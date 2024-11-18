@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1072151404082",
+    "project_id": "aider-bd0e4",
+    "storage_bucket": "aider-bd0e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072151404082:android:501451ca28b4b46ecd262b",
+        "android_client_info": {
+          "package_name": "com.aider.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5NSoJ1F2U5eMpmasaTojGW0Gy9JRq_4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
