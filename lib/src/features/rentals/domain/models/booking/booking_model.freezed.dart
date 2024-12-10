@@ -40,8 +40,12 @@ mixin _$BookingModel {
   UserModel? get vendor => throw _privateConstructorUsedError;
   UserModel? get user => throw _privateConstructorUsedError;
 
+  /// Serializes this BookingModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $BookingModelCopyWith<BookingModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -88,6 +92,8 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -191,6 +197,8 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
     ) as $Val);
   }
 
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $BookedProductModelCopyWith<$Res>? get bookedProduct {
@@ -203,6 +211,8 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
     });
   }
 
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserModelCopyWith<$Res>? get vendor {
@@ -215,6 +225,8 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
     });
   }
 
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserModelCopyWith<$Res>? get user {
@@ -273,6 +285,8 @@ class __$$BookingModelImplCopyWithImpl<$Res>
       _$BookingModelImpl _value, $Res Function(_$BookingModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -493,7 +507,7 @@ class _$BookingModelImpl extends _BookingModel {
             (identical(other.user, user) || other.user == user));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -518,7 +532,9 @@ class _$BookingModelImpl extends _BookingModel {
         user
       ]);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$BookingModelImplCopyWith<_$BookingModelImpl> get copyWith =>
@@ -596,8 +612,11 @@ abstract class _BookingModel extends BookingModel {
   UserModel? get vendor;
   @override
   UserModel? get user;
+
+  /// Create a copy of BookingModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BookingModelImplCopyWith<_$BookingModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

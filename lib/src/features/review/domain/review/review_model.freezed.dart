@@ -29,8 +29,12 @@ mixin _$ReviewModel {
   String? get date => throw _privateConstructorUsedError;
   UserModel? get reviewer => throw _privateConstructorUsedError;
 
+  /// Serializes this ReviewModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ReviewModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ReviewModelCopyWith<ReviewModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -64,6 +68,8 @@ class _$ReviewModelCopyWithImpl<$Res, $Val extends ReviewModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ReviewModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -112,6 +118,8 @@ class _$ReviewModelCopyWithImpl<$Res, $Val extends ReviewModel>
     ) as $Val);
   }
 
+  /// Create a copy of ReviewModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserModelCopyWith<$Res>? get reviewer {
@@ -155,6 +163,8 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
       _$ReviewModelImpl _value, $Res Function(_$ReviewModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ReviewModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -260,12 +270,14 @@ class _$ReviewModelImpl implements _ReviewModel {
                 other.reviewer == reviewer));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, externalId, rating, comment,
       postedAt, time, date, reviewer);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ReviewModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ReviewModelImplCopyWith<_$ReviewModelImpl> get copyWith =>
@@ -309,8 +321,11 @@ abstract class _ReviewModel implements ReviewModel {
   String? get date;
   @override
   UserModel? get reviewer;
+
+  /// Create a copy of ReviewModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ReviewModelImplCopyWith<_$ReviewModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

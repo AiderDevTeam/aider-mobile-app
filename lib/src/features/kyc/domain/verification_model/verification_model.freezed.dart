@@ -28,8 +28,12 @@ mixin _$VerificationModel {
   String? get status => throw _privateConstructorUsedError;
   String? get rejectionReason => throw _privateConstructorUsedError;
 
+  /// Serializes this VerificationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of VerificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $VerificationModelCopyWith<VerificationModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -60,6 +64,8 @@ class _$VerificationModelCopyWithImpl<$Res, $Val extends VerificationModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of VerificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -130,6 +136,8 @@ class __$$VerificationModelImplCopyWithImpl<$Res>
       $Res Function(_$VerificationModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of VerificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -228,12 +236,14 @@ class _$VerificationModelImpl implements _VerificationModel {
                 other.rejectionReason == rejectionReason));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, externalId, idNumber,
       documentUrl, selfieUrl, type, status, rejectionReason);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of VerificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$VerificationModelImplCopyWith<_$VerificationModelImpl> get copyWith =>
@@ -275,8 +285,11 @@ abstract class _VerificationModel implements VerificationModel {
   String? get status;
   @override
   String? get rejectionReason;
+
+  /// Create a copy of VerificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$VerificationModelImplCopyWith<_$VerificationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

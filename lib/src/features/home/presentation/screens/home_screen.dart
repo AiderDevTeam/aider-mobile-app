@@ -2,7 +2,7 @@
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
-import 'package:aider_mobile_app/core/view_models/socket_view_model.dart';
+// import 'package:aider_mobile_app/core/view_models/socket_view_model.dart';
 import 'package:aider_mobile_app/core/view_models/user_view_model.dart';
 import 'package:aider_mobile_app/src/features/explore/presentation/screens/explore_screen.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/services/git_it_service_locator.dart';
 import '../../../../../core/services/local_notification_service.dart';
+import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/services/push_notification_service.dart';
 import '../../../../../core/view_models/base_view.dart';
 import '../../../inbox/presentation/screens/inbox_screen.dart';
@@ -27,6 +28,25 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  Future<void> fetchUserWallet([int page = 1]) async {
+    if (!mounted) return;
+    await context.read<UserViewModel>().fetchWalletData();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userViewModel = context.read<UserViewModel>();
+
+      // Fetch wallet data and set default wallet if available
+      await fetchUserWallet();
+      _fcmInitialization();
+      _requestForNotificationPermissions();
+    });
+
+  }
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _widgetOptions = const <Widget>[
     ExploreScreen(),
@@ -40,56 +60,52 @@ class _HomeScreenState extends State<HomeScreen> {
   void onTap(int index) async{
     final bottomNavProvider = context.read<BottomNavViewModel>();
     final user = context.read<UserViewModel>().getUser;
+    ZLoggerService.logOnInfo('SOCKET User CONNECTED.... $user');
     if(index == 2){
-      if(user.userIdentifications?.first.status == kRejected){
-        AppNavigator.pushNamed(
-          context, AppRoute.afterVerificationScreen,
-          arguments: {
-            'kycType': user.userIdentifications?.first.type,
-            // 'fromProfile': false
-          },
-        );
-        return;
-      }
-      if(user.idVerificationStatus != kCompletedStatus){
-        AppNavigator.pushNamed(context, AppRoute.verifyIdentityScreen);
-        return;
-      }
-      if(user.userHasWallet == false){
+      // if(user.userIdentifications?.first.status == kRejected){
+      //   AppNavigator.pushNamed(
+      //     context, AppRoute.afterVerificationScreen,
+      //     arguments: {
+      //       'kycType': user.userIdentifications?.first.type,
+      //       // 'fromProfile': false
+      //     },
+      //   );
+      //   return;
+      // }
+
+      // if(user.idVerificationStatus != kCompletedStatus){
+      //   AppNavigator.pushNamed(context, AppRoute.verifyIdentityScreen);
+      //   return;
+      // }
+
+      if(user.wallets?.length  == 0){
         AppNavigator.pushNamed(context, AppRoute.paymentScreen);
         return;
       }
-      if(user.idVerificationStatus == kCompletedStatus){
-        context.read<ProductViewModel>().clearProductDescription();
-        AppNavigator.pushNamed(context, AppRoute.listProductScreen);
-        return;
-      }
+
+      // if(user.idVerificationStatus == kCompletedStatus){
+      //   context.read<ProductViewModel>().clearProductDescription();
+      //   AppNavigator.pushNamed(context, AppRoute.listProductScreen);
+      //   return;
+      // }
+
+      context.read<ProductViewModel>().clearProductDescription();
+      AppNavigator.pushNamed(context, AppRoute.listProductScreen);
       return;
     }
 
-    if(index == 3){
-      if(user.idVerificationStatus != kCompletedStatus){
-        AppNavigator.pushNamed(context, AppRoute.verifyIdentityScreen);
-        return;
-      }
-    }
+    // if(index == 3){
+    //   if(user.idVerificationStatus != kCompletedStatus){
+    //     AppNavigator.pushNamed(context, AppRoute.verifyIdentityScreen);
+    //     return;
+    //   }
+    // }
 
     bottomNavProvider.selectNavTab = index;
   }
 
   void _fcmInitialization() async {
     if(mounted) await sl.get<PushNotificationService>().setupInteractedMessage();
-  }
-
-  @override
-  void initState() {
-    connectSocket();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fcmInitialization();
-      _requestForNotificationPermissions();
-    });
-    super.initState();
   }
 
   @override
@@ -111,10 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void connectSocket(){
-    if(!mounted) return;
-    context.read<SocketViewModel>().connect(context, context.read<UserViewModel>().getUser.externalId?? '');
-  }
+  // void connectSocket(){
+  //   if(!mounted) return;
+  //   context.read<SocketViewModel>().connect(context, context.read<UserViewModel>().getUser.externalId?? '');
+  // }
 
 
   void _requestForNotificationPermissions() async{

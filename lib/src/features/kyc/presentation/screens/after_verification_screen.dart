@@ -19,6 +19,7 @@ import '../../../../shared_widgets/common/v_space.dart';
 import '../../domain/verification_model/verification_model.dart';
 import '../view_model/kyc_view_model.dart';
 import '../widgets/kyc_status_card.dart';
+import '../../../../../core/services/logger_service.dart';
 
 class AfterVerification extends StatelessWidget {
   const AfterVerification({
@@ -27,7 +28,6 @@ class AfterVerification extends StatelessWidget {
   });
 
   final Map<String, dynamic> param;
-
   @override
   Widget build(BuildContext context) {
     return AppScreenScaffold(
@@ -47,6 +47,8 @@ class AfterVerification extends StatelessWidget {
         userViewConsumer.getUser.userIdentifications?.firstWhere(
               (model) => model.type == param['kycType'],
         );
+        final user = context.read<UserViewModel>().getUser;
+        ZLoggerService.logOnInfo('KYC Details.... $user');
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -134,7 +136,7 @@ class AfterVerification extends StatelessWidget {
                 tryAgain: AppPrimaryButton(
                   onPressed: () {
                     context.read<KycViewModel>().clearCaptureInfo();
-                    AppNavigator.pushReplacementNamed(context, AppRoute.verifyIdentityScreen);
+                    // AppNavigator.pushReplacementNamed(context, AppRoute.verifyIdentityScreen);
                   },
                   text: "Try again",
                   height: 46,

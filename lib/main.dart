@@ -37,9 +37,7 @@ Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     setUpGetItServiceLocator();
-
     await preLoaders();
-
     runApp(
       DevicePreview(
         enabled: false,

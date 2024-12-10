@@ -40,8 +40,12 @@ mixin _$ProductModel {
       throw _privateConstructorUsedError;
   List<ReviewModel>? get reviews => throw _privateConstructorUsedError;
 
+  /// Serializes this ProductModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ProductModelCopyWith<ProductModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -86,6 +90,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -179,6 +185,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     ) as $Val);
   }
 
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $AddressModelCopyWith<$Res>? get address {
@@ -191,6 +199,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     });
   }
 
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserModelCopyWith<$Res>? get user {
@@ -203,6 +213,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     });
   }
 
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SubCategoryItemModelCopyWith<$Res>? get subCategoryItem {
@@ -260,6 +272,8 @@ class __$$ProductModelImplCopyWithImpl<$Res>
       _$ProductModelImpl _value, $Res Function(_$ProductModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -487,7 +501,7 @@ class _$ProductModelImpl extends _ProductModel {
             const DeepCollectionEquality().equals(other._reviews, _reviews));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -509,7 +523,9 @@ class _$ProductModelImpl extends _ProductModel {
       const DeepCollectionEquality().hash(_unavailableBookingDates),
       const DeepCollectionEquality().hash(_reviews));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ProductModelImplCopyWith<_$ProductModelImpl> get copyWith =>
@@ -581,8 +597,11 @@ abstract class _ProductModel extends ProductModel {
   List<BookingDateModel>? get unavailableBookingDates;
   @override
   List<ReviewModel>? get reviews;
+
+  /// Create a copy of ProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ProductModelImplCopyWith<_$ProductModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

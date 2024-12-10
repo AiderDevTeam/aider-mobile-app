@@ -23,8 +23,12 @@ mixin _$ReviewHistoryModel {
   List<ReviewModel> get data => throw _privateConstructorUsedError;
   PaginationModel? get meta => throw _privateConstructorUsedError;
 
+  /// Serializes this ReviewHistoryModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ReviewHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ReviewHistoryModelCopyWith<ReviewHistoryModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -50,6 +54,8 @@ class _$ReviewHistoryModelCopyWithImpl<$Res, $Val extends ReviewHistoryModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ReviewHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -68,6 +74,8 @@ class _$ReviewHistoryModelCopyWithImpl<$Res, $Val extends ReviewHistoryModel>
     ) as $Val);
   }
 
+  /// Create a copy of ReviewHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $PaginationModelCopyWith<$Res>? get meta {
@@ -103,6 +111,8 @@ class __$$ReviewHistoryModelImplCopyWithImpl<$Res>
       $Res Function(_$ReviewHistoryModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ReviewHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -158,12 +168,14 @@ class _$ReviewHistoryModelImpl implements _ReviewHistoryModel {
             (identical(other.meta, meta) || other.meta == meta));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(_data), meta);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ReviewHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ReviewHistoryModelImplCopyWith<_$ReviewHistoryModelImpl> get copyWith =>
@@ -190,8 +202,11 @@ abstract class _ReviewHistoryModel implements ReviewHistoryModel {
   List<ReviewModel> get data;
   @override
   PaginationModel? get meta;
+
+  /// Create a copy of ReviewHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ReviewHistoryModelImplCopyWith<_$ReviewHistoryModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -28,8 +28,12 @@ mixin _$LocationPredictionModel {
   Map<String, dynamic>? get structuredFormatting =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this LocationPredictionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of LocationPredictionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $LocationPredictionModelCopyWith<LocationPredictionModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -58,6 +62,8 @@ class _$LocationPredictionModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of LocationPredictionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -108,6 +114,8 @@ class __$$LocationPredictionModelImplCopyWithImpl<$Res>
       $Res Function(_$LocationPredictionModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of LocationPredictionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -179,12 +187,14 @@ class _$LocationPredictionModelImpl implements _LocationPredictionModel {
                 .equals(other._structuredFormatting, _structuredFormatting));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, description, placeId,
       const DeepCollectionEquality().hash(_structuredFormatting));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LocationPredictionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LocationPredictionModelImplCopyWith<_$LocationPredictionModelImpl>
@@ -218,8 +228,11 @@ abstract class _LocationPredictionModel implements LocationPredictionModel {
   @override
   @JsonKey(name: 'structured_formatting')
   Map<String, dynamic>? get structuredFormatting;
+
+  /// Create a copy of LocationPredictionModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LocationPredictionModelImplCopyWith<_$LocationPredictionModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

@@ -34,17 +34,16 @@ class LocalNotificationService {
       importance: Importance.max,
     );
 
-     DarwinInitializationSettings iOSInitializationSettings = DarwinInitializationSettings(
+     DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification
     );
 
     final InitializationSettings initializationSettings =
     InitializationSettings(
         android: initializationSettingsAndroid,
-        iOS: iOSInitializationSettings
+        iOS: initializationSettingsDarwin
     );
 
     await flutterLocalNotificationsPlugin.initialize(

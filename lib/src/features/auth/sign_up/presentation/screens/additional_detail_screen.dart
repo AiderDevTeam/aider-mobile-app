@@ -34,6 +34,7 @@ class AdditionalDetailScreen extends StatefulWidget {
 class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
   final formKey = GlobalKey<FormState>();
   AutovalidateMode autoValidate = AutovalidateMode.disabled;
+  String? selectedGender;
   final selectedItem = ValueNotifier<String?>(null);
   final dobController = TextEditingController();
   final locationController = TextEditingController();
@@ -59,7 +60,7 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
             if (formKey.currentState!.validate()) {
               userProvider.setSignupRequestBody({
                 "birthday": dobController.text.split('/').reversed.join('-'),
-                "gender": selectedItem.value?.toLowerCase(),
+                "gender": selectedGender?.toLowerCase(),
               });
               AppNavigator.pushNamed(
                 context,
@@ -140,10 +141,14 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
                   const VSpace(height: 8.0),
                   AppDropdownField(
                     hintText: 'Select gender',
-                    selectedItem: selectedItem.value,
+                    selectedItem: selectedGender,
                     listItems: const ['Male', 'Female'],
                     onChanged: (value) {
-                      selectedItem.value = value;
+                      print('Changed to: $value');
+                      setState(() {
+                        selectedGender = value;
+                        print('Changed to: $selectedGender');
+                      });
                     },
                     validator: (value) {
                       if (value == null) return 'Please select gender';

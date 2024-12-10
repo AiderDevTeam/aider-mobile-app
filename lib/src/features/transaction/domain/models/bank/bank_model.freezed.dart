@@ -29,8 +29,12 @@ mixin _$BankModel {
   String? get name => throw _privateConstructorUsedError;
   String? get sortCode => throw _privateConstructorUsedError;
 
+  /// Serializes this BankModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of BankModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $BankModelCopyWith<BankModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -61,6 +65,8 @@ class _$BankModelCopyWithImpl<$Res, $Val extends BankModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of BankModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -137,6 +143,8 @@ class __$$BankModelImplCopyWithImpl<$Res>
       _$BankModelImpl _value, $Res Function(_$BankModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of BankModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -244,12 +252,14 @@ class _$BankModelImpl implements _BankModel {
                 other.sortCode == sortCode));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, externalId, bankCode,
       country, currency, longCode, name, sortCode);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of BankModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$BankModelImplCopyWith<_$BankModelImpl> get copyWith =>
@@ -293,8 +303,11 @@ abstract class _BankModel implements BankModel {
   String? get name;
   @override
   String? get sortCode;
+
+  /// Create a copy of BankModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BankModelImplCopyWith<_$BankModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

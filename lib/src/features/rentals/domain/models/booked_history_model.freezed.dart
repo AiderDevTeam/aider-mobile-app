@@ -24,8 +24,12 @@ mixin _$BookedProductHistoryModel {
   List<BookingModel> get data => throw _privateConstructorUsedError;
   PaginationModel? get meta => throw _privateConstructorUsedError;
 
+  /// Serializes this BookedProductHistoryModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of BookedProductHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $BookedProductHistoryModelCopyWith<BookedProductHistoryModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -52,6 +56,8 @@ class _$BookedProductHistoryModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of BookedProductHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -70,6 +76,8 @@ class _$BookedProductHistoryModelCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of BookedProductHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $PaginationModelCopyWith<$Res>? get meta {
@@ -108,6 +116,8 @@ class __$$BookedProductHistoryModelImplCopyWithImpl<$Res>
       $Res Function(_$BookedProductHistoryModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of BookedProductHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -163,12 +173,14 @@ class _$BookedProductHistoryModelImpl implements _BookedProductHistoryModel {
             (identical(other.meta, meta) || other.meta == meta));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(_data), meta);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of BookedProductHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$BookedProductHistoryModelImplCopyWith<_$BookedProductHistoryModelImpl>
@@ -195,8 +207,11 @@ abstract class _BookedProductHistoryModel implements BookedProductHistoryModel {
   List<BookingModel> get data;
   @override
   PaginationModel? get meta;
+
+  /// Create a copy of BookedProductHistoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BookedProductHistoryModelImplCopyWith<_$BookedProductHistoryModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

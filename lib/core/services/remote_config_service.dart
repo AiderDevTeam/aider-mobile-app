@@ -43,7 +43,7 @@ class RemoteConfigService{
         'payStackPublicKey': _firebaseRemoteConfig.getString('payStackPublicKey'),
         'payStackSecretKey': _firebaseRemoteConfig.getString('payStackSecretKey'),
       });
-
+      print('LIVE_BASE_URL 2: ${_firebaseRemoteConfig.getString('baseUrl')}');
     }catch(e){
       _configDataModel = RemoteConfigModel(
         baseUrl: Environment.getLiveBaseUrl,

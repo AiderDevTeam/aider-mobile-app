@@ -29,8 +29,12 @@ mixin _$AddressModel {
   double? get latitude => throw _privateConstructorUsedError;
   double? get longitude => throw _privateConstructorUsedError;
 
+  /// Serializes this AddressModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AddressModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AddressModelCopyWith<AddressModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -62,6 +66,8 @@ class _$AddressModelCopyWithImpl<$Res, $Val extends AddressModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AddressModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -138,6 +144,8 @@ class __$$AddressModelImplCopyWithImpl<$Res>
       _$AddressModelImpl _value, $Res Function(_$AddressModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AddressModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -245,12 +253,14 @@ class _$AddressModelImpl implements _AddressModel {
                 other.longitude == longitude));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, externalId, city, originName,
       country, countryCode, latitude, longitude);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AddressModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AddressModelImplCopyWith<_$AddressModelImpl> get copyWith =>
@@ -294,8 +304,11 @@ abstract class _AddressModel implements AddressModel {
   double? get latitude;
   @override
   double? get longitude;
+
+  /// Create a copy of AddressModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AddressModelImplCopyWith<_$AddressModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

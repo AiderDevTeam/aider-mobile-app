@@ -28,8 +28,12 @@ mixin _$VendorIndividualRatingCountsModel {
   int? get fourRating => throw _privateConstructorUsedError;
   int? get fiveRating => throw _privateConstructorUsedError;
 
+  /// Serializes this VendorIndividualRatingCountsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of VendorIndividualRatingCountsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $VendorIndividualRatingCountsModelCopyWith<VendorIndividualRatingCountsModel>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -62,6 +66,8 @@ class _$VendorIndividualRatingCountsModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of VendorIndividualRatingCountsModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -129,6 +135,8 @@ class __$$VendorIndividualRatingCountsModelImplCopyWithImpl<$Res>
       $Res Function(_$VendorIndividualRatingCountsModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of VendorIndividualRatingCountsModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -220,12 +228,14 @@ class _$VendorIndividualRatingCountsModelImpl
                 other.fiveRating == fiveRating));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, oneRating, twoRating,
       threeRating, fourRating, fiveRating);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of VendorIndividualRatingCountsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$VendorIndividualRatingCountsModelImplCopyWith<
@@ -267,8 +277,11 @@ abstract class _VendorIndividualRatingCountsModel
   int? get fourRating;
   @override
   int? get fiveRating;
+
+  /// Create a copy of VendorIndividualRatingCountsModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$VendorIndividualRatingCountsModelImplCopyWith<
           _$VendorIndividualRatingCountsModelImpl>
       get copyWith => throw _privateConstructorUsedError;

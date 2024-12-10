@@ -29,6 +29,7 @@ import '../../../../../core/view_models/socket_view_model.dart';
 import '../../../../../core/view_models/user_view_model.dart';
 import '../../../../shared_widgets/common/network_image_view.dart';
 import '../../../../shared_widgets/modals/question_modal_content.dart';
+import '../../../kyc/presentation/view_model/kyc_view_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -41,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     connectSocket();
+    _loadKYCData();
     super.initState();
   }
 
@@ -48,6 +50,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!mounted) return;
     context.read<SocketViewModel>().connect(
         context, context.read<UserViewModel>().getUser.externalId ?? '');
+  }
+
+  void _loadKYCData() async {
+    await context.read<KycViewModel>().fetchUserKYCData();
   }
 
   @override
@@ -480,7 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AppDialogUtil.showScrollableBottomSheet(
                           context: context,
                           builder: (context) => QuestionModalContent(
-                            questionText: 'Are you sure?',
+                            questionText: 'Are you sure want to logout?',
                             onYesPressed: () async {
                               await context.read<UserViewModel>().logout(
                                 context,

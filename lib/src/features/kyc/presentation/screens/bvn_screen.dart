@@ -30,9 +30,26 @@ class _BvnScreenState extends State<BvnScreen> {
   final formKey = GlobalKey<FormState>();
   AutovalidateMode autoValidate = AutovalidateMode.disabled;
   final bvnNumberController = TextEditingController();
+
+  bool isButtonEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Add a listener to the TextEditingController
+    bvnNumberController.addListener(() {
+      // Update button state when the text changes
+      setState(() {
+        isButtonEnabled = bvnNumberController.text.isNotEmpty;
+      });
+    });
+  }
+
   @override
   void dispose() {
-    bvnNumberController.text;
+    bvnNumberController.dispose();
+    phoneFocusNode.dispose();
     super.dispose();
   }
 
@@ -44,12 +61,14 @@ class _BvnScreenState extends State<BvnScreen> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           text: "Proceed",
-          onPressed: bvnNumberController.text.isEmpty
-              ? null
-              : () async {
-                  context.read<KycViewModel>().captureNiNInfo({"type": "bvn", "idNumber": bvnNumberController.text});
-                  AppNavigator.pushNamed(context, AppRoute.bvnSelfieScreen);
-                },
+          onPressed: isButtonEnabled
+              ? () async {
+            context
+                .read<KycViewModel>()
+                .captureNiNInfo({"type": "bvn", "idNumber": bvnNumberController.text});
+            AppNavigator.pushNamed(context, AppRoute.bvnSelfieScreen);
+          }
+              : null,
         ),
       ),
       child: AppKeyboardAction(

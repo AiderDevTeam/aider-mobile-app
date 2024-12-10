@@ -25,8 +25,12 @@ mixin _$SubCategoryItemModel {
   String? get name => throw _privateConstructorUsedError;
   SubCategoryModel? get subCategory => throw _privateConstructorUsedError;
 
+  /// Serializes this SubCategoryItemModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SubCategoryItemModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SubCategoryItemModelCopyWith<SubCategoryItemModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -57,6 +61,8 @@ class _$SubCategoryItemModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SubCategoryItemModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -85,6 +91,8 @@ class _$SubCategoryItemModelCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of SubCategoryItemModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SubCategoryModelCopyWith<$Res>? get subCategory {
@@ -124,6 +132,8 @@ class __$$SubCategoryItemModelImplCopyWithImpl<$Res>
       $Res Function(_$SubCategoryItemModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SubCategoryItemModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -189,12 +199,14 @@ class _$SubCategoryItemModelImpl implements _SubCategoryItemModel {
                 other.subCategory == subCategory));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, externalId, name, subCategory);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SubCategoryItemModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SubCategoryItemModelImplCopyWith<_$SubCategoryItemModelImpl>
@@ -228,8 +240,11 @@ abstract class _SubCategoryItemModel implements SubCategoryItemModel {
   String? get name;
   @override
   SubCategoryModel? get subCategory;
+
+  /// Create a copy of SubCategoryItemModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SubCategoryItemModelImplCopyWith<_$SubCategoryItemModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

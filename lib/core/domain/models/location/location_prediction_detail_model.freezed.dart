@@ -26,8 +26,12 @@ mixin _$LocationPredictionDetailModel {
   @JsonKey(name: 'address_components')
   List<dynamic>? get addressComponents => throw _privateConstructorUsedError;
 
+  /// Serializes this LocationPredictionDetailModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of LocationPredictionDetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $LocationPredictionDetailModelCopyWith<LocationPredictionDetailModel>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -56,6 +60,8 @@ class _$LocationPredictionDetailModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of LocationPredictionDetailModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -99,6 +105,8 @@ class __$$LocationPredictionDetailModelImplCopyWithImpl<$Res>
       $Res Function(_$LocationPredictionDetailModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of LocationPredictionDetailModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -171,14 +179,16 @@ class _$LocationPredictionDetailModelImpl
                 .equals(other._addressComponents, _addressComponents));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_geometry),
       const DeepCollectionEquality().hash(_addressComponents));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of LocationPredictionDetailModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LocationPredictionDetailModelImplCopyWith<
@@ -211,8 +221,11 @@ abstract class _LocationPredictionDetailModel
   @override
   @JsonKey(name: 'address_components')
   List<dynamic>? get addressComponents;
+
+  /// Create a copy of LocationPredictionDetailModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LocationPredictionDetailModelImplCopyWith<
           _$LocationPredictionDetailModelImpl>
       get copyWith => throw _privateConstructorUsedError;

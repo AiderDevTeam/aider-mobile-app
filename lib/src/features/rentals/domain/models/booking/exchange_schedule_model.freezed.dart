@@ -29,8 +29,12 @@ mixin _$ExchangeScheduleModel {
   String? get originName => throw _privateConstructorUsedError;
   String? get timeOfExchange => throw _privateConstructorUsedError;
 
+  /// Serializes this ExchangeScheduleModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ExchangeScheduleModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ExchangeScheduleModelCopyWith<ExchangeScheduleModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -62,6 +66,8 @@ class _$ExchangeScheduleModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ExchangeScheduleModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -134,6 +140,8 @@ class __$$ExchangeScheduleModelImplCopyWithImpl<$Res>
       $Res Function(_$ExchangeScheduleModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ExchangeScheduleModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -232,12 +240,14 @@ class _$ExchangeScheduleModelImpl extends _ExchangeScheduleModel {
                 other.timeOfExchange == timeOfExchange));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, externalId, city, status,
       country, countryCode, originName, timeOfExchange);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ExchangeScheduleModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ExchangeScheduleModelImplCopyWith<_$ExchangeScheduleModelImpl>
@@ -280,8 +290,11 @@ abstract class _ExchangeScheduleModel extends ExchangeScheduleModel {
   String? get originName;
   @override
   String? get timeOfExchange;
+
+  /// Create a copy of ExchangeScheduleModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ExchangeScheduleModelImplCopyWith<_$ExchangeScheduleModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

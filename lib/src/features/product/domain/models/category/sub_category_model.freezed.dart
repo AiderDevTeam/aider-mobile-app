@@ -27,8 +27,12 @@ mixin _$SubCategoryModel {
   List<SubCategoryItemModel>? get subCategoryItems =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this SubCategoryModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SubCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SubCategoryModelCopyWith<SubCategoryModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -59,6 +63,8 @@ class _$SubCategoryModelCopyWithImpl<$Res, $Val extends SubCategoryModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SubCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -92,6 +98,8 @@ class _$SubCategoryModelCopyWithImpl<$Res, $Val extends SubCategoryModel>
     ) as $Val);
   }
 
+  /// Create a copy of SubCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $CategoryModelCopyWith<$Res>? get category {
@@ -132,6 +140,8 @@ class __$$SubCategoryModelImplCopyWithImpl<$Res>
       $Res Function(_$SubCategoryModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SubCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -219,12 +229,14 @@ class _$SubCategoryModelImpl implements _SubCategoryModel {
                 .equals(other._subCategoryItems, _subCategoryItems));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, externalId, name, category,
       const DeepCollectionEquality().hash(_subCategoryItems));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SubCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SubCategoryModelImplCopyWith<_$SubCategoryModelImpl> get copyWith =>
@@ -261,8 +273,11 @@ abstract class _SubCategoryModel implements SubCategoryModel {
   CategoryModel? get category;
   @override
   List<SubCategoryItemModel>? get subCategoryItems;
+
+  /// Create a copy of SubCategoryModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SubCategoryModelImplCopyWith<_$SubCategoryModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

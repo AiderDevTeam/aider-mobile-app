@@ -26,8 +26,12 @@ mixin _$ProductPriceModel {
   int? get startDay => throw _privateConstructorUsedError;
   int? get endDay => throw _privateConstructorUsedError;
 
+  /// Serializes this ProductPriceModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ProductPriceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ProductPriceModelCopyWith<ProductPriceModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -52,6 +56,8 @@ class _$ProductPriceModelCopyWithImpl<$Res, $Val extends ProductPriceModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ProductPriceModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -106,6 +112,8 @@ class __$$ProductPriceModelImplCopyWithImpl<$Res>
       $Res Function(_$ProductPriceModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ProductPriceModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -179,12 +187,14 @@ class _$ProductPriceModelImpl implements _ProductPriceModel {
             (identical(other.endDay, endDay) || other.endDay == endDay));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, externalId, price, startDay, endDay);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ProductPriceModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ProductPriceModelImplCopyWith<_$ProductPriceModelImpl> get copyWith =>
@@ -220,8 +230,11 @@ abstract class _ProductPriceModel implements ProductPriceModel {
   int? get startDay;
   @override
   int? get endDay;
+
+  /// Create a copy of ProductPriceModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ProductPriceModelImplCopyWith<_$ProductPriceModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

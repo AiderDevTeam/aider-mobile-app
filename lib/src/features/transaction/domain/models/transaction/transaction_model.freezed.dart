@@ -30,8 +30,12 @@ mixin _$TransactionModel {
   String? get status => throw _privateConstructorUsedError;
   String? get stan => throw _privateConstructorUsedError;
 
+  /// Serializes this TransactionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of TransactionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $TransactionModelCopyWith<TransactionModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -63,6 +67,8 @@ class _$TransactionModelCopyWithImpl<$Res, $Val extends TransactionModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of TransactionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -139,6 +145,8 @@ class __$$TransactionModelImplCopyWithImpl<$Res>
       $Res Function(_$TransactionModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of TransactionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -245,12 +253,14 @@ class _$TransactionModelImpl implements _TransactionModel {
             (identical(other.stan, stan) || other.stan == stan));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, externalId, amount,
       accountNumber, sortCode, type, status, stan);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of TransactionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$TransactionModelImplCopyWith<_$TransactionModelImpl> get copyWith =>
@@ -296,8 +306,11 @@ abstract class _TransactionModel implements TransactionModel {
   String? get status;
   @override
   String? get stan;
+
+  /// Create a copy of TransactionModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$TransactionModelImplCopyWith<_$TransactionModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

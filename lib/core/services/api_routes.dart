@@ -62,6 +62,7 @@ class ApiRoutes {
 
   /// VERIFICATION
   static String get initializeVerification => '$_baseUrl/auth/api/user/identification/initialize';
+  static String get getUserKYC => '$_baseUrl/auth/api/user/identification/getUserKYC';
 
   /// REVIEW
   static review(String? bookingProductExternalId) => '$_baseUrl/vendor/api/review/$bookingProductExternalId';

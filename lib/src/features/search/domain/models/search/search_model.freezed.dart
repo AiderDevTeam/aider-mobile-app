@@ -25,8 +25,12 @@ mixin _$SearchModel {
   int? get vendorCount => throw _privateConstructorUsedError;
   int? get productCount => throw _privateConstructorUsedError;
 
+  /// Serializes this SearchModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SearchModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SearchModelCopyWith<SearchModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -54,6 +58,8 @@ class _$SearchModelCopyWithImpl<$Res, $Val extends SearchModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SearchModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -106,6 +112,8 @@ class __$$SearchModelImplCopyWithImpl<$Res>
       _$SearchModelImpl _value, $Res Function(_$SearchModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SearchModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -192,7 +200,7 @@ class _$SearchModelImpl implements _SearchModel {
                 other.productCount == productCount));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -201,7 +209,9 @@ class _$SearchModelImpl implements _SearchModel {
       vendorCount,
       productCount);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SearchModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SearchModelImplCopyWith<_$SearchModelImpl> get copyWith =>
@@ -233,8 +243,11 @@ abstract class _SearchModel implements SearchModel {
   int? get vendorCount;
   @override
   int? get productCount;
+
+  /// Create a copy of SearchModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SearchModelImplCopyWith<_$SearchModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -49,13 +49,13 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC5NSoJ1F2U5eMpmasaTojGW0Gy9JRq_4M',
-    appId: '1:1072151404082:android:501451ca28b4b46ecd262b',
-    messagingSenderId: '1072151404082',
-    projectId: 'aider-bd0e4',
-    storageBucket: 'aider-bd0e4.appspot.com',
-  );
+    static const FirebaseOptions android = FirebaseOptions(
+      apiKey: 'AIzaSyAZqJo0F7g9yvA5ziIMOxgSvLniaV5mkZo',
+      appId: '1:21825747160:android:55ce82c3e4975a1b52ffad',
+      messagingSenderId: '21825747160',
+      projectId: 'aider-7a175',
+      storageBucket: 'aider-7a175.firebasestorage.app',
+    );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBh3NGMby68uPCRqULbQfJLpFNf1ygqrHo',

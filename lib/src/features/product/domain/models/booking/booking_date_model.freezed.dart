@@ -23,8 +23,12 @@ mixin _$BookingDateModel {
   int? get id => throw _privateConstructorUsedError;
   String? get date => throw _privateConstructorUsedError;
 
+  /// Serializes this BookingDateModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of BookingDateModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $BookingDateModelCopyWith<BookingDateModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -48,6 +52,8 @@ class _$BookingDateModelCopyWithImpl<$Res, $Val extends BookingDateModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of BookingDateModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +92,8 @@ class __$$BookingDateModelImplCopyWithImpl<$Res>
       $Res Function(_$BookingDateModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of BookingDateModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -132,11 +140,13 @@ class _$BookingDateModelImpl implements _BookingDateModel {
             (identical(other.date, date) || other.date == date));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, date);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of BookingDateModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$BookingDateModelImplCopyWith<_$BookingDateModelImpl> get copyWith =>
@@ -162,8 +172,11 @@ abstract class _BookingDateModel implements BookingDateModel {
   int? get id;
   @override
   String? get date;
+
+  /// Create a copy of BookingDateModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BookingDateModelImplCopyWith<_$BookingDateModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

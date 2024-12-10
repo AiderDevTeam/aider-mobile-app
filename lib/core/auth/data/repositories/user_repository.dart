@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../errors/failure.dart';
 import '../../../services/crash_service.dart';
+import '../../../services/logger_service.dart';
 import '../../domain/models/wallet/wallet_model.dart';
 import '../../domain/models/user/user_model.dart';
 import '../datasources/user_local_datasource.dart';
@@ -17,10 +18,12 @@ abstract class UserRepository{
   Future<Either<Failure, bool>> logout();
   Future<Either<Failure, bool>> deleteAccount({required Map<String, dynamic> requestBody});
   Future<Either<Failure, UserModel>> updateUser({ required Map<String, dynamic> requestBody });
+  Future<Either<Failure, UserModel>> fetchUserDetail({ required Map<String, dynamic> requestBody });
   Future<Either<Failure, bool>> verifyDisplayName({ required Map<String, dynamic> requestBody });
   Future<Either<Failure, bool>> verifyEmail({ required Map<String, dynamic> requestBody });
   Future<Either<Failure, String>> signUpOTP({ required Map<String, dynamic> requestBody });
   Future<Either<Failure, WalletModel>> saveWallet({ required Map<String, dynamic> requestBody });
+  Future<Either<Failure, List<WalletModel>>> fetchWallet({ required Map<String, dynamic> requestBody });
   Future<Either<Failure, WalletModel>> setWalletToDefault({String? walletExternalId});
   Future<Either<Failure, bool>> addProfileImage({required Map<String, dynamic> requestBody});
   Future<Either<Failure, List<dynamic>>> userType();
@@ -121,6 +124,17 @@ class UserRepositoryImpl extends UserRepository{
   }
 
   @override
+  Future<Either<Failure, UserModel>> fetchUserDetail({ required Map<String, dynamic> requestBody }) async{
+    try {
+      final response = await userRemoteDatasource.fetchUserDetail(requestBody: requestBody);
+      return Right(response);
+    } catch (e, s) {
+      CrashService.setCrashKey('fetchUserDetail', 'Fetching user details');
+      return Left(FailureToMessage.returnLeftError(e, s));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserModel>> retrieveUser() async{
     try {
       final response = await userLocalDatasource.retrieveUser();
@@ -182,6 +196,18 @@ class UserRepositoryImpl extends UserRepository{
       return Right(response);
     } catch (e, s) {
       CrashService.setCrashKey('wallet', 'Saving a bank, wallet');
+      return Left(FailureToMessage.returnLeftError(e, s));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<WalletModel>>> fetchWallet({required Map<String, dynamic> requestBody}) async{
+    try {
+      final response = await userRemoteDatasource.fetchWallet(requestBody: requestBody);
+      ZLoggerService.logOnInfo("Body Stack Trace: $response");
+      return Right(response);
+    } catch (e, s) {
+      CrashService.setCrashKey('wallet', 'Fetching user wallets');
       return Left(FailureToMessage.returnLeftError(e, s));
     }
   }

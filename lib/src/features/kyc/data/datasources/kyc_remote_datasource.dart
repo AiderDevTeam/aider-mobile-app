@@ -7,6 +7,7 @@ import '../../domain/verification_model/verification_model.dart';
 
 abstract class KycRemoteDataSource {
   Future<VerificationModel> initializeVerification({required Map<String, dynamic> requestBody});
+  Future<List<VerificationModel>> fetchUserKYC({ required Map<String, dynamic> requestBody });
 }
 
 class KycRemoteDataSourceImpl extends KycRemoteDataSource {
@@ -28,5 +29,22 @@ class KycRemoteDataSourceImpl extends KycRemoteDataSource {
       throw ServerException(message: body['message'] ?? '');
     }
     return VerificationModel.fromJson(response.data['data']?? {});
+  }
+
+  @override
+  Future<List<VerificationModel>> fetchUserKYC({required Map<String, dynamic> requestBody}) async {
+    final response = await httpServiceRequester.getRequest(
+      endpoint: ApiRoutes.getUserKYC,
+    );
+
+    var body = response.data;
+
+    if (body['success'] == false) {
+      throw ServerException(message: body['message'] ?? '');
+    }
+
+    return (body['data'] as List)
+        .map((kycJson) => VerificationModel.fromJson(kycJson))
+        .toList();
   }
 }

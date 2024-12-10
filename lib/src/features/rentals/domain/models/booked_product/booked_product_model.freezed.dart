@@ -38,8 +38,12 @@ mixin _$BookedProductModel {
   ExchangeScheduleModel? get exchangeSchedule =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this BookedProductModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $BookedProductModelCopyWith<BookedProductModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -84,6 +88,8 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -172,6 +178,8 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
     ) as $Val);
   }
 
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ProductModelCopyWith<$Res>? get product {
@@ -184,6 +192,8 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
     });
   }
 
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ReviewModelCopyWith<$Res>? get review {
@@ -196,6 +206,8 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
     });
   }
 
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ReviewModelCopyWith<$Res>? get renterReview {
@@ -208,6 +220,8 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
     });
   }
 
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ExchangeScheduleModelCopyWith<$Res>? get exchangeSchedule {
@@ -266,6 +280,8 @@ class __$$BookedProductModelImplCopyWithImpl<$Res>
       $Res Function(_$BookedProductModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -451,7 +467,7 @@ class _$BookedProductModelImpl extends _BookedProductModel {
                 other.exchangeSchedule == exchangeSchedule));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -472,7 +488,9 @@ class _$BookedProductModelImpl extends _BookedProductModel {
       renterReview,
       exchangeSchedule);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$BookedProductModelImplCopyWith<_$BookedProductModelImpl> get copyWith =>
@@ -543,8 +561,11 @@ abstract class _BookedProductModel extends BookedProductModel {
   ReviewModel? get renterReview;
   @override
   ExchangeScheduleModel? get exchangeSchedule;
+
+  /// Create a copy of BookedProductModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BookedProductModelImplCopyWith<_$BookedProductModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -27,8 +27,12 @@ mixin _$PriceStructureModel {
   int? get startDay => throw _privateConstructorUsedError;
   int? get endDay => throw _privateConstructorUsedError;
 
+  /// Serializes this PriceStructureModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PriceStructureModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PriceStructureModelCopyWith<PriceStructureModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -58,6 +62,8 @@ class _$PriceStructureModelCopyWithImpl<$Res, $Val extends PriceStructureModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PriceStructureModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -122,6 +128,8 @@ class __$$PriceStructureModelImplCopyWithImpl<$Res>
       $Res Function(_$PriceStructureModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PriceStructureModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -209,12 +217,14 @@ class _$PriceStructureModelImpl implements _PriceStructureModel {
             (identical(other.endDay, endDay) || other.endDay == endDay));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, externalId, name, description, startDay, endDay);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PriceStructureModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PriceStructureModelImplCopyWith<_$PriceStructureModelImpl> get copyWith =>
@@ -253,8 +263,11 @@ abstract class _PriceStructureModel implements PriceStructureModel {
   int? get startDay;
   @override
   int? get endDay;
+
+  /// Create a copy of PriceStructureModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PriceStructureModelImplCopyWith<_$PriceStructureModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

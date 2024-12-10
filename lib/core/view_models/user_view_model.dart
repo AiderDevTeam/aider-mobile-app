@@ -44,16 +44,18 @@ class UserViewModel extends BaseViewModel{
     notifyListeners();
     _persistUser();
   }
-  
 
-  void userOnSocket(){
-    SocketService().once('fetchUser', (data){
-      ZLoggerService.logOnInfo('FETCHING USER \n $data');
-      if(data != null){
-        setUser = UserModel.fromJson(data);
-      }
-    });
-    SocketService().off('fetchUser');
+
+  void userOnSocket()async{
+    final result = await _userRepository.fetchUserDetail(requestBody: {});
+    ZLoggerService.logOnInfo('FETCHING USER \n $result');
+    // SocketService().once('fetchUser', (data){
+    //
+    //   if(data != null){
+    //     setUser = UserModel.fromJson(data);
+    //   }
+    // });
+    // SocketService().off('fetchUser');
   }
 
   UserModel get getUser => _user;
@@ -368,8 +370,29 @@ class UserViewModel extends BaseViewModel{
   }
 
   /// SAVING TO BANK WALLET
-  UnmodifiableListView<WalletModel> get getWallets => UnmodifiableListView(_user.wallets?? []);
-  WalletModel? get getDefaultWallet => (_user.wallets?? []).firstWhere((obj) => obj.isDefault == true, orElse: ()=> const WalletModel());
+  UnmodifiableListView<WalletModel> get getWallets => UnmodifiableListView(_user.wallets ?? []);
+  WalletModel? get getDefaultWallet =>
+      (_user.wallets ?? []).firstWhere((obj) => obj.isDefault == true, orElse: () => const WalletModel());
+
+  Future<void> fetchWalletData() async{
+
+    final result = await _userRepository.fetchWallet(requestBody: {});
+    // ZLoggerService.logOnInfo("Wallet data fetched and updated successfully. $result");
+    result.fold(
+          (failure) {
+        ZLoggerService.logOnError("Failed to fetch wallet data: $failure");
+      },
+          (wallet) {
+        setUser = _user.copyWith(
+          wallets: wallet,
+        );
+        ZLoggerService.logOnInfo("Wallet data fetched and updated successfully.");
+      },
+    );
+  }
+
+
+
 
   Future<void> saveWallet(BuildContext context, { required Map<String, dynamic> requestBody}) async{
     AppDialogUtil.loadingDialog(context);

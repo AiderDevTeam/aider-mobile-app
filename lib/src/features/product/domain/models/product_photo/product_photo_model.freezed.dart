@@ -24,8 +24,12 @@ mixin _$ProductPhotoModel {
   String? get externalId => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
 
+  /// Serializes this ProductPhotoModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ProductPhotoModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ProductPhotoModelCopyWith<ProductPhotoModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -49,6 +53,8 @@ class _$ProductPhotoModelCopyWithImpl<$Res, $Val extends ProductPhotoModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ProductPhotoModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -92,6 +98,8 @@ class __$$ProductPhotoModelImplCopyWithImpl<$Res>
       $Res Function(_$ProductPhotoModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ProductPhotoModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -148,11 +156,13 @@ class _$ProductPhotoModelImpl implements _ProductPhotoModel {
                 other.photoUrl == photoUrl));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, externalId, photoUrl);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ProductPhotoModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ProductPhotoModelImplCopyWith<_$ProductPhotoModelImpl> get copyWith =>
@@ -182,8 +192,11 @@ abstract class _ProductPhotoModel implements ProductPhotoModel {
   String? get externalId;
   @override
   String? get photoUrl;
+
+  /// Create a copy of ProductPhotoModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ProductPhotoModelImplCopyWith<_$ProductPhotoModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

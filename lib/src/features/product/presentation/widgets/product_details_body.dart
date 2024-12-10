@@ -73,14 +73,14 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
               AppDialogUtil.showWarningAlert(context, "Oops! You can't rent your own item");
               return;
             }
-            if (user.idVerificationStatus != kCompletedStatus) {
-              AppNavigator.pushNamed(context, AppRoute.verifyIdentityScreen);
-              return;
-            }
-            if(user.userHasWallet == false){
-              AppNavigator.pushNamed(context, AppRoute.paymentScreen);
-              return;
-            }
+            // if (user.idVerificationStatus != kCompletedStatus) {
+            //   AppNavigator.pushNamed(context, AppRoute.verifyIdentityScreen);
+            //   return;
+            // }
+            // if(user.userHasWallet == false){
+            //   AppNavigator.pushNamed(context, AppRoute.paymentScreen);
+            //   return;
+            // }
 
             context.read<ProductViewModel>().removeDates();
             context.read<ProductViewModel>().setQuantity = 1;
