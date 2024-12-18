@@ -2,7 +2,7 @@
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
-// import 'package:aider_mobile_app/core/view_models/socket_view_model.dart';
+import 'package:aider_mobile_app/core/view_models/socket_view_model.dart';
 import 'package:aider_mobile_app/core/view_models/user_view_model.dart';
 import 'package:aider_mobile_app/src/features/explore/presentation/screens/explore_screen.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
@@ -36,7 +36,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    connectSocket();
     super.initState();
+    
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final userViewModel = context.read<UserViewModel>();
 
@@ -47,6 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
   }
+
+  void connectSocket(){
+    if(!mounted) return;
+    context.read<SocketViewModel>().connect(context, context.read<UserViewModel>().getUser.externalId ?? '');
+  }
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _widgetOptions = const <Widget>[
     ExploreScreen(),
@@ -126,12 +134,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // void connectSocket(){
-  //   if(!mounted) return;
-  //   context.read<SocketViewModel>().connect(context, context.read<UserViewModel>().getUser.externalId?? '');
-  // }
-
 
   void _requestForNotificationPermissions() async{
     await Future.delayed(const Duration(seconds: 3));
