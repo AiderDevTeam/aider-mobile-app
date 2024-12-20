@@ -49,20 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-    static const FirebaseOptions android = FirebaseOptions(
-      apiKey: 'AIzaSyAZqJo0F7g9yvA5ziIMOxgSvLniaV5mkZo',
-      appId: '1:21825747160:android:55ce82c3e4975a1b52ffad',
-      messagingSenderId: '21825747160',
-      projectId: 'aider-7a175',
-      storageBucket: 'aider-7a175.firebasestorage.app',
-    );
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAZqJo0F7g9yvA5ziIMOxgSvLniaV5mkZo',
+    appId: '1:21825747160:android:55ce82c3e4975a1b52ffad',
+    messagingSenderId: '21825747160',
+    projectId: 'aider-7a175',
+    storageBucket: 'aider-7a175.firebasestorage.app',
+  );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBh3NGMby68uPCRqULbQfJLpFNf1ygqrHo',
-    appId: '1:1072151404082:ios:deb83c894cb99572cd262b',
-    messagingSenderId: '1072151404082',
-    projectId: 'aider-bd0e4',
-    storageBucket: 'aider-bd0e4.appspot.com',
+    apiKey: 'AIzaSyDhvu24d5SMc21YRSE9dBWpI1nAYQO2MX8',
+    appId: '1:21825747160:ios:98662e9887f262ea52ffad',
+    messagingSenderId: '21825747160',
+    projectId: 'aider-7a175',
+    storageBucket: 'aider-7a175.firebasestorage.app',
     iosBundleId: 'com.aider.mobile',
   );
+
 }
