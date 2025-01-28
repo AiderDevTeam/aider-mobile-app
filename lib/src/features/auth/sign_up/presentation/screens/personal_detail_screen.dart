@@ -6,7 +6,7 @@ import 'package:aider_mobile_app/core/routing/app_route.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
-import 'package:aider_mobile_app/core/view_models/base_view.dart';
+import 'package:aider_mobile_app/core/providers/base_view.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
@@ -19,7 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/constants/colors.dart';
-import '../../../../../../core/view_models/user_view_model.dart';
+import '../../../../../../core/providers/auth_provider.dart';
+import '../../../../../../core/providers/user_provider.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/common/linear_percent_indicator.dart';
 import '../widgets/country_code_modal.dart';
@@ -53,13 +54,18 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userProvider = context.read<UserViewModel>();
+      final authProvider = context.read<AuthProvider>();
+      final userProvider = context.read<UserProvider>();
       userProvider.setEmailAvailable('', true);
       userProvider.setDisplayNameAvailable('', true);
-      firstNameController.text = userProvider.getSignupRequestBody['firstName']?? '';
-      lastNameController.text = userProvider.getSignupRequestBody['lastName']?? '';
-      emailController.text = userProvider.getSignupRequestBody['email']?? '';
-      passwordController.text = userProvider.getSignupRequestBody['password']?? '';
+
+      firstNameController.text =
+          authProvider.getSignupRequestBody.firstName ?? '';
+      lastNameController.text =
+          authProvider.getSignupRequestBody.lastName ?? '';
+      emailController.text = authProvider.getSignupRequestBody.email ?? '';
+      passwordController.text =
+          authProvider.getSignupRequestBody.password ?? '';
     });
     super.initState();
   }
@@ -82,35 +88,35 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           onPressed: () {
-            final userProvider = context.read<UserViewModel>();
-            if(userProvider.getComponentLoading('verifyDisplayName') || userProvider.getComponentLoading('verifyEmail')) return;
+            final authProvider = context.read<AuthProvider>();
+            final userProvider = context.read<UserProvider>();
+
+            if (userProvider.isComponentLoading('verifyDisplayName') ||
+                userProvider.isComponentLoading('verifyEmail')) return;
 
             if (formKey.currentState!.validate()) {
-
-              // if(userProvider.emailAvailableStatus != kAvailable){
-              //   AppDialogUtil.showWarningAlert(
-              //     context,
-              //     userProvider.emailAvailableStatus.isNotEmpty? userProvider.emailAvailableStatus.trim(): 'Email field can not be empty',
-              //   );
-              //   return;
-              // }
-              if(userProvider.displayNameAvailableStatus != kAvailable){
+              if (userProvider.displayNameAvailableStatus != kAvailable) {
                 AppDialogUtil.showWarningAlert(
                   context,
-                  userProvider.displayNameAvailableStatus.isNotEmpty? userProvider.displayNameAvailableStatus.trim(): 'Display name field can not be empty',
+                  userProvider.displayNameAvailableStatus.isNotEmpty
+                      ? userProvider.displayNameAvailableStatus.trim()
+                      : 'Display name field can not be empty',
                 );
                 return;
               }
 
-              userProvider.setSignupRequestBody({
-                "firstName": firstNameController.text,
-                "lastName": lastNameController.text,
-                "email": userProvider.getOTPData['email'],
-                "password": passwordController.text,
-                "displayName": displayNameController.text,
-                "phone": phoneNumberController.text,
-                "callingCode": selectedCountry.value['code']
-              });
+              var requestBody = authProvider.getSignupRequestBody;
+              requestBody = requestBody.copyWith(
+                firstName: firstNameController.text,
+                lastName: lastNameController.text,
+                email: emailController.text,
+                password: passwordController.text,
+                displayName: displayNameController.text,
+                phone: phoneNumberController.text,
+                callingCode: selectedCountry.value['code'],
+              );
+              authProvider.setSignupRequestBody = requestBody;
+
               AppNavigator.pushNamed(
                 context,
                 AppRoute.additionalDetailScreen,
@@ -181,70 +187,92 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
                   ),
                   const FormLabel(text: 'Display name'),
                   const VSpace(height: 8.0),
-                  BaseView<UserViewModel>(
-                    builder: (context, userConsumer, child) {
-                      return FocusScope(
-                        child: Focus(
-                          onFocusChange: (focus) async{
-                            if(!focus && displayNameController.text.isNotEmpty){
-                              if(userConsumer.getComponentLoading('verifyDisplayName')) return;
-                              await context.read<UserViewModel>().verifyDisplayName(
-                                context,
-                                requestBody: {
-                                  "displayName": displayNameController.text,
-                                },
-                              );
+                  BaseView<UserProvider>(
+                      builder: (context, userConsumer, child) {
+                    return FocusScope(
+                      child: Focus(
+                        onFocusChange: (focus) async {
+                          if (!focus && displayNameController.text.isNotEmpty) {
+                            if (userConsumer.isComponentLoading(
+                                'verifyDisplayName')) return;
+                            await context
+                                .read<UserProvider>()
+                                .verifyDisplayName(
+                                  context,
+                                  displayName: displayNameController.text,
+                                );
+                          }
+                        },
+                        child: AppInputField(
+                          hintText: 'Enter display name',
+                          controller: displayNameController,
+                          validator: (value) {
+                            if (value!.isEmpty)
+                              return 'Display name is required';
+                            return null;
+                          },
+                          onChanged: (value) {
+                            if (value!.isEmpty) {
+                              context
+                                  .read<UserProvider>()
+                                  .setDisplayNameAvailable('', true);
                             }
                           },
-                          child: AppInputField(
-                            hintText: 'Enter display name',
-                            controller: displayNameController,
-                            validator: (value) {
-                              if (value!.isEmpty) return 'Display name is required';
-                              return null;
-                            },
-                            onChanged: (value){
-                              if(value!.isEmpty){
-                                context.read<UserViewModel>().setDisplayNameAvailable('', true);
-                              }
-                            },
-                            suffixIcon: userConsumer.getComponentLoading('verifyDisplayName')?
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const ZLoading().paddingOnly(right: 16.0),
-                              ],
-                            ) : userConsumer.displayNameAvailableStatus == kAvailable?
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: kSuccess700,
-                                  size: AppThemeUtil.radius(24.0),
-                                ).paddingOnly(right: 16.0),
-                              ],
-                            ) : null,
-                            customBorderColor: (userConsumer.displayNameAvailableStatus.isNotEmpty && userConsumer.displayNameAvailableStatus != kAvailable)? kError600:null,
-                            helperText: (userConsumer.displayNameAvailableStatus.isNotEmpty && userConsumer.displayNameAvailableStatus != kAvailable)? userConsumer.displayNameAvailableStatus : ' ',
-                            helperStyleColor: (userConsumer.displayNameAvailableStatus.isNotEmpty && userConsumer.displayNameAvailableStatus != kAvailable)? kError600 : null,
-                          ),
+                          suffixIcon: userConsumer
+                                  .isComponentLoading('verifyDisplayName')
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const ZLoading().paddingOnly(right: 16.0),
+                                  ],
+                                )
+                              : userConsumer.displayNameAvailableStatus ==
+                                      kAvailable
+                                  ? Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: kSuccess700,
+                                          size: AppThemeUtil.radius(24.0),
+                                        ).paddingOnly(right: 16.0),
+                                      ],
+                                    )
+                                  : null,
+                          customBorderColor: (userConsumer
+                                      .displayNameAvailableStatus.isNotEmpty &&
+                                  userConsumer.displayNameAvailableStatus !=
+                                      kAvailable)
+                              ? kError600
+                              : null,
+                          helperText: (userConsumer
+                                      .displayNameAvailableStatus.isNotEmpty &&
+                                  userConsumer.displayNameAvailableStatus !=
+                                      kAvailable)
+                              ? userConsumer.displayNameAvailableStatus
+                              : ' ',
+                          helperStyleColor: (userConsumer
+                                      .displayNameAvailableStatus.isNotEmpty &&
+                                  userConsumer.displayNameAvailableStatus !=
+                                      kAvailable)
+                              ? kError600
+                              : null,
                         ),
-                      );
-                    }
-                  ),
+                      ),
+                    );
+                  }),
                   const FormLabel(text: 'Phone'),
                   const VSpace(height: 8.0),
-                  // BaseView<UserViewModel>(
+                  // BaseView<UserViewProvider>(
                   //   builder: (context, userConsumer, child) {
                   //     return FocusScope(
                   //       child: Focus(
                   //         onFocusChange: (focus) async{
                   //           if(!focus && emailController.text.isNotEmpty && emailController.text.isValidEmail()){
                   //             if(userConsumer.getComponentLoading('verifyEmail')) return;
-                  //             await context.read<UserViewModel>().verifyEmail(
+                  //             await context.read<UserViewProvider>().verifyEmail(
                   //               context,
                   //               requestBody: {
                   //                 "email": emailController.text,
@@ -299,7 +327,7 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
                       selectedCountry: selectedCountry,
                       onTap: () async {
                         final country =
-                        await CountryCodeModal.showDialog(context);
+                            await CountryCodeModal.showDialog(context);
 
                         if (country != null) {
                           selectedCountry.value = {
@@ -318,26 +346,26 @@ class _PersonalDetailScreenState extends State<PersonalDetailScreen> {
                   const FormLabel(text: 'Password'),
                   const VSpace(height: 8.0),
                   ValueListenableBuilder<bool>(
-                    valueListenable: isHidden,
-                    builder: (context, isHiddenValue, child) {
-                      return AppInputField(
-                        hintText: 'Enter password',
-                        obscureText: isHiddenValue,
-                        suffixIcon: FieldEye(
-                          onPressed: (){
-                            isHidden.value = !isHiddenValue;
+                      valueListenable: isHidden,
+                      builder: (context, isHiddenValue, child) {
+                        return AppInputField(
+                          hintText: 'Enter password',
+                          obscureText: isHiddenValue,
+                          suffixIcon: FieldEye(
+                            onPressed: () {
+                              isHidden.value = !isHiddenValue;
+                            },
+                            isHidden: isHiddenValue,
+                          ),
+                          controller: passwordController,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Password is required';
+                            if (value.length < 6)
+                              return 'Password must be at least 6 characters';
+                            return null;
                           },
-                          isHidden: isHiddenValue,
-                        ),
-                        controller: passwordController,
-                        validator: (value) {
-                          if (value!.isEmpty) return 'Password is required';
-                          if (value.length < 6) return 'Password must be at least 6 characters';
-                          return null;
-                        },
-                      );
-                    }
-                  ),
+                        );
+                      }),
                 ],
               ),
             )

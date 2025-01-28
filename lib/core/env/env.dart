@@ -26,4 +26,8 @@ abstract class Env {
   static final String supportInstagram = _Env.supportInstagram;
   @EnviedField(varName: 'EMAIL_ADDRESS', obfuscate: true)
   static final String supportEmail = _Env.supportEmail;
+  @EnviedField(varName: 'CLOUDINARY_CLOUD_NAME', obfuscate: true)
+  static final String cloudinaryCloudName = _Env.cloudinaryCloudName;
+  @EnviedField(varName: 'CLOUDINARY_UPLOAD_PRESET', obfuscate: true)
+  static final String cloudinaryUploadPreset = _Env.cloudinaryUploadPreset;
 }

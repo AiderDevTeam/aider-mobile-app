@@ -22,11 +22,11 @@ import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../core/providers/auth_provider.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../core/utils/url_launcher_util.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/socket_view_model.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/network_image_view.dart';
 import '../../../../shared_widgets/modals/question_modal_content.dart';
 import '../../../kyc/presentation/view_model/kyc_view_model.dart';
@@ -41,15 +41,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
-    connectSocket();
     _loadKYCData();
     super.initState();
-  }
-
-  void connectSocket() {
-    if (!mounted) return;
-    context.read<SocketViewModel>().connect(
-        context, context.read<UserViewModel>().getUser.externalId ?? '');
   }
 
   void _loadKYCData() async {
@@ -74,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: kPrimaryWhite,
                     borderRadius:
                         BorderRadius.circular(AppThemeUtil.radius(12))),
-                child: BaseView<UserViewModel>(
+                child: BaseView<UserProvider>(
                   builder: (context, userConsumer, child) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ).paddingAll(20.0),
               ),
               const VSpace(height: 12.0),
-              BaseView<UserViewModel>(builder: (context, userConsumer, child) {
+              BaseView<UserProvider>(builder: (context, userConsumer, child) {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -376,9 +369,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       text: 'User Identification',
                       iconName: 'seal_check_outline.svg',
                       onPressed: () {
-                        if (context.read<UserViewModel>().getUser.idVerificationStatus == kCompletedStatus) {
+                        if (context
+                                .read<UserProvider>()
+                                .getUser
+                                .idVerificationStatus ==
+                            kCompletedStatus) {
                           VerificationModel? kycStatus = context
-                              .read<UserViewModel>()
+                              .read<UserProvider>()
                               .getUser
                               .userIdentifications
                               ?.firstWhere(
@@ -386,36 +383,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     model.status == kBookingAcceptedStatus,
                               );
                           AppNavigator.pushNamed(
-                              context, AppRoute.afterVerificationScreen,
-                              arguments: {
-                                'kycType': kycStatus?.type,
-                                'fromProfile': true
-                              },
-                          );
-                          return;
-                        }
-                        if(context.read<UserViewModel>().getUser.userIdentifications?.first.status == kRejected){
-                          AppNavigator.pushNamed(
-                            context, AppRoute.afterVerificationScreen,
+                            context,
+                            AppRoute.afterVerificationScreen,
                             arguments: {
-                              'kycType':
-                              context.read<UserViewModel>().getUser.userIdentifications?.first.type,
+                              'kycType': kycStatus?.type,
                               'fromProfile': true
                             },
                           );
                           return;
                         }
-                        if(context.read<UserViewModel>().getUser.userIdentifications?.first.status == kPendingStatus){
+                        if (context
+                                .read<UserProvider>()
+                                .getUser
+                                .userIdentifications
+                                ?.first
+                                .status ==
+                            kRejected) {
                           AppNavigator.pushNamed(
-                            context, AppRoute.afterVerificationScreen,
+                            context,
+                            AppRoute.afterVerificationScreen,
                             arguments: {
-                              'kycType': context.read<UserViewModel>().getUser.userIdentifications?.first.type,
+                              'kycType': context
+                                  .read<UserProvider>()
+                                  .getUser
+                                  .userIdentifications
+                                  ?.first
+                                  .type,
                               'fromProfile': true
                             },
                           );
                           return;
                         }
-                        else {
+                        if (context
+                                .read<UserProvider>()
+                                .getUser
+                                .userIdentifications
+                                ?.first
+                                .status ==
+                            kPendingStatus) {
+                          AppNavigator.pushNamed(
+                            context,
+                            AppRoute.afterVerificationScreen,
+                            arguments: {
+                              'kycType': context
+                                  .read<UserProvider>()
+                                  .getUser
+                                  .userIdentifications
+                                  ?.first
+                                  .type,
+                              'fromProfile': true
+                            },
+                          );
+                          return;
+                        } else {
                           AppNavigator.pushNamed(
                               context, AppRoute.userIdentityScreen);
                         }
@@ -488,9 +508,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           builder: (context) => QuestionModalContent(
                             questionText: 'Are you sure want to logout?',
                             onYesPressed: () async {
-                              await context.read<UserViewModel>().logout(
-                                context,
-                              );
+                              await context.read<AuthProvider>().logout(
+                                    context,
+                                  );
                             },
                           ),
                         );

@@ -7,7 +7,7 @@ import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dar
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../rentals/presentation/widgets/button_switcher.dart';
 import 'items_tab_screen.dart';
 
@@ -30,8 +30,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           Tab(
             child: Align(
                 alignment: Alignment.center,
-                child: const Text('Items').semiBold().fontSize(16.0)
-            ),
+                child: const Text('Items').semiBold().fontSize(16.0)),
           ),
           Tab(
             child: Align(
@@ -46,10 +45,11 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
           color: kPrimaryBlack,
         ),
         children: [
-          ItemsTabScreen(vendor: context.read<UserViewModel>().getUser).paddingSymmetric(horizontal: kWidthPadding),
-          const RentalScoreTabScreen().paddingSymmetric(horizontal: kWidthPadding)
+          ItemsTabScreen(vendor: context.read<UserProvider>().getUser)
+              .paddingSymmetric(horizontal: kWidthPadding),
+          const RentalScoreTabScreen()
+              .paddingSymmetric(horizontal: kWidthPadding)
         ],
-
       ),
     );
   }

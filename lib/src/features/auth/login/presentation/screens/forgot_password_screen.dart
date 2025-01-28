@@ -8,7 +8,7 @@ import 'package:aider_mobile_app/core/constants/text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../../core/view_models/user_view_model.dart';
+import '../../../../../../core/providers/auth_provider.dart';
 import '../../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../../shared_widgets/forms/form_label.dart';
@@ -48,21 +48,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           const VSpace(height: 16.0),
           AppPrimaryButton(
-            onPressed: () async{
-              final userProvider = context.read<UserViewModel>();
-              if(formKey.currentState!.validate()){
-                userProvider.setOTPData({
-                  'action': 'forgot-password',
-                  "email": emailController.text,
-                });
-                userProvider.forgotPassword(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                Provider.of<AuthProvider>(context, listen: false)
+                    .forgotPassword(
                   context,
-                  requestBody: {
-                    "email": emailController.text,
-                  },
+                  email: emailController.text,
                 );
-              }else{
-                setState(() => autoValidate = AutovalidateMode.onUserInteraction);
+              } else {
+                setState(
+                    () => autoValidate = AutovalidateMode.onUserInteraction);
               }
             },
             minWidth: double.infinity,
@@ -71,22 +66,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           const VSpace(height: 32.0),
           RichText(
             text: TextSpan(
-              text: 'I remember password now. ',
-              style: kRegularFontStyle.copyWith(
-                fontSize: AppThemeUtil.fontSize(16.0),
-                color: kPrimaryBlack,
-              ),
-              children: [
-                TextSpan(
-                  text: 'Login',
-                  style: kSemiBoldFontStyle.copyWith(
-                    fontSize: AppThemeUtil.fontSize(16.0),
-                    color: kPrimaryBlack,
-                  ),
+                text: 'I remember password now. ',
+                style: kRegularFontStyle.copyWith(
+                  fontSize: AppThemeUtil.fontSize(16.0),
+                  color: kPrimaryBlack,
                 ),
-              ]
-            ),
-          ).onPressed((){
+                children: [
+                  TextSpan(
+                    text: 'Login',
+                    style: kSemiBoldFontStyle.copyWith(
+                      fontSize: AppThemeUtil.fontSize(16.0),
+                      color: kPrimaryBlack,
+                    ),
+                  ),
+                ]),
+          ).onPressed(() {
             if (widget.pageController.page == 1) {
               widget.pageController.animateToPage(
                 0,

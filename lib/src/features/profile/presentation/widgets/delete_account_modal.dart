@@ -10,9 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/common.dart';
+import '../../../../../core/providers/auth_provider.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/app_bottom_nav_wrapper.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/buttons/app_primary_button.dart';
@@ -92,16 +93,8 @@ class _DeleteAccountModalState extends State<DeleteAccountModal> {
                                 // sl.get<MixpanelService>().trackAuthEvent('Yes Delete Account Tapped', user);
                                 AppNavigator.pop(context);
                                 await context
-                                    .read<UserViewModel>()
-                                    .deleteAccount(
-                                  context,
-                                  requestBody: {
-                                    "reason":
-                                        selectedText.toLowerCase() == 'other'
-                                            ? otherReasonsController.text
-                                            : selectedText,
-                                  },
-                                );
+                                    .read<AuthProvider>()
+                                    .deleteAccount(context);
                               },
                             ),
                           );

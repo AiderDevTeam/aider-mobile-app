@@ -15,7 +15,7 @@ import '../../../../../core/constants/common.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/base_view.dart';
+import '../../../../../core/providers/base_view.dart';
 import '../../../../shared_widgets/cards/app_card.dart';
 import '../../../../shared_widgets/common/aider_empty_state.dart';
 import '../../../../shared_widgets/common/app_load_more.dart';
@@ -36,7 +36,8 @@ class ItemsTabScreen extends StatefulWidget {
 }
 
 class _ItemsTabScreenState extends State<ItemsTabScreen> {
-  Future<void> fetchVendorProductsAndReviews([String? nextPage, page = 1]) async {
+  Future<void> fetchVendorProductsAndReviews(
+      [String? nextPage, page = 1]) async {
     if (!mounted) return;
     await context.read<ReviewViewModel>().fetchVendorProductsAndReviews(context,
         userExternalId: widget.vendor.externalId,
@@ -50,7 +51,6 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fetchVendorProductsAndReviews();
-
     });
     super.initState();
   }
@@ -60,11 +60,10 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
     final statistics = widget.vendor.statistics;
     return BaseView<ReviewViewModel>(
       builder: (context, reviewConsumer, child) {
-        if (reviewConsumer
-            .getComponentLoading('fetchVendorProductsAndReview')) {
+        if (reviewConsumer.isComponentLoading('fetchVendorProductsAndReview')) {
           return const Center(
             child: ZLoading(),
-          );// const ReviewLoadingEffect();
+          ); // const ReviewLoadingEffect();
         }
         if (reviewConsumer
             .isComponentErrorType('fetchVendorProductsAndReview')) {
@@ -72,18 +71,19 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
             child: ErrorResponseMessage(
               message: reviewConsumer.componentErrorType?['error'] ?? '',
               onRetry: () async {
-                await fetchVendorProductsAndReviews(reviewConsumer.getVendorProductAndReviewsMeta?.next);
+                await fetchVendorProductsAndReviews(
+                    reviewConsumer.getVendorProductAndReviewsMeta?.next);
               },
             ),
           );
         }
 
-        if(reviewConsumer.getVendorProductsAndReviews.isEmpty) {
+        if (reviewConsumer.getVendorProductsAndReviews.isEmpty) {
           return Padding(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.20,
             ),
-            child:  AiderEmptyState(
+            child: AiderEmptyState(
               title: '',
               subtitle: 'No reviews yet',
               iconWidget: ZSvgIcon(
@@ -97,11 +97,17 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
         return RefreshIndicator.adaptive(
           onRefresh: fetchVendorProductsAndReviews,
           child: AppLoadMore(
-            isFinish: reviewConsumer.getVendorProductAndReviewsMeta?.next == null,
-            onLoadMore: () => fetchVendorProductsAndReviews(reviewConsumer.getVendorProductAndReviewsMeta?.next),
+            isFinish:
+                reviewConsumer.getVendorProductAndReviewsMeta?.next == null,
+            onLoadMore: () => fetchVendorProductsAndReviews(
+                reviewConsumer.getVendorProductAndReviewsMeta?.next),
             children: [
               RowText(
-                rightWidget: Text('${reviewConsumer.getVendorProductsAndReviews.length} ${(reviewConsumer.getVendorProductsAndReviews.length) > 1? 'Reviews':'Review'}').bold().fontSize(16.0).color(kPrimaryBlack),
+                rightWidget: Text(
+                        '${reviewConsumer.getVendorProductsAndReviews.length} ${(reviewConsumer.getVendorProductsAndReviews.length) > 1 ? 'Reviews' : 'Review'}')
+                    .bold()
+                    .fontSize(16.0)
+                    .color(kPrimaryBlack),
                 leftWidget: Row(
                   children: [
                     ZSvgIcon(
@@ -110,7 +116,11 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                       size: AppThemeUtil.radius(32.0),
                     ),
                     const HSpace(width: 4.0),
-                    Text("${statistics?.vendorAverageRating ?? 0}").extraBold().fontSize(28).letterSpacing(-0.44).color(kPrimaryBlack),
+                    Text("${statistics?.vendorAverageRating ?? 0}")
+                        .extraBold()
+                        .fontSize(28)
+                        .letterSpacing(-0.44)
+                        .color(kPrimaryBlack),
                   ],
                 ),
               ),
@@ -123,8 +133,9 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                 shrinkWrap: true,
                 primary: false,
                 itemCount: reviewConsumer.getVendorProductsAndReviews.length,
-                itemBuilder: (context, index){
-                  final product = reviewConsumer.getVendorProductsAndReviews[index];
+                itemBuilder: (context, index) {
+                  final product =
+                      reviewConsumer.getVendorProductsAndReviews[index];
                   final review = product.reviews?[0];
                   return AppCard(
                     width: double.infinity,
@@ -132,7 +143,8 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                     decoration: ShapeDecoration(
                       color: kGrey50,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
+                        borderRadius:
+                            BorderRadius.circular(AppThemeUtil.radius(12)),
                       ),
                     ),
                     child: Column(
@@ -142,19 +154,27 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           rightWidget: Text(
                             review?.date ?? '',
-                          ).regular().fontSize(12).color(kGrey700).alignText(TextAlign.right),
+                          )
+                              .regular()
+                              .fontSize(12)
+                              .color(kGrey700)
+                              .alignText(TextAlign.right),
                           leftWidget: Row(
                             children: [
-                              (review?.reviewer?.hasProfilePhoto == true) ?
-                              NetworkImageView(
-                                imageUrl: review?.reviewer?.profilePhotoUrl ?? '',
-                                width: AppThemeUtil.radius(70),
-                                height: AppThemeUtil.radius(70),
-                                radius: 32.0,
-                              ) : CircleAvatar(
-                                maxRadius: AppThemeUtil.radius(32.0),
-                                backgroundImage: const AssetImage('$kImagePath/profile_placeholder.png'),
-                              ),
+                              (review?.reviewer?.hasProfilePhoto == true)
+                                  ? NetworkImageView(
+                                      imageUrl:
+                                          review?.reviewer?.profilePhotoUrl ??
+                                              '',
+                                      width: AppThemeUtil.radius(70),
+                                      height: AppThemeUtil.radius(70),
+                                      radius: 32.0,
+                                    )
+                                  : CircleAvatar(
+                                      maxRadius: AppThemeUtil.radius(32.0),
+                                      backgroundImage: const AssetImage(
+                                          '$kImagePath/profile_placeholder.png'),
+                                    ),
                               const HSpace(width: 12),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +185,8 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                                   const VSpace(height: 8),
                                   Wrap(
                                     runSpacing: 12.0,
-                                    children: List.generate(review?.rating ?? 0, (index) {
+                                    children: List.generate(review?.rating ?? 0,
+                                        (index) {
                                       return ZSvgIcon(
                                         'star.svg',
                                         color: kWarning700,
@@ -176,8 +197,11 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                                 ],
                               )
                             ],
-                          ).onPressed((){
-                            AppNavigator.pushNamed(context, AppRoute.vendorProfileScreen, arguments: review?.reviewer?? const UserModel());
+                          ).onPressed(() {
+                            AppNavigator.pushNamed(
+                                context, AppRoute.vendorProfileScreen,
+                                arguments:
+                                    review?.reviewer ?? const UserModel());
                           }),
                         ),
                         const VSpace(height: 12),
@@ -189,26 +213,33 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                           padding: const EdgeInsets.all(12),
                           decoration: ShapeDecoration(
                             color: kGrey200,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppThemeUtil.radius(8))),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    AppThemeUtil.radius(8))),
                           ),
                           child: AppListTile(
-                            leading: product.hasPhotos ?
-                            NetworkImageView(
-                              imageUrl: product.hasPhotos? (product.photos?.first.photoUrl?? '') : '',
-                              width: AppThemeUtil.radius(44),
-                              height: AppThemeUtil.radius(44),
-                              radius: 3.54,
-                            ): Container(
-                              width: AppThemeUtil.width(44),
-                              height: AppThemeUtil.height(44),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: Colors.black.withOpacity(0.30000001192092896),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3.54),
-                                ),
-                              ),
-                            ),
+                            leading: product.hasPhotos
+                                ? NetworkImageView(
+                                    imageUrl: product.hasPhotos
+                                        ? (product.photos?.first.photoUrl ?? '')
+                                        : '',
+                                    width: AppThemeUtil.radius(44),
+                                    height: AppThemeUtil.radius(44),
+                                    radius: 3.54,
+                                  )
+                                : Container(
+                                    width: AppThemeUtil.width(44),
+                                    height: AppThemeUtil.height(44),
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: ShapeDecoration(
+                                      color: Colors.black
+                                          .withOpacity(0.30000001192092896),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(3.54),
+                                      ),
+                                    ),
+                                  ),
                             title: Text(
                               product.name ?? '',
                             ).regular().fontSize(14).color(kGrey1200),
@@ -216,8 +247,10 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
                               product.getFirstPrice,
                             ).semiBold().fontSize(14).color(kGrey1200),
                             trailing: const Icon(CupertinoIcons.forward),
-                            onTap: (){
-                              AppNavigator.pushNamed(context, AppRoute.productDetailScreen, arguments: product);
+                            onTap: () {
+                              AppNavigator.pushNamed(
+                                  context, AppRoute.productDetailScreen,
+                                  arguments: product);
                             },
                           ),
                         )

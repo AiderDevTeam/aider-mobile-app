@@ -4,7 +4,9 @@ import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dar
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../../core/providers/auth_provider.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../shared_widgets/forms/field_eye.dart';
 import '../../../../shared_widgets/forms/form_label.dart';
@@ -18,6 +20,7 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final formKey = GlobalKey<FormState>();
+  final oldPasswordController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmController = TextEditingController();
   AutovalidateMode autoValidate = AutovalidateMode.disabled;
@@ -41,80 +44,85 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: ListView(
           children: [
             const VSpace(height: 24),
-            const FormLabel(text: 'Current Password',),
-
+            const FormLabel(
+              text: 'Current Password',
+            ),
             const VSpace(height: 12),
-
             AppInputField(
               hintText: "Enter Password",
-              controller: passwordController,
+              controller: oldPasswordController,
               validator: (String? value) {
                 if (value!.isEmpty) return "Enter new password";
                 return null;
               },
               obscureText: isHidden,
               suffixIcon: FieldEye(
-                onPressed: (){
-                  setState(() => isHidden = !isHidden );
+                onPressed: () {
+                  setState(() => isHidden = !isHidden);
                 },
                 isHidden: isHidden,
               ),
             ),
-            const FormLabel(text: 'New Password',),
-
+            const FormLabel(
+              text: 'New Password',
+            ),
             const VSpace(height: 12),
-
             AppInputField(
               hintText: "Enter Password",
-              controller: confirmController,
+              controller: passwordController,
               validator: (String? value) {
                 if (value!.isEmpty) return "Enter Password";
-                if(passwordController.text != value) return 'Password does not match';
+                if (passwordController.text != value)
+                  return 'Password does not match';
                 return null;
               },
               obscureText: isHidden2,
               suffixIcon: FieldEye(
-                onPressed: (){
-                  setState(() => isHidden2 = !isHidden2 );
+                onPressed: () {
+                  setState(() => isHidden2 = !isHidden2);
                 },
                 isHidden: isHidden2,
               ),
             ),
-            const FormLabel(text: 'Repeat Password',),
-
+            const FormLabel(
+              text: 'Repeat Password',
+            ),
             const VSpace(height: 12),
-
             AppInputField(
               hintText: "Repeat Password",
               controller: confirmController,
               validator: (String? value) {
                 if (value!.isEmpty) return "Repeat Password";
-                if(passwordController.text != value) return 'Password does not match';
+                if (passwordController.text != value)
+                  return 'Password does not match';
                 return null;
               },
               obscureText: isHidden2,
               suffixIcon: FieldEye(
-                onPressed: (){
-                  setState(() => isHidden2 = !isHidden2 );
+                onPressed: () {
+                  setState(() => isHidden2 = !isHidden2);
                 },
                 isHidden: isHidden2,
               ),
             ),
             const VSpace(height: 12),
             AppPrimaryButton(
-              onPressed: () async{
+              onPressed: () async {
                 if (formKey.currentState!.validate()) {
-
+                  context.read<AuthProvider>().changePassword(
+                        context,
+                        oldPassword: oldPasswordController.text,
+                        newPassword: passwordController.text,
+                      );
                 } else {
-                  setState(() => autoValidate = AutovalidateMode.onUserInteraction);
+                  setState(
+                      () => autoValidate = AutovalidateMode.onUserInteraction);
                 }
               },
               text: "Submit",
             )
           ],
-        ).paddingSymmetric(
-          horizontal: kWidthPadding
-        ),
+        ).paddingSymmetric(horizontal: kWidthPadding),
       ),
     );
   }

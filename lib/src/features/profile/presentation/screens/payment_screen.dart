@@ -5,8 +5,8 @@ import 'package:aider_mobile_app/core/extensions/widgets/gesture_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
-import 'package:aider_mobile_app/core/view_models/base_view.dart';
-import 'package:aider_mobile_app/core/view_models/user_view_model.dart';
+import 'package:aider_mobile_app/core/providers/base_view.dart';
+import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_icon_text_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/cards/app_card.dart';
@@ -14,8 +14,10 @@ import 'package:aider_mobile_app/src/shared_widgets/common/app_radio.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/auth/domain/models/wallet/wallet_model.dart';
+import '../../../../../core/providers/wallet_provider.dart';
 import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../widgets/bank_account_modal.dart';
@@ -35,23 +37,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      selectedWallet.value = context.read<UserViewModel>(). getDefaultWallet;
+      await context.read<WalletProvider>().getWallets();
+      selectedWallet.value = context.read<WalletProvider>().defaultWallet;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = context.watch<UserViewModel>();
     return AppScreenScaffold(
       title: 'Payment Method',
       resizeToAvoidBottomInset: false,
-      child: BaseView<UserViewModel>(
-        builder: (context, userConsumer, child) {
-          // if (userConsumer.isFetchingWallets) {
-          //   return const Center(child: CircularProgressIndicator());
-          // }
+      child: BaseView<WalletProvider>(
+        builder: (context, walletConsumer, child) {
+          if (walletConsumer.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          if (userConsumer.getWallets.isEmpty) {
+          if (walletConsumer.userWallets.isEmpty) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -97,13 +99,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ListView.builder(
                   shrinkWrap: true,
                   primary: false,
-                  itemCount: userConsumer.getWallets.length,
+                  itemCount: walletConsumer.userWallets.length,
                   itemBuilder: (context, index) {
-                    final wallet = userConsumer.getWallets[index];
+                    final wallet = walletConsumer.userWallets[index];
                     return ValueListenableBuilder<WalletModel?>(
                       valueListenable: selectedWallet,
                       builder: (context, selectedWalletValue, child) {
-                        final isDefault = selectedWalletValue?.externalId == wallet.externalId;
+                        final isDefault = selectedWalletValue?.accountNumber ==
+                            wallet.accountNumber;
                         return AppCard(
                           backgroundColor: kAider100,
                           padding: EdgeInsets.all(AppThemeUtil.radius(20)),
@@ -111,20 +114,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             color: isDefault ? kAider100 : kGrey100,
                             shape: RoundedRectangleBorder(
                               side: isDefault
-                                  ? const BorderSide(width: 1, color: kAiderDefault)
+                                  ? const BorderSide(
+                                      width: 1, color: kAiderDefault)
                                   : BorderSide.none,
-                              borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
+                              borderRadius: BorderRadius.circular(
+                                  AppThemeUtil.radius(12)),
                             ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(wallet.bankName ?? '')
                                           .semiBold()
@@ -143,7 +150,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                               const VSpace(height: 4.0),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('*******${(wallet.accountNumber ?? '').substring((wallet.accountNumber ?? '').length - 4)}')
                                       .regular()
@@ -158,15 +166,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             ],
                           ),
-                        )
-                            .onPressed(() async {
+                        ).onPressed(() async {
                           selectedWallet.value = wallet;
-                          await context.read<UserViewModel>().setWalletToDefault(
-                            context,
-                            walletExternalId: selectedWallet.value?.externalId,
-                          );
-                        })
-                            .paddingOnly(bottom: 16.0);
+                          await context
+                              .read<WalletProvider>()
+                              .setDefaultWallet(context, wallet);
+                        }).paddingOnly(bottom: 16.0);
                       },
                     );
                   },

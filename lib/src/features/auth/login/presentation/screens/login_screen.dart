@@ -9,9 +9,9 @@ import 'package:aider_mobile_app/src/shared_widgets/common/h_space.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../../core/providers/auth_provider.dart';
 import '../../../../../../core/utils/app_theme_util.dart';
 import '../../../../../../core/utils/helper_util.dart';
-import '../../../../../../core/view_models/user_view_model.dart';
 import '../../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../../shared_widgets/forms/app_input_field.dart';
@@ -32,7 +32,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _pageController = PageController(initialPage: 0);
 
-
   @override
   void initState() {
     _pageController.addListener(() {
@@ -43,22 +42,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double progress = _pageController.hasClients ? (_pageController.page ?? 0) : 0;
+    final double progress =
+        _pageController.hasClients ? (_pageController.page ?? 0) : 0;
     return DraggableBottomSheet(
-      initialChildSize: HelperUtil.isIOS? 0.82 : 0.72,
+      initialChildSize: HelperUtil.isIOS ? 0.82 : 0.72,
       minChildSize: 0.50,
-      maxChildSize: HelperUtil.isIOS? 0.82 : 0.72,
-      builder: (context, scrollController){
+      maxChildSize: HelperUtil.isIOS ? 0.82 : 0.72,
+      builder: (context, scrollController) {
         return DraggableBottomSheetContent(
           draggableKey: GlobalKey(),
           scrollController: scrollController,
-          modalHeaderContent:  Row(
+          modalHeaderContent: Row(
             children: [
-              if(progress <= 0.3)...[
-                const Text('Welcome back 👋').bold().fontSize(20).color(kPrimaryBlack),
+              if (progress <= 0.3) ...[
+                const Text('Welcome back 👋')
+                    .bold()
+                    .fontSize(20)
+                    .color(kPrimaryBlack),
               ],
-
-              if(progress > 0.3)...[
+              if (progress > 0.3) ...[
                 Icon(
                   CupertinoIcons.arrow_left,
                   size: AppThemeUtil.radius(24.0),
@@ -73,7 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                 }),
                 const HSpace(width: 16),
-                const Text('Forgot password').bold().fontSize(20).color(kPrimaryBlack),
+                const Text('Forgot password')
+                    .bold()
+                    .fontSize(20)
+                    .color(kPrimaryBlack),
               ],
             ],
           ).paddingOnly(left: kWidthPadding, right: kWidthPadding, bottom: 10),
@@ -82,7 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: _pageController,
             children: [
               SingleChildScrollView(
-                child: LoginForm(pageController: _pageController,),
+                child: LoginForm(
+                  pageController: _pageController,
+                ),
               ),
               SingleChildScrollView(
                 child: ForgotPasswordScreen(
@@ -94,13 +101,14 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
     );
-
   }
 }
 
-
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key, required this.pageController,});
+  const LoginForm({
+    super.key,
+    required this.pageController,
+  });
 
   final PageController pageController;
 
@@ -121,6 +129,7 @@ class _LoginFormState extends State<LoginForm> {
     passwordController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -142,10 +151,8 @@ class _LoginFormState extends State<LoginForm> {
               return null;
             },
           ),
-
           const FormLabel(text: 'Password'),
           const VSpace(height: 8.0),
-
           ValueListenableBuilder<bool>(
               valueListenable: isHidden,
               builder: (context, isHiddenValue, child) {
@@ -153,7 +160,7 @@ class _LoginFormState extends State<LoginForm> {
                   hintText: 'Enter password',
                   obscureText: isHiddenValue,
                   suffixIcon: FieldEye(
-                    onPressed: (){
+                    onPressed: () {
                       isHidden.value = !isHiddenValue;
                     },
                     isHidden: isHiddenValue,
@@ -161,14 +168,17 @@ class _LoginFormState extends State<LoginForm> {
                   controller: passwordController,
                   validator: (value) {
                     if (value!.isEmpty) return 'Password is required';
-                    if (value.length < 6) return 'Password must be at least 6 characters';
+                    if (value.length < 6)
+                      return 'Password must be at least 6 characters';
                     return null;
                   },
                 );
-              }
-          ),
-
-          const Text('Forgotten password?').regular().fontSize(16.0).color(kPrimaryBlack).onPressed((){
+              }),
+          const Text('Forgotten password?')
+              .regular()
+              .fontSize(16.0)
+              .color(kPrimaryBlack)
+              .onPressed(() {
             if (widget.pageController.page == 0) {
               widget.pageController.animateToPage(
                 1,
@@ -179,19 +189,16 @@ class _LoginFormState extends State<LoginForm> {
           }).alignCenterRight(),
           const VSpace(height: 32.0),
           AppPrimaryButton(
-            onPressed: () async{
+            onPressed: () async {
               if (formKey.currentState!.validate()) {
-                await context.read<UserViewModel>().authentication(
-                  context,
-                  requestBody: {
-                    "email": emailController.text,
-                    "password": passwordController.text,
-                    "deviceOs": HelperUtil.getOSPlatform,
-                    "pushNotificationToken":""
-                  },
-                );
+                await context.read<AuthProvider>().login(
+                      context,
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
               } else {
-                setState(() => autoValidate = AutovalidateMode.onUserInteraction);
+                setState(
+                    () => autoValidate = AutovalidateMode.onUserInteraction);
               }
             },
             minWidth: double.infinity,

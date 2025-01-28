@@ -9,28 +9,37 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/services/git_it_service_locator.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
-import '../../../../../core/view_models/base_view_model.dart';
+import '../../../../../core/providers/base_provider.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../domain/models/booked_history_model.dart';
 import '../../data/repositories/rental_repository.dart';
 
-class RentalViewModel extends BaseViewModel {
+class RentalViewModel extends BaseProvider {
   final _rentalRepository = sl.get<RentalRepository>();
-  BookedProductHistoryModel _rentedProductHistory = const BookedProductHistoryModel();
-  BookedProductHistoryModel _myItemsProductHistory = const BookedProductHistoryModel();
+  BookedProductHistoryModel _rentedProductHistory =
+      const BookedProductHistoryModel();
+  BookedProductHistoryModel _myItemsProductHistory =
+      const BookedProductHistoryModel();
 
-  UnmodifiableListView<BookingModel> get getRentalProducts => UnmodifiableListView(_rentedProductHistory.data);
+  UnmodifiableListView<BookingModel> get getRentalProducts =>
+      UnmodifiableListView(_rentedProductHistory.data);
   PaginationModel? get getRentalProductMeta => _rentedProductHistory.meta;
 
   Future<void> fetchRentedItems(BuildContext context,
-      {required Map<String, dynamic> queryParams, String loadingComponent = 'fetchRentedItems', String? nextPage}) async {
+      {required Map<String, dynamic> queryParams,
+      String loadingComponent = 'fetchRentedItems',
+      String? nextPage}) async {
     setComponentErrorType = null;
     setLoading(true, component: loadingComponent);
 
-    final result = await _rentalRepository.fetchRentedItems(queryParam: queryParams, nextPage: nextPage);
+    final result = await _rentalRepository.fetchRentedItems(
+        queryParam: queryParams, nextPage: nextPage);
 
     result.fold((left) {
-      setComponentErrorType = {'error': FailureToMessage.mapFailureToMessage(left), 'component': loadingComponent};
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(left),
+        'component': loadingComponent
+      };
       setLoading(false, component: loadingComponent);
     }, (history) {
       setRentedItemsHistory(history, (history.meta?.currentPage ?? 0) > 1);
@@ -42,7 +51,8 @@ class RentalViewModel extends BaseViewModel {
     });
   }
 
-  void setRentedItemsHistory(BookedProductHistoryModel history, [bool append = false]) {
+  void setRentedItemsHistory(BookedProductHistoryModel history,
+      [bool append = false]) {
     if (append) {
       _rentedProductHistory = _rentedProductHistory.copyWith(
         data: List.from(_rentedProductHistory.data)..addAll(history.data),
@@ -53,18 +63,25 @@ class RentalViewModel extends BaseViewModel {
     }
   }
 
-  UnmodifiableListView<BookingModel> get getMyItemsProducts => UnmodifiableListView(_myItemsProductHistory.data);
+  UnmodifiableListView<BookingModel> get getMyItemsProducts =>
+      UnmodifiableListView(_myItemsProductHistory.data);
   PaginationModel? get getMyItemsProductMeta => _myItemsProductHistory.meta;
 
   Future<void> fetchMyItems(BuildContext context,
-      {required Map<String, dynamic> queryParams, String loadingComponent = 'fetchMyItems', String? nextPage}) async {
+      {required Map<String, dynamic> queryParams,
+      String loadingComponent = 'fetchMyItems',
+      String? nextPage}) async {
     setComponentErrorType = null;
     setLoading(true, component: loadingComponent);
 
-    final result = await _rentalRepository.fetchMyItems(queryParam: queryParams, nextPage: nextPage);
+    final result = await _rentalRepository.fetchMyItems(
+        queryParam: queryParams, nextPage: nextPage);
 
     result.fold((left) {
-      setComponentErrorType = {'error': FailureToMessage.mapFailureToMessage(left), 'component': loadingComponent};
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(left),
+        'component': loadingComponent
+      };
       setLoading(false, component: loadingComponent);
     }, (history) {
       setMyItemsHistory(history, (history.meta?.currentPage ?? 0) > 1);
@@ -76,7 +93,8 @@ class RentalViewModel extends BaseViewModel {
     });
   }
 
-  void setMyItemsHistory(BookedProductHistoryModel history, [bool append = false]) {
+  void setMyItemsHistory(BookedProductHistoryModel history,
+      [bool append = false]) {
     if (append) {
       _myItemsProductHistory = _myItemsProductHistory.copyWith(
         data: List.from(_myItemsProductHistory.data)..addAll(history.data),
@@ -96,7 +114,8 @@ class RentalViewModel extends BaseViewModel {
   }) async {
     AppDialogUtil.loadingDialog(context);
 
-    final result = await _rentalRepository.confirmPickUp(bookingExternalId: bookingExternalId, requestBody: requestBody);
+    final result = await _rentalRepository.confirmPickUp(
+        bookingExternalId: bookingExternalId, requestBody: requestBody);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -112,7 +131,8 @@ class RentalViewModel extends BaseViewModel {
       });
     }, (right) {
       if (type == 'user') {
-        final index = _rentedProductHistory.data.indexWhere((obj) => obj.externalId == bookingExternalId);
+        final index = _rentedProductHistory.data
+            .indexWhere((obj) => obj.externalId == bookingExternalId);
         if (index >= 0) {
           final userBooking = _rentedProductHistory.data[index].copyWith(
             id: right.id,
@@ -141,7 +161,8 @@ class RentalViewModel extends BaseViewModel {
           notifyListeners();
         }
       } else {
-        final index = _myItemsProductHistory.data.indexWhere((obj) => obj.externalId == bookingExternalId);
+        final index = _myItemsProductHistory.data
+            .indexWhere((obj) => obj.externalId == bookingExternalId);
         if (index >= 0) {
           final userBooking = _myItemsProductHistory.data[index].copyWith(
             id: right.id,
@@ -183,7 +204,8 @@ class RentalViewModel extends BaseViewModel {
   }) async {
     AppDialogUtil.loadingDialog(context);
 
-    final result = await _rentalRepository.confirmDropOff(bookingExternalId: bookingExternalId, requestBody: requestBody);
+    final result = await _rentalRepository.confirmDropOff(
+        bookingExternalId: bookingExternalId, requestBody: requestBody);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -199,7 +221,8 @@ class RentalViewModel extends BaseViewModel {
       });
     }, (right) {
       if (type == 'user') {
-        final index = _rentedProductHistory.data.indexWhere((obj) => obj.externalId == bookingExternalId);
+        final index = _rentedProductHistory.data
+            .indexWhere((obj) => obj.externalId == bookingExternalId);
         if (index >= 0) {
           final userBooking = _rentedProductHistory.data[index].copyWith(
             id: right.id,
@@ -228,7 +251,8 @@ class RentalViewModel extends BaseViewModel {
           notifyListeners();
         }
       } else {
-        final index = _myItemsProductHistory.data.indexWhere((obj) => obj.externalId == bookingExternalId);
+        final index = _myItemsProductHistory.data
+            .indexWhere((obj) => obj.externalId == bookingExternalId);
         if (index >= 0) {
           final userBooking = _myItemsProductHistory.data[index].copyWith(
             id: right.id,
@@ -262,10 +286,13 @@ class RentalViewModel extends BaseViewModel {
   }
 
   Future<void> createProductReviews(BuildContext context,
-      {required String type, required String bookingProductExternalId, required Map<String, dynamic> requestBody}) async {
+      {required String type,
+      required String bookingProductExternalId,
+      required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
 
-    final result = await _rentalRepository.createProductReviews(requestBody: requestBody, bookingExternalId: bookingProductExternalId);
+    final result = await _rentalRepository.createProductReviews(
+        requestBody: requestBody, bookingExternalId: bookingProductExternalId);
 
     if (context.mounted) {
       AppNavigator.pop(context);
@@ -288,37 +315,47 @@ class RentalViewModel extends BaseViewModel {
       });
     }, (right) {
       if (type == 'product') {
-        final index = _rentedProductHistory.data.indexWhere((obj) => obj.bookedProduct?.externalId == bookingProductExternalId);
+        final index = _rentedProductHistory.data.indexWhere(
+            (obj) => obj.bookedProduct?.externalId == bookingProductExternalId);
         if (index >= 0) {
-          final hasUserReview = _rentedProductHistory.data[index].bookedProduct?.copyWith(
+          final hasUserReview =
+              _rentedProductHistory.data[index].bookedProduct?.copyWith(
             isReviewed: true,
             review: right,
           );
 
-          List<BookingModel> updatedData = List.from(_rentedProductHistory.data);
+          List<BookingModel> updatedData =
+              List.from(_rentedProductHistory.data);
           updatedData[index] = _rentedProductHistory.data[index].copyWith(
-            bookedProduct: hasUserReview, // Assign the updated BookedProductModel
+            bookedProduct:
+                hasUserReview, // Assign the updated BookedProductModel
           );
 
-          final updatedHistory = _rentedProductHistory.copyWith(data: updatedData);
+          final updatedHistory =
+              _rentedProductHistory.copyWith(data: updatedData);
           _rentedProductHistory = updatedHistory;
           notifyListeners();
           AppNavigator.pop(context);
         }
       } else {
-        final index = _myItemsProductHistory.data.indexWhere((obj) => obj.bookedProduct?.externalId == bookingProductExternalId);
+        final index = _myItemsProductHistory.data.indexWhere(
+            (obj) => obj.bookedProduct?.externalId == bookingProductExternalId);
         if (index >= 0) {
-          final hasUserReview = _myItemsProductHistory.data[index].bookedProduct?.copyWith(
+          final hasUserReview =
+              _myItemsProductHistory.data[index].bookedProduct?.copyWith(
             isReviewed: true,
             review: right,
           );
 
-          List<BookingModel> updatedData = List.from(_myItemsProductHistory.data);
+          List<BookingModel> updatedData =
+              List.from(_myItemsProductHistory.data);
           updatedData[index] = _myItemsProductHistory.data[index].copyWith(
-            bookedProduct: hasUserReview, // Assign the updated BookedProductModel
+            bookedProduct:
+                hasUserReview, // Assign the updated BookedProductModel
           );
 
-          final updatedHistory = _myItemsProductHistory.copyWith(data: updatedData);
+          final updatedHistory =
+              _myItemsProductHistory.copyWith(data: updatedData);
           _myItemsProductHistory = updatedHistory;
           notifyListeners();
           AppNavigator.pop(context);
@@ -327,9 +364,14 @@ class RentalViewModel extends BaseViewModel {
     });
   }
 
-  Future<void> reportBooking({required BuildContext context, required String externalId, required int bookingId, required String andReason}) async {
+  Future<void> reportBooking(
+      {required BuildContext context,
+      required String externalId,
+      required int bookingId,
+      required String andReason}) async {
     AppDialogUtil.loadingDialog(context);
-    final result = await _rentalRepository.reportBookingWith(externalId: externalId, bookingId: bookingId, andReason: andReason);
+    final result = await _rentalRepository.reportBookingWith(
+        externalId: externalId, bookingId: bookingId, andReason: andReason);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -360,10 +402,12 @@ class RentalViewModel extends BaseViewModel {
     });
   }
 
-  Future<void> earlyReturn(BuildContext context, {required String bookedProductExternalId}) async {
+  Future<void> earlyReturn(BuildContext context,
+      {required String bookedProductExternalId}) async {
     AppDialogUtil.loadingDialog(context);
 
-    final result = await _rentalRepository.earlyReturn(bookedProductExternalId: bookedProductExternalId);
+    final result = await _rentalRepository.earlyReturn(
+        bookedProductExternalId: bookedProductExternalId);
 
     if (context.mounted) {
       AppNavigator.pop(context);
@@ -386,9 +430,11 @@ class RentalViewModel extends BaseViewModel {
         );
       });
     }, (right) {
-      final index = _rentedProductHistory.data.indexWhere((obj) => obj.bookedProduct?.externalId == bookedProductExternalId);
+      final index = _rentedProductHistory.data.indexWhere(
+          (obj) => obj.bookedProduct?.externalId == bookedProductExternalId);
       if (index >= 0) {
-        final bookedProduct = _rentedProductHistory.data[index].bookedProduct?.copyWith(
+        final bookedProduct =
+            _rentedProductHistory.data[index].bookedProduct?.copyWith(
           id: right.bookedProduct?.id,
           externalId: right.bookedProduct?.externalId,
           amount: right.bookedProduct?.amount,
@@ -407,7 +453,8 @@ class RentalViewModel extends BaseViewModel {
           bookedProduct: bookedProduct,
         );
 
-        _rentedProductHistory = _rentedProductHistory.copyWith(data: updatedData);
+        _rentedProductHistory =
+            _rentedProductHistory.copyWith(data: updatedData);
         notifyListeners();
       }
       AppNavigator.pop(context);
@@ -416,11 +463,13 @@ class RentalViewModel extends BaseViewModel {
 
   /// LOCAL DB
   void _persistRentedItemsHistory() async {
-    final _ = await _rentalRepository.persistRentedItemHistory(_rentedProductHistory);
+    final _ =
+        await _rentalRepository.persistRentedItemHistory(_rentedProductHistory);
   }
 
   void _persistMyItemsHistory() async {
-    final _ = await _rentalRepository.persistMyItemHistory(_myItemsProductHistory);
+    final _ =
+        await _rentalRepository.persistMyItemHistory(_myItemsProductHistory);
   }
 
   // void _persistReviewHistory() async {

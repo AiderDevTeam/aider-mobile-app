@@ -15,10 +15,14 @@ import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../core/view_models/base_view.dart';
+import '../../../../../core/providers/base_view.dart';
 
 class CategoryModalContent extends StatefulWidget {
-  const CategoryModalContent({super.key, required this.pageController, required this.scrollController,});
+  const CategoryModalContent({
+    super.key,
+    required this.pageController,
+    required this.scrollController,
+  });
 
   final PageController pageController;
   final ScrollController scrollController;
@@ -73,47 +77,61 @@ class _CategoryModalContentState extends State<CategoryModalContent> {
                   color: kGrey500,
                   size: AppThemeUtil.radius(20),
                 ),
-              ).paddingOnly(top: 16.0, bottom: 16.0, left: 20,),
+              ).paddingOnly(
+                top: 16.0,
+                bottom: 16.0,
+                left: 20,
+              ),
             ).paddingSymmetric(horizontal: kWidthPadding),
             const Divider(color: kGrey200),
             const VSpace(height: 15.0),
-            const Text('POPULAR CATEGORIES').bold().color(kGrey700).fontSize(12.0).paddingSymmetric(horizontal: kWidthPadding),
+            const Text('POPULAR CATEGORIES')
+                .bold()
+                .color(kGrey700)
+                .fontSize(12.0)
+                .paddingSymmetric(horizontal: kWidthPadding),
             const VSpace(height: 20.0),
             BaseView<ProductViewModel>(
-              builder: (context, productConsumer, child) {
-                if(productConsumer.getSubCategoryItems.isEmpty){
-                  return const ScreenEmptyState(
-                    title: 'Categories',
-                    subtitle: 'No popular categories to display',
-                  );
-                }
-                return Wrap(
-                  spacing: AppThemeUtil.width(8.0),
-                  runSpacing: AppThemeUtil.height(12.0),
-                  children: List.generate(productConsumer.getSubCategoryItems.length, (index){
-                    final item = productConsumer.getSubCategoryItems[index];
-                    return Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppThemeUtil.width(16),
-                        vertical: AppThemeUtil.height(8),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      decoration: ShapeDecoration(
-                        color: AppThemeUtil.getThemeColor(kGrey50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      child: Text(
-                        '${item.name}',
-                      ).medium().fontSize(14).height(20, 14).letterSpacing(-0.15).alignText(TextAlign.center).color(kGrey1200),
-                    ).onPressed((){
-                      AppNavigator.pop(context, item);
-                    });
-                  }),
-                ).paddingSymmetric(horizontal: kWidthPadding);
+                builder: (context, productConsumer, child) {
+              if (productConsumer.getSubCategoryItems.isEmpty) {
+                return const ScreenEmptyState(
+                  title: 'Categories',
+                  subtitle: 'No popular categories to display',
+                );
               }
-            ),
+              return Wrap(
+                spacing: AppThemeUtil.width(8.0),
+                runSpacing: AppThemeUtil.height(12.0),
+                children: List.generate(
+                    productConsumer.getSubCategoryItems.length, (index) {
+                  final item = productConsumer.getSubCategoryItems[index];
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppThemeUtil.width(16),
+                      vertical: AppThemeUtil.height(8),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: AppThemeUtil.getThemeColor(kGrey50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: Text(
+                      '${item.name}',
+                    )
+                        .medium()
+                        .fontSize(14)
+                        .height(20, 14)
+                        .letterSpacing(-0.15)
+                        .alignText(TextAlign.center)
+                        .color(kGrey1200),
+                  ).onPressed(() {
+                    AppNavigator.pop(context, item);
+                  });
+                }),
+              ).paddingSymmetric(horizontal: kWidthPadding);
+            }),
           ],
         ),
       ),

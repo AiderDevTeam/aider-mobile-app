@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/cards/app_card.dart';
 import '../../../../shared_widgets/common/h_space.dart';
 import '../../../../shared_widgets/common/svg_icon.dart';
@@ -24,7 +24,8 @@ class NudgeChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(message.senderExternalId == context.read<UserViewModel>().getUser.externalId){
+    if (message.senderExternalId ==
+        context.read<UserProvider>().getUser.externalId) {
       return AppCard(
         padding: EdgeInsets.all(AppThemeUtil.height(12.0)),
         decoration: BoxDecoration(
@@ -46,7 +47,10 @@ class NudgeChatItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(message.getSentAt).regular().fontSize(12.0).color(kGrey400),
+                Text(message.getSentAt)
+                    .regular()
+                    .fontSize(12.0)
+                    .color(kGrey400),
                 const HSpace(width: 8.0),
                 ZSvgIcon(
                   'checks.svg',
@@ -93,7 +97,10 @@ class NudgeChatItem extends StatelessWidget {
               color: kGrey50,
               borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
             ),
-            child: Text(message.receiverMessage.toString()).regular().fontSize(14.0).color(kGrey1200),
+            child: Text(message.receiverMessage.toString())
+                .regular()
+                .fontSize(14.0)
+                .color(kGrey1200),
           ),
           const VSpace(height: 12.0),
           Row(

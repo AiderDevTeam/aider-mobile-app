@@ -3,8 +3,8 @@ import 'package:aider_mobile_app/core/extensions/widgets/center_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/gesture_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
-import 'package:aider_mobile_app/core/view_models/base_view.dart';
-import 'package:aider_mobile_app/src/features/explore/presentation/view_models/explore_view_model.dart';
+import 'package:aider_mobile_app/core/providers/base_view.dart';
+import 'package:aider_mobile_app/src/features/explore/presentation/providers/explore_view_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/aider_empty_state.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_load_more.dart';
@@ -20,7 +20,10 @@ import '../../../../shared_widgets/common/network_image_view.dart';
 import '../widgets/category_loading_effect.dart';
 
 class SeeAllCategoriesScreen extends StatefulWidget {
-  const SeeAllCategoriesScreen({super.key, required this.param,});
+  const SeeAllCategoriesScreen({
+    super.key,
+    required this.param,
+  });
 
   final Map<String, dynamic> param;
 
@@ -29,11 +32,9 @@ class SeeAllCategoriesScreen extends StatefulWidget {
 }
 
 class _SeeAllCategoriesScreenState extends State<SeeAllCategoriesScreen> {
-
-
   Future<void> fetchCategories([int page = 1]) async {
     if (!mounted) return;
-    await context.read<ExploreViewModel>().fetchCategories(
+    await context.read<ExploreViewProvider>().fetchCategories(
       context,
       sectionExternalId: widget.param['externalId'],
       queryParams: {
@@ -45,8 +46,8 @@ class _SeeAllCategoriesScreenState extends State<SeeAllCategoriesScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      if(widget.param['type'] == 'section'){
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (widget.param['type'] == 'section') {
         await fetchCategories();
       }
     });
@@ -57,67 +58,71 @@ class _SeeAllCategoriesScreenState extends State<SeeAllCategoriesScreen> {
   Widget build(BuildContext context) {
     return AppScreenScaffold(
       title: "Categories",
-      child: BaseView<ExploreViewModel>(
-        builder: (context, exploreConsumer, child) {
-          if(exploreConsumer.getComponentLoading('categories') && exploreConsumer.getCategories.isEmpty){
-            return const CategoryLoadingEffect();
-          }
+      child: BaseView<ExploreViewProvider>(
+          builder: (context, exploreConsumer, child) {
+        if (exploreConsumer.isComponentLoading('categories') &&
+            exploreConsumer.getCategories.isEmpty) {
+          return const CategoryLoadingEffect();
+        }
 
-          if(exploreConsumer.isComponentErrorType('categories')){
-            return Center(
-              child: ErrorResponseMessage(
-                message: exploreConsumer.componentErrorType?['error']?? '',
-                onRetry: () async{
-                  await fetchCategories(exploreConsumer.getCategoriesPageNumber);
-                },
-              ),
-            );
-          }
+        if (exploreConsumer.isComponentErrorType('categories')) {
+          return Center(
+            child: ErrorResponseMessage(
+              message: exploreConsumer.componentErrorType?['error'] ?? '',
+              onRetry: () async {
+                await fetchCategories(exploreConsumer.getCategoriesPageNumber);
+              },
+            ),
+          );
+        }
 
-          if(exploreConsumer.getCategories.isEmpty){
-            return const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AiderEmptyState(
-                  title: '',
-                  subtitle: 'No categories found yet',
-                ),
-              ],
-            ).paddingOnly(bottom: 40);
-          }
-
-          return AppLoadMore(
-            isFinish: exploreConsumer.hasNoCategoryData,
-            onLoadMore: () => fetchCategories(exploreConsumer.getCategoriesPageNumber),
-            isLoaderVisible: !exploreConsumer.getComponentLoading('categories'),
+        if (exploreConsumer.getCategories.isEmpty) {
+          return const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              GridView.builder(
-                shrinkWrap: true,
-                primary: false,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: AppThemeUtil.width(12.0),
-                  mainAxisSpacing: AppThemeUtil.height(24),
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppThemeUtil.width(kWidthPadding),
-                ),
-                itemCount: exploreConsumer.getCategories.length,
-                physics: const ClampingScrollPhysics(),
-                itemBuilder: (BuildContext context, index) {
-                  final category = exploreConsumer.getCategories[index];
-                  return Container(
+              AiderEmptyState(
+                title: '',
+                subtitle: 'No categories found yet',
+              ),
+            ],
+          ).paddingOnly(bottom: 40);
+        }
+
+        return AppLoadMore(
+          isFinish: exploreConsumer.hasNoCategoryData,
+          onLoadMore: () =>
+              fetchCategories(exploreConsumer.getCategoriesPageNumber),
+          isLoaderVisible: !exploreConsumer.isComponentLoading('categories'),
+          children: [
+            GridView.builder(
+              shrinkWrap: true,
+              primary: false,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: AppThemeUtil.width(12.0),
+                mainAxisSpacing: AppThemeUtil.height(24),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppThemeUtil.width(kWidthPadding),
+              ),
+              itemCount: exploreConsumer.getCategories.length,
+              physics: const ClampingScrollPhysics(),
+              itemBuilder: (BuildContext context, index) {
+                final category = exploreConsumer.getCategories[index];
+                return Container(
                     decoration: BoxDecoration(
                         border: Border.all(
                           color: kGrey200,
                         ),
                         // color: kGrey200,
-                        borderRadius: BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0,)))
-                    ),
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(AppThemeUtil.radius(
+                          12.0,
+                        )))),
                     child: Stack(
                       children: [
                         NetworkImageView(
-                          imageUrl: category.imageUrl?? '',
+                          imageUrl: category.imageUrl ?? '',
                           width: AppThemeUtil.width(116),
                           height: AppThemeUtil.height(110),
                           radius: 12.0,
@@ -127,36 +132,48 @@ class _SeeAllCategoriesScreenState extends State<SeeAllCategoriesScreen> {
                           child: Container(
                             height: AppThemeUtil.height(44),
                             width: AppThemeUtil.width(116),
-                            padding: EdgeInsets.symmetric(horizontal: AppThemeUtil.width(12), vertical: AppThemeUtil.height(5)),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: AppThemeUtil.width(12),
+                                vertical: AppThemeUtil.height(5)),
                             decoration: BoxDecoration(
                                 color: kPrimaryWhite.withOpacity(0.94),
                                 borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(AppThemeUtil.radius(12.0,)),
-                                  bottomRight: Radius.circular(AppThemeUtil.radius(12.0,)),
-                                )
-                            ),
-                            child: Text(category.name?? '', maxLines: 2,)
+                                  bottomLeft:
+                                      Radius.circular(AppThemeUtil.radius(
+                                    12.0,
+                                  )),
+                                  bottomRight:
+                                      Radius.circular(AppThemeUtil.radius(
+                                    12.0,
+                                  )),
+                                )),
+                            child: Text(
+                              category.name ?? '',
+                              maxLines: 2,
+                            )
                                 .medium()
                                 .fontSize(12)
-                                .color(kPrimaryBlack).wrapAround(true).overflowText(TextOverflow.ellipsis)
+                                .color(kPrimaryBlack)
+                                .wrapAround(true)
+                                .overflowText(TextOverflow.ellipsis)
                                 .toCenter(),
                           ),
                         ),
                       ],
-                    )
-                  ).onPressed((){
-                    AppNavigator.pushNamed(context, AppRoute.seeAllRentalListeningScreen, arguments: {
-                      'type': 'category',
-                      'externalId': category.externalId ?? '',
-                      'title': category.name,
-                    });
-                  });
-                },
-              ),
-            ],
-          );
-        }
-      ),
+                    )).onPressed(() {
+                  AppNavigator.pushNamed(
+                      context, AppRoute.seeAllRentalListeningScreen,
+                      arguments: {
+                        'type': 'category',
+                        'externalId': category.externalId ?? '',
+                        'title': category.name,
+                      });
+                });
+              },
+            ),
+          ],
+        );
+      }),
     );
   }
 }

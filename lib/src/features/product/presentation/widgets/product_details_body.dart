@@ -12,8 +12,8 @@ import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/common.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../shared_widgets/cards/app_card.dart';
@@ -68,9 +68,10 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           onPressed: () {
-            final user = context.read<UserViewModel>().getUser;
+            final user = context.read<UserProvider>().getUser;
             if (user.externalId == widget.product.user!.externalId) {
-              AppDialogUtil.showWarningAlert(context, "Oops! You can't rent your own item");
+              AppDialogUtil.showWarningAlert(
+                  context, "Oops! You can't rent your own item");
               return;
             }
             // if (user.idVerificationStatus != kCompletedStatus) {
@@ -102,7 +103,11 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.product.name ?? '').medium().fontSize(16.0).color(kGrey1200).flexible(),
+                Text(widget.product.name ?? '')
+                    .medium()
+                    .fontSize(16.0)
+                    .color(kGrey1200)
+                    .flexible(),
                 const HSpace(width: 116.0),
                 // Container(
                 //   height: AppThemeUtil.radius(44.0),
@@ -164,14 +169,21 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                     ),
                     decoration: BoxDecoration(
                       color: kGrey50,
-                      borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                      borderRadius:
+                          BorderRadius.circular(AppThemeUtil.radius(12.0)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(dailyText).regular().fontSize(12).color(kGrey600),
-                        Text('$kCurrency ${price.price}').bold().fontSize(16).color(kGrey1200),
-                        Text(duration).regular().fontSize(12.0).color(kGrey1200),
+                        Text('$kCurrency ${price.price}')
+                            .bold()
+                            .fontSize(16)
+                            .color(kGrey1200),
+                        Text(duration)
+                            .regular()
+                            .fontSize(12.0)
+                            .color(kGrey1200),
                       ],
                     ),
                   ).flexible();
@@ -189,9 +201,15 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('DESCRIPTION').bold().fontSize(12.0).color(kGrey700),
+                  const Text('DESCRIPTION')
+                      .bold()
+                      .fontSize(12.0)
+                      .color(kGrey700),
                   const VSpace(height: 12.0),
-                  Text('${widget.product.description}').regular().fontSize(14.0).color(kGrey1200),
+                  Text('${widget.product.description}')
+                      .regular()
+                      .fontSize(14.0)
+                      .color(kGrey1200),
 
                   // const VSpace(height: 12.0),
                   // const Text('See more').semiBold().fontSize(16.0).color(kGrey1200).alignBottomCenter(),
@@ -209,7 +227,10 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('ITEM OWNER').bold().fontSize(12.0).color(kGrey700),
+                  const Text('ITEM OWNER')
+                      .bold()
+                      .fontSize(12.0)
+                      .color(kGrey700),
                   const VSpace(height: 12.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -220,10 +241,13 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                               ? CircleAvatar(
                                   backgroundColor: Colors.transparent,
                                   maxRadius: AppThemeUtil.radius(26),
-                                  backgroundImage: const AssetImage("$kImagePath/profile_placeholder.png"),
+                                  backgroundImage: const AssetImage(
+                                      "$kImagePath/profile_placeholder.png"),
                                 )
                               : NetworkImageView(
-                                  imageUrl: widget.product.user!.profilePhotoUrl ?? '',
+                                  imageUrl:
+                                      widget.product.user!.profilePhotoUrl ??
+                                          '',
                                   width: AppThemeUtil.radius(52),
                                   height: AppThemeUtil.radius(52),
                                   radius: 26.0,
@@ -232,7 +256,11 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(widget.product.user?.displayName ?? '').bold().fontSize(14.0).color(kGrey1200).overflowText(TextOverflow.ellipsis),
+                              Text(widget.product.user?.displayName ?? '')
+                                  .bold()
+                                  .fontSize(14.0)
+                                  .color(kGrey1200)
+                                  .overflowText(TextOverflow.ellipsis),
                               Row(
                                 children: [
                                   ZSvgIcon(
@@ -240,7 +268,10 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                                     size: AppThemeUtil.radius(14.0),
                                   ),
                                   const HSpace(width: 4.0),
-                                  Text('${widget.product.user?.statistics?.vendorAverageRating ?? 0.0}').regular().fontSize(12.0).color(kGrey700),
+                                  Text('${widget.product.user?.statistics?.vendorAverageRating ?? 0.0}')
+                                      .regular()
+                                      .fontSize(12.0)
+                                      .color(kGrey700),
                                 ],
                               ),
                             ],
@@ -253,7 +284,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                         padding: EdgeInsets.all(AppThemeUtil.radius(10.0)),
                         decoration: BoxDecoration(
                           color: kGrey200,
-                          borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                          borderRadius:
+                              BorderRadius.circular(AppThemeUtil.radius(12.0)),
                         ),
                         child: ZSvgIcon(
                           'profile_outline.svg',
@@ -265,7 +297,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                   ),
                 ],
               ).onPressed(() {
-                AppNavigator.pushNamed(context, AppRoute.vendorProfileScreen, arguments: widget.product.user ?? const UserModel());
+                AppNavigator.pushNamed(context, AppRoute.vendorProfileScreen,
+                    arguments: widget.product.user ?? const UserModel());
               }),
             ).paddingSymmetric(horizontal: kWidthPadding),
             const VSpace(height: 20.0),
@@ -279,7 +312,11 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(widget.product.address?.originName ?? '').medium().fontSize(14.0).color(kGrey1200).flexible(),
+                  Text(widget.product.address?.originName ?? '')
+                      .medium()
+                      .fontSize(14.0)
+                      .color(kGrey1200)
+                      .flexible(),
                   const HSpace(width: 12.0),
                   Container(
                     height: AppThemeUtil.radius(44.0),
@@ -287,7 +324,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                     padding: EdgeInsets.all(AppThemeUtil.radius(10.0)),
                     decoration: BoxDecoration(
                       color: kGrey200,
-                      borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                      borderRadius:
+                          BorderRadius.circular(AppThemeUtil.radius(12.0)),
                     ),
                     child: ZSvgIcon(
                       'map.svg',
@@ -311,7 +349,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
             //   borderColor: kGrey700,
             // ),
             const VSpace(height: 32.0),
-            BaseView<ReviewViewModel>(builder: (context, reviewConsumer, child) {
+            BaseView<ReviewViewModel>(
+                builder: (context, reviewConsumer, child) {
               if (reviewConsumer.getVendorReviews.isEmpty) {
                 return const SizedBox.shrink();
               }
@@ -336,7 +375,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                         decoration: ShapeDecoration(
                           color: kGrey50,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
+                            borderRadius:
+                                BorderRadius.circular(AppThemeUtil.radius(12)),
                           ),
                         ),
                         child: Column(
@@ -346,23 +386,31 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               rightWidget: Text(
                                 review.date ?? '',
-                              ).regular().fontSize(12).color(kGrey700).alignText(TextAlign.right),
+                              )
+                                  .regular()
+                                  .fontSize(12)
+                                  .color(kGrey700)
+                                  .alignText(TextAlign.right),
                               leftWidget: Row(
                                 children: [
                                   (review.reviewer?.hasProfilePhoto == true)
                                       ? NetworkImageView(
-                                          imageUrl: review.reviewer?.profilePhotoUrl ?? '',
+                                          imageUrl: review
+                                                  .reviewer?.profilePhotoUrl ??
+                                              '',
                                           width: AppThemeUtil.radius(70),
                                           height: AppThemeUtil.radius(70),
                                           radius: 32.0,
                                         )
                                       : CircleAvatar(
                                           maxRadius: AppThemeUtil.radius(32.0),
-                                          backgroundImage: const AssetImage('$kImagePath/profile_placeholder.png'),
+                                          backgroundImage: const AssetImage(
+                                              '$kImagePath/profile_placeholder.png'),
                                         ),
                                   const HSpace(width: 12),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         review.reviewer?.fullName ?? '',
@@ -370,7 +418,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                                       const VSpace(height: 8),
                                       Wrap(
                                         runSpacing: 12.0,
-                                        children: List.generate(review.rating ?? 0, (index) {
+                                        children: List.generate(
+                                            review.rating ?? 0, (index) {
                                           return ZSvgIcon(
                                             'star.svg',
                                             color: kWarning700,
@@ -383,7 +432,10 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                                 ],
                               ),
                             ).onPressed(() {
-                              AppNavigator.pushNamed(context, AppRoute.vendorProfileScreen, arguments: review.reviewer ?? const UserModel());
+                              AppNavigator.pushNamed(
+                                  context, AppRoute.vendorProfileScreen,
+                                  arguments:
+                                      review.reviewer ?? const UserModel());
                             }),
                             const VSpace(height: 12),
                             Text(

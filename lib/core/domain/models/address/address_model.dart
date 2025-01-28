@@ -3,11 +3,11 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'address_model.freezed.dart';
 part 'address_model.g.dart';
 
-
 @freezed
 class AddressModel with _$AddressModel {
   const factory AddressModel({
     final int? id,
+    final String? uid,
     final String? externalId,
     final String? city,
     final String? originName,
@@ -21,15 +21,12 @@ class AddressModel with _$AddressModel {
       _$AddressModelFromJson(json);
 }
 
-
-
 class AddressList {
   AddressList({required this.list});
   final List<AddressModel> list;
 
   factory AddressList.fromJson(List parsedJson) {
-    final list = parsedJson.map((obj) => AddressModel.fromJson(obj) ).toList();
+    final list = parsedJson.map((obj) => AddressModel.fromJson(obj)).toList();
     return AddressList(list: list);
   }
-
 }

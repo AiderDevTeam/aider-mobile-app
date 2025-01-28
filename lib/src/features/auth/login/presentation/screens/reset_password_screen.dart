@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/constants/colors.dart';
 import '../../../../../../core/constants/common.dart';
 import '../../../../../../core/constants/text_style.dart';
-import '../../../../../../core/view_models/user_view_model.dart';
+import '../../../../../../core/providers/auth_provider.dart';
+import '../../../../../../core/providers/user_provider.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../../shared_widgets/forms/app_input_field.dart';
@@ -29,9 +30,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      emailController.text = context.read<UserViewModel>().getOTPData['email'];
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     super.initState();
   }
 
@@ -48,10 +47,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       title: 'Reset Password',
       hasBottomBorder: false,
       child: ListView(
-        padding: EdgeInsets.symmetric(horizontal: AppThemeUtil.width(kWidthPadding),),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppThemeUtil.width(kWidthPadding),
+        ),
         physics: const ClampingScrollPhysics(),
         children: [
-          const VSpace(height: 134,),
+          const VSpace(
+            height: 134,
+          ),
           Text(
             'Let’s help you reset your password.',
             style: kRegularFontStyle.copyWith(
@@ -78,13 +81,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   controller: newPasswordController,
                   validator: (String? value) {
                     if (value!.isEmpty) return "New password";
-                    if(newPasswordController.text != value) return 'Enter Password';
+                    if (newPasswordController.text != value)
+                      return 'Enter Password';
                     return null;
                   },
                   obscureText: isHidden2,
                   suffixIcon: FieldEye(
-                    onPressed: (){
-                      setState(() => isHidden2 = !isHidden2 );
+                    onPressed: () {
+                      setState(() => isHidden2 = !isHidden2);
                     },
                     isHidden: isHidden2,
                   ),
@@ -92,21 +96,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ],
             ),
           ),
-
-          const  VSpace(height: 32.0),
+          const VSpace(height: 32.0),
           AppPrimaryButton(
-            onPressed: () async{
-              if(formKey.currentState!.validate()){
-                final userProvider = context.read<UserViewModel>();
-                await userProvider.resetPassword(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                final authProvider = context.read<AuthProvider>();
+                await authProvider.resetPassword(
                   context,
-                  requestBody: {
-                    "email": context.read<UserViewModel>().getOTPData['email'],
-                    "password": newPasswordController.text,
-                  },
+                  email: emailController.text,
+                  password: newPasswordController.text,
                 );
-              }else{
-                setState(() => autoValidate = AutovalidateMode.onUserInteraction );
+              } else {
+                setState(
+                    () => autoValidate = AutovalidateMode.onUserInteraction);
               }
             },
             text: "Reset password",

@@ -11,9 +11,10 @@ import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/common.dart';
+import '../../../../../core/providers/wallet_provider.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../shared_widgets/common/app_keyboard_action.dart';
@@ -22,10 +23,14 @@ import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../shared_widgets/forms/form_label.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
 import '../../../transaction/domain/models/bank/bank_model.dart';
-import '../../../transaction/presentation/view_models/transaction_view_model.dart';
+import '../../../transaction/presentation/providers/transaction_provider.dart';
 
 class BankAccountModal extends StatefulWidget {
-  const BankAccountModal({super.key, this.update = false, this.selectedWallet,});
+  const BankAccountModal({
+    super.key,
+    this.update = false,
+    this.selectedWallet,
+  });
 
   final bool update;
   final WalletModel? selectedWallet;
@@ -46,8 +51,8 @@ class _BankAccountModalState extends State<BankAccountModal> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(!mounted) return;
-      context.read<TransactionViewModel>().resetAccountName();
+      if (!mounted) return;
+      context.read<TransactionProvider>().resetAccountName();
     });
     super.initState();
   }
@@ -88,22 +93,28 @@ class _BankAccountModalState extends State<BankAccountModal> {
                       hintText: 'Select a bank',
                       controller: bankController,
                       validator: (value) {
-                        if (value!.isEmpty) return 'Bank field must not be empty';
+                        if (value!.isEmpty)
+                          return 'Bank field must not be empty';
                         return null;
                       },
                       helperHeight: 0.1,
                       readOnly: true,
-                      onTap: () async{
-                        final result = await AppDialogUtil.showScrollableBottomSheet(
+                      onTap: () async {
+                        final result =
+                            await AppDialogUtil.showScrollableBottomSheet(
                           context: context,
                           builder: (context) => const SearchBanksModal(),
                         );
-                        if(result != null){
-                          bankController.text = (result as BankModel).name?? '';
+                        if (result != null) {
+                          bankController.text =
+                              (result as BankModel).name ?? '';
                           selectedBank = result;
-                          if(bankController.text.isNotEmpty && accountNumberController.text.isNotEmpty){
-                            if(!mounted) result;
-                            await enquireAccountName(accountNumberController.text, result.bankCode?? '');
+                          if (bankController.text.isNotEmpty &&
+                              accountNumberController.text.isNotEmpty) {
+                            if (!mounted) result;
+                            await enquireAccountName(
+                                accountNumberController.text,
+                                result.code ?? '');
                           }
                         }
                       },
@@ -118,16 +129,18 @@ class _BankAccountModalState extends State<BankAccountModal> {
                         ],
                       ),
                     ),
-
                     const VSpace(height: 24.0),
                     const FormLabel(text: 'Account Number'),
                     const VSpace(height: 8.0),
-
                     FocusScope(
                       child: Focus(
-                        onFocusChange: (focus) async{
-                          if(!focus && (accountNumberController.text.isNotEmpty && bankController.text.isNotEmpty)){
-                            await enquireAccountName(accountNumberController.text, selectedBank?.bankCode?? '');
+                        onFocusChange: (focus) async {
+                          if (!focus &&
+                              (accountNumberController.text.isNotEmpty &&
+                                  bankController.text.isNotEmpty)) {
+                            await enquireAccountName(
+                                accountNumberController.text,
+                                selectedBank?.code ?? '');
                           }
                         },
                         child: AppInputField(
@@ -135,39 +148,47 @@ class _BankAccountModalState extends State<BankAccountModal> {
                           controller: accountNumberController,
                           focusNode: accountNumberFocusNode,
                           validator: (value) {
-                            if (value!.isEmpty) return 'Enter your bank account number';
+                            if (value!.isEmpty)
+                              return 'Enter your bank account number';
                             return null;
                           },
                           helperHeight: 0.1,
-                          suffixIcon: BaseView<TransactionViewModel>(
+                          suffixIcon: BaseView<TransactionProvider>(
                               builder: (context, transactionConsumer, child) {
-                              return transactionConsumer.getComponentLoading('resolution')?
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const ZLoading().paddingOnly(right: 16.0),
-                                ],
-                              ) : const SizedBox.shrink();
-                            }
-                          ),
+                            return transactionConsumer
+                                    .isComponentLoading('resolution')
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const ZLoading().paddingOnly(right: 16.0),
+                                    ],
+                                  )
+                                : const SizedBox.shrink();
+                          }),
                         ),
                       ),
                     ),
-
-                    BaseView<TransactionViewModel>(
-                      builder: (context, transactionConsumer, child){
-                        if(transactionConsumer.getAccountNameDetail['accountName'] == null) return const SizedBox.shrink();
+                    BaseView<TransactionProvider>(
+                      builder: (context, transactionConsumer, child) {
+                        if (transactionConsumer
+                                .getAccountNameDetail['accountName'] ==
+                            null) return const SizedBox.shrink();
                         return Container(
                           padding: EdgeInsets.all(AppThemeUtil.radius(16.0)),
                           decoration: BoxDecoration(
                               color: kSuccess100,
-                              borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0))
-                          ),
+                              borderRadius: BorderRadius.circular(
+                                  AppThemeUtil.radius(12.0))),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(transactionConsumer.getAccountNameDetail['accountName']?? '').semiBold().fontSize(14.0).color(kGrey1200),
+                              Text(transactionConsumer.getAccountNameDetail[
+                                          'accountName'] ??
+                                      '')
+                                  .semiBold()
+                                  .fontSize(14.0)
+                                  .color(kGrey1200),
                               Icon(
                                 Icons.check_circle,
                                 color: kSuccess700,
@@ -178,34 +199,39 @@ class _BankAccountModalState extends State<BankAccountModal> {
                         );
                       },
                     ),
-
                     const VSpace(height: 32.0),
                     AppPrimaryButton(
-                      onPressed: () async{
-                        final transactionProvider = context.read<TransactionViewModel>();
-                        if(transactionProvider.getComponentLoading('resolution')) return;
+                      onPressed: () async {
+                        final transactionProvider =
+                            context.read<TransactionProvider>();
+                        if (transactionProvider
+                            .isComponentLoading('resolution')) return;
 
-                        if(formKey.currentState!.validate()) {
+                        if (formKey.currentState!.validate()) {
                           if (widget.update) {
                             return;
                           }
-                          if(transactionProvider.getAccountNameDetail['accountName'] == null){
-                            AppDialogUtil.showWarningAlert(context, 'Your account name is not verified');
+                          if (transactionProvider
+                                  .getAccountNameDetail['accountName'] ==
+                              null) {
+                            AppDialogUtil.showWarningAlert(
+                                context, 'Your account name is not verified');
                             return;
                           }
 
-                          await context.read<UserViewModel>().saveWallet(
-                            context,
-                            requestBody: {
-                              "accountNumber": accountNumberController.text,
-                              "accountName": transactionProvider.getAccountNameDetail['accountName'],
-                              "sortCode": selectedBank?.sortCode,
-                              "bankCode": selectedBank?.bankCode
-                            },
-                          );
+                          await context.read<WalletProvider>().createWallet(
+                                context,
+                                WalletModel(
+                                  accountNumber: accountNumberController.text,
+                                  accountName: transactionProvider
+                                      .getAccountNameDetail['accountName'],
+                                  bankCode: selectedBank?.code,
+                                  bankName: selectedBank?.name,
+                                ),
+                              );
                         }
                       },
-                      text: widget.update? 'Update Bank' : "Add Bank",
+                      text: widget.update ? 'Update Bank' : "Add Bank",
                       minWidth: double.infinity,
                     ),
                   ],
@@ -218,14 +244,8 @@ class _BankAccountModalState extends State<BankAccountModal> {
     );
   }
 
-  Future<void> enquireAccountName(String accountNumber, String bankCode) async{
-    await context.read<TransactionViewModel>().enquireAccountName(
-      context,
-      queryParam: {
-        'accountNumber': accountNumber,
-        'bankCode': bankCode,
-      }
-    );
+  Future<void> enquireAccountName(String accountNumber, String bankCode) async {
+    await context.read<TransactionProvider>().enquireAccountName(context,
+        accountNumber: accountNumber, bankCode: bankCode);
   }
-
 }

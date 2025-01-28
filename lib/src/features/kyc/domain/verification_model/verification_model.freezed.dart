@@ -20,6 +20,7 @@ VerificationModel _$VerificationModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$VerificationModel {
+  String? get uid => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   String? get idNumber => throw _privateConstructorUsedError;
   String? get documentUrl => throw _privateConstructorUsedError;
@@ -45,7 +46,8 @@ abstract class $VerificationModelCopyWith<$Res> {
       _$VerificationModelCopyWithImpl<$Res, VerificationModel>;
   @useResult
   $Res call(
-      {String? externalId,
+      {String? uid,
+      String? externalId,
       String? idNumber,
       String? documentUrl,
       String? selfieUrl,
@@ -69,6 +71,7 @@ class _$VerificationModelCopyWithImpl<$Res, $Val extends VerificationModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? idNumber = freezed,
     Object? documentUrl = freezed,
@@ -78,6 +81,10 @@ class _$VerificationModelCopyWithImpl<$Res, $Val extends VerificationModel>
     Object? rejectionReason = freezed,
   }) {
     return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -119,7 +126,8 @@ abstract class _$$VerificationModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String? externalId,
+      {String? uid,
+      String? externalId,
       String? idNumber,
       String? documentUrl,
       String? selfieUrl,
@@ -141,6 +149,7 @@ class __$$VerificationModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? idNumber = freezed,
     Object? documentUrl = freezed,
@@ -150,6 +159,10 @@ class __$$VerificationModelImplCopyWithImpl<$Res>
     Object? rejectionReason = freezed,
   }) {
     return _then(_$VerificationModelImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -186,7 +199,8 @@ class __$$VerificationModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$VerificationModelImpl implements _VerificationModel {
   const _$VerificationModelImpl(
-      {this.externalId,
+      {this.uid,
+      this.externalId,
       this.idNumber,
       this.documentUrl,
       this.selfieUrl,
@@ -197,6 +211,8 @@ class _$VerificationModelImpl implements _VerificationModel {
   factory _$VerificationModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$VerificationModelImplFromJson(json);
 
+  @override
+  final String? uid;
   @override
   final String? externalId;
   @override
@@ -214,7 +230,7 @@ class _$VerificationModelImpl implements _VerificationModel {
 
   @override
   String toString() {
-    return 'VerificationModel(externalId: $externalId, idNumber: $idNumber, documentUrl: $documentUrl, selfieUrl: $selfieUrl, type: $type, status: $status, rejectionReason: $rejectionReason)';
+    return 'VerificationModel(uid: $uid, externalId: $externalId, idNumber: $idNumber, documentUrl: $documentUrl, selfieUrl: $selfieUrl, type: $type, status: $status, rejectionReason: $rejectionReason)';
   }
 
   @override
@@ -222,6 +238,7 @@ class _$VerificationModelImpl implements _VerificationModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$VerificationModelImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.idNumber, idNumber) ||
@@ -238,7 +255,7 @@ class _$VerificationModelImpl implements _VerificationModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, externalId, idNumber,
+  int get hashCode => Object.hash(runtimeType, uid, externalId, idNumber,
       documentUrl, selfieUrl, type, status, rejectionReason);
 
   /// Create a copy of VerificationModel
@@ -260,7 +277,8 @@ class _$VerificationModelImpl implements _VerificationModel {
 
 abstract class _VerificationModel implements VerificationModel {
   const factory _VerificationModel(
-      {final String? externalId,
+      {final String? uid,
+      final String? externalId,
       final String? idNumber,
       final String? documentUrl,
       final String? selfieUrl,
@@ -271,6 +289,8 @@ abstract class _VerificationModel implements VerificationModel {
   factory _VerificationModel.fromJson(Map<String, dynamic> json) =
       _$VerificationModelImpl.fromJson;
 
+  @override
+  String? get uid;
   @override
   String? get externalId;
   @override

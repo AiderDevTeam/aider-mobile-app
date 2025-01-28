@@ -8,17 +8,18 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
-import 'package:aider_mobile_app/core/view_models/base_view.dart';
+import 'package:aider_mobile_app/core/providers/base_view.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/aider_empty_state.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/common.dart';
+import '../../../../../core/providers/wallet_provider.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
-import '../../../transaction/presentation/view_models/transaction_view_model.dart';
+import '../../../transaction/presentation/providers/transaction_provider.dart';
 
 class SearchBanksModal extends StatefulWidget {
   const SearchBanksModal({super.key});
@@ -35,8 +36,8 @@ class _SearchBanksModalState extends State<SearchBanksModal> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(!mounted) return;
-      context.read<TransactionViewModel>().fetchBanks();
+      if (!mounted) return;
+      context.read<TransactionProvider>().fetchBanks();
     });
     super.initState();
   }
@@ -69,33 +70,41 @@ class _SearchBanksModalState extends State<SearchBanksModal> {
                 helperHeight: 0.1,
               ).paddingSymmetric(horizontal: kWidthPadding),
               const VSpace(height: 16),
-              BaseView<TransactionViewModel>(
-                builder: (context, transactionConsumer, child) {
-                  if(transactionConsumer.getBanks.isEmpty){
-                    return const AiderEmptyState(
-                      title: '',
-                      subtitle: 'Search for your bank',
-                    ).paddingOnly(top: 40);
-                  }
-                  return ListView.builder(
-                    itemCount: transactionConsumer.getBanks.length,
-                    itemBuilder: (context, index){
-                      final bank = transactionConsumer.getBanks[index];
-                      return Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          vertical: AppThemeUtil.height(12.0),
-                          horizontal: AppThemeUtil.width(20.0)
-                        ),
-                        color: kGrey50,
-                        child: Text(bank.name?? '').regular().fontSize(16).color(kGrey1200),
-                      ).onPressed((){
-                        AppNavigator.pop(context, bank);
-                      }).alignCenterLeft().paddingOnly(bottom: 8);
-                    },
-                  ).expanded();
+              BaseView<TransactionProvider>(
+                  builder: (context, transactionConsumer, child) {
+                final filteredBanks =
+                    transactionConsumer.getFilteredBanks(searchController.text);
+                if (filteredBanks.isEmpty) {
+                  return const AiderEmptyState(
+                    title: '',
+                    subtitle: 'Search for your bank',
+                  ).paddingOnly(top: 40);
                 }
-              ),
+                return ListView.builder(
+                  itemCount: filteredBanks.length,
+                  itemBuilder: (context, index) {
+                    final bank = filteredBanks[index];
+                    return Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(
+                          horizontal: AppThemeUtil.width(8.0)),
+                      padding: EdgeInsets.symmetric(
+                          vertical: AppThemeUtil.height(12.0),
+                          horizontal: AppThemeUtil.width(20.0)),
+                      color: kGrey50,
+                      child: Text(bank.name ?? '')
+                          .regular()
+                          .fontSize(16)
+                          .color(kGrey1200),
+                    )
+                        .onPressed(() {
+                          AppNavigator.pop(context, bank);
+                        })
+                        .alignCenterLeft()
+                        .paddingOnly(bottom: 8);
+                  },
+                ).expanded();
+              }),
             ],
           ),
         );
@@ -105,9 +114,8 @@ class _SearchBanksModalState extends State<SearchBanksModal> {
 
   _onSearchChanged(String? query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      context.read<TransactionViewModel>().emitBanks(query);
-      context.read<TransactionViewModel>().fetchBanks();
+    _debounce = Timer(const Duration(milliseconds: 100), () {
+      setState(() {}); // Trigger rebuild to update filtered results
     });
   }
 }

@@ -20,13 +20,13 @@ WalletModel _$WalletModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$WalletModel {
-  int? get id => throw _privateConstructorUsedError;
+  String? get uid => throw _privateConstructorUsedError;
+  String? get userId => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   String? get bankName => throw _privateConstructorUsedError;
   String? get bankCode => throw _privateConstructorUsedError;
   String? get accountNumber => throw _privateConstructorUsedError;
   String? get accountName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'default')
   bool? get isDefault => throw _privateConstructorUsedError;
 
   /// Serializes this WalletModel to a JSON map.
@@ -46,13 +46,14 @@ abstract class $WalletModelCopyWith<$Res> {
       _$WalletModelCopyWithImpl<$Res, WalletModel>;
   @useResult
   $Res call(
-      {int? id,
+      {String? uid,
+      String? userId,
       String? externalId,
       String? bankName,
       String? bankCode,
       String? accountNumber,
       String? accountName,
-      @JsonKey(name: 'default') bool? isDefault});
+      bool? isDefault});
 }
 
 /// @nodoc
@@ -70,7 +71,8 @@ class _$WalletModelCopyWithImpl<$Res, $Val extends WalletModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? uid = freezed,
+    Object? userId = freezed,
     Object? externalId = freezed,
     Object? bankName = freezed,
     Object? bankCode = freezed,
@@ -79,10 +81,14 @@ class _$WalletModelCopyWithImpl<$Res, $Val extends WalletModel>
     Object? isDefault = freezed,
   }) {
     return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -120,13 +126,14 @@ abstract class _$$WalletModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {String? uid,
+      String? userId,
       String? externalId,
       String? bankName,
       String? bankCode,
       String? accountNumber,
       String? accountName,
-      @JsonKey(name: 'default') bool? isDefault});
+      bool? isDefault});
 }
 
 /// @nodoc
@@ -142,7 +149,8 @@ class __$$WalletModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = freezed,
+    Object? uid = freezed,
+    Object? userId = freezed,
     Object? externalId = freezed,
     Object? bankName = freezed,
     Object? bankCode = freezed,
@@ -151,10 +159,14 @@ class __$$WalletModelImplCopyWithImpl<$Res>
     Object? isDefault = freezed,
   }) {
     return _then(_$WalletModelImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -187,19 +199,22 @@ class __$$WalletModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WalletModelImpl implements _WalletModel {
   const _$WalletModelImpl(
-      {this.id,
+      {this.uid,
+      this.userId,
       this.externalId,
       this.bankName,
       this.bankCode,
       this.accountNumber,
       this.accountName,
-      @JsonKey(name: 'default') this.isDefault});
+      this.isDefault});
 
   factory _$WalletModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$WalletModelImplFromJson(json);
 
   @override
-  final int? id;
+  final String? uid;
+  @override
+  final String? userId;
   @override
   final String? externalId;
   @override
@@ -211,12 +226,11 @@ class _$WalletModelImpl implements _WalletModel {
   @override
   final String? accountName;
   @override
-  @JsonKey(name: 'default')
   final bool? isDefault;
 
   @override
   String toString() {
-    return 'WalletModel(id: $id, externalId: $externalId, bankName: $bankName, bankCode: $bankCode, accountNumber: $accountNumber, accountName: $accountName, isDefault: $isDefault)';
+    return 'WalletModel(uid: $uid, userId: $userId, externalId: $externalId, bankName: $bankName, bankCode: $bankCode, accountNumber: $accountNumber, accountName: $accountName, isDefault: $isDefault)';
   }
 
   @override
@@ -224,7 +238,8 @@ class _$WalletModelImpl implements _WalletModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$WalletModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.bankName, bankName) ||
@@ -241,8 +256,8 @@ class _$WalletModelImpl implements _WalletModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, externalId, bankName,
-      bankCode, accountNumber, accountName, isDefault);
+  int get hashCode => Object.hash(runtimeType, uid, userId, externalId,
+      bankName, bankCode, accountNumber, accountName, isDefault);
 
   /// Create a copy of WalletModel
   /// with the given fields replaced by the non-null parameter values.
@@ -262,19 +277,22 @@ class _$WalletModelImpl implements _WalletModel {
 
 abstract class _WalletModel implements WalletModel {
   const factory _WalletModel(
-      {final int? id,
+      {final String? uid,
+      final String? userId,
       final String? externalId,
       final String? bankName,
       final String? bankCode,
       final String? accountNumber,
       final String? accountName,
-      @JsonKey(name: 'default') final bool? isDefault}) = _$WalletModelImpl;
+      final bool? isDefault}) = _$WalletModelImpl;
 
   factory _WalletModel.fromJson(Map<String, dynamic> json) =
       _$WalletModelImpl.fromJson;
 
   @override
-  int? get id;
+  String? get uid;
+  @override
+  String? get userId;
   @override
   String? get externalId;
   @override
@@ -286,7 +304,6 @@ abstract class _WalletModel implements WalletModel {
   @override
   String? get accountName;
   @override
-  @JsonKey(name: 'default')
   bool? get isDefault;
 
   /// Create a copy of WalletModel

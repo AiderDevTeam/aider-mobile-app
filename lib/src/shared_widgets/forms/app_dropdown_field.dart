@@ -48,15 +48,13 @@ class AppDropdownField extends StatelessWidget {
             color: AppThemeUtil.getThemeColor(kPrimaryBlack),
           ),
         ),
-        // value: selectedItem,
+        valueListenable: ValueNotifier(selectedItem),
         validator: validator,
         onChanged: onChanged,
         decoration: InputDecoration(
           helperText: ' ',
           helperStyle: kRegularFontStyle.copyWith(
-            fontSize: AppThemeUtil.fontSize(14.0),
-            height: 0.01
-          ),
+              fontSize: AppThemeUtil.fontSize(14.0), height: 0.01),
           errorStyle: kRegularFontStyle.copyWith(
             fontSize: AppThemeUtil.fontSize(12.0),
             color: AppThemeUtil.getThemeColor(kError600),
@@ -66,29 +64,39 @@ class AppDropdownField extends StatelessWidget {
             vertical: AppThemeUtil.height(14.0),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
-            borderSide: BorderSide(color: AppThemeUtil.getThemeColor(kError600), width: 1.0),
+            borderRadius:
+                BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
+            borderSide: BorderSide(
+                color: AppThemeUtil.getThemeColor(kError600), width: 1.0),
           ),
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: AppThemeUtil.getThemeColor(kGrey300), width: 1.0),
-            borderRadius: BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
+            borderSide: BorderSide(
+                color: AppThemeUtil.getThemeColor(kGrey300), width: 1.0),
+            borderRadius:
+                BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppThemeUtil.getThemeColor(kGrey300), width: 1.0),
-            borderRadius: BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
+            borderSide: BorderSide(
+                color: AppThemeUtil.getThemeColor(kGrey300), width: 1.0),
+            borderRadius:
+                BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: AppThemeUtil.getThemeColor(kPrimaryBlack), width: 1.0),
-            borderRadius: BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
+            borderSide: BorderSide(
+                color: AppThemeUtil.getThemeColor(kPrimaryBlack), width: 1.0),
+            borderRadius:
+                BorderRadius.all(Radius.circular(AppThemeUtil.radius(12.0))),
           ),
         ),
-
         dropdownStyleData: DropdownStyleData(
           maxHeight: dropdownMaxHeight,
-          width: (MediaQuery.of(context).size.width-(kWidthPadding+kWidthPadding)),
+          width: (MediaQuery.of(context).size.width -
+              (kWidthPadding + kWidthPadding)),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppThemeUtil.radius(16)),
-            border: Border.all(color: AppThemeUtil.getThemeColor(kGrey200),),
+            border: Border.all(
+              color: AppThemeUtil.getThemeColor(kGrey200),
+            ),
             color: AppThemeUtil.getThemeColor(kPrimaryWhite),
             boxShadow: const [
               BoxShadow(
@@ -99,14 +107,16 @@ class AppDropdownField extends StatelessWidget {
               ),
             ],
           ),
-          offset: dropDownOffset?? const Offset(0, -8),
+          offset: dropDownOffset ?? const Offset(0, -8),
         ),
-        items: listItems.map((obj) => DropdownItem<String>(
-          value: obj,
-          child: Text(
-            obj,
-          ).semiBold().fontSize(14.0).color(kPrimaryBlack),
-        )).toList(),
+        items: listItems
+            .map((obj) => DropdownItem<String>(
+                  value: obj,
+                  child: Text(
+                    obj,
+                  ).semiBold().fontSize(14.0).color(kPrimaryBlack),
+                ))
+            .toList(),
       ),
     );
   }

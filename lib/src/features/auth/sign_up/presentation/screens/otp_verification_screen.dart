@@ -2,7 +2,8 @@ import 'package:aider_mobile_app/core/extensions/widgets/align_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
-import 'package:aider_mobile_app/core/view_models/user_view_model.dart';
+import 'package:aider_mobile_app/core/providers/auth_provider.dart';
+import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,20 +36,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   bool isResendBtnEnabled = false;
   String otpCode = '';
 
-
   Future<void> verifyOTP(String otp) async {
     if (otp == otpCode) {
-      if(!mounted) return;
-      final otpData = context.read<UserViewModel>().getOTPData;
-      if(otpData['action'] == kSignupAction){
+      if (!mounted) return;
+      final otpData = context.read<AuthProvider>().getOTPData;
+      if (otpData['action'] == kSignupAction) {
         signup();
         return;
       }
-      if(otpData['action'] == kResetPassAction){
+      if (otpData['action'] == kResetPassAction) {
         resetPassword();
         return;
       }
-
     } else {
       AppDialogUtil.popUpModal(
         context,
@@ -59,23 +58,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     }
   }
 
-
-
-  void onEnd(){
-    if(!mounted) return;
-    setState(() => isResendBtnEnabled = true );
+  void onEnd() {
+    if (!mounted) return;
+    setState(() => isResendBtnEnabled = true);
   }
 
   @override
   void initState() {
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * initialSeconds;
-    otpCode = widget.otpCode?? '';
+    otpCode = widget.otpCode ?? '';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final otpData = context.read<UserViewModel>().getOTPData;
+    final otpData = context.read<AuthProvider>().getOTPData;
     return AppScreenScaffold(
       appBar: false,
       hasBottomBorder: false,
@@ -85,14 +82,24 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const VSpace(height: 32.0),
-            const Text('OTP Verification').semiBold().color(kBlack.withOpacity(0.8)).fontSize(28.0).letterSpacing(-0.31).alignCenter(),
+            const Text('OTP Verification')
+                .semiBold()
+                .color(kBlack.withOpacity(0.8))
+                .fontSize(28.0)
+                .letterSpacing(-0.31)
+                .alignCenter(),
             const VSpace(height: 110.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
                   'We\'ve sent you an OTP verification\nto your email',
-                ).regular().fontSize(20).color(kPrimaryBlack).letterSpacing(-1.1).alignText(TextAlign.center),
+                )
+                    .regular()
+                    .fontSize(20)
+                    .color(kPrimaryBlack)
+                    .letterSpacing(-1.1)
+                    .alignText(TextAlign.center),
               ],
             ),
             // Row(
@@ -122,45 +129,48 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 ),
                 const VSpace(height: 32.0),
                 GestureDetector(
-                  onTap: isResendBtnEnabled? () async{
-                    final userProvider = context.read<UserViewModel>();
-                    setState(() {
-                      isResendBtnEnabled = false;
-                      if (initialSeconds == 60) {
-                        initialSeconds = timerIncrement;
-                      } else {
-                        initialSeconds += timerIncrement;
-                      }
-                    });
-                    if(otpData['action'] == kResetPassAction){
-                      await userProvider.forgotPassword(
-                        context,
-                        requestBody: {
-                          "email": userProvider.getOTPData['email'],
-                        },
-                      );
-                    }
+                  onTap: isResendBtnEnabled
+                      ? () async {
+                          final authProvider = context.read<AuthProvider>();
+                          setState(() {
+                            isResendBtnEnabled = false;
+                            if (initialSeconds == 60) {
+                              initialSeconds = timerIncrement;
+                            } else {
+                              initialSeconds += timerIncrement;
+                            }
+                          });
+                          if (otpData['action'] == kResetPassAction) {
+                            await authProvider.forgotPassword(
+                              context,
+                              email: authProvider.getOTPData['email'],
+                            );
+                          }
 
-                    if(!mounted) return;
-                    setState(() {
-                      endTime = DateTime.now().millisecondsSinceEpoch + 1000 * initialSeconds;
-                      isResendBtnEnabled = false;
-                      otpCode = userProvider.getResendOtpCode;
-                    });
-
-                  }: null,
+                          if (!mounted) return;
+                          setState(() {
+                            endTime = DateTime.now().millisecondsSinceEpoch +
+                                1000 * initialSeconds;
+                            isResendBtnEnabled = false;
+                            otpCode = authProvider.getOTPData['otp'];
+                          });
+                        }
+                      : null,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
                         'Didn\'t receive a code? ',
-                      ).regular().fontSize(16).color(kGrey400).letterSpacing(-0.18).alignText(TextAlign.center),
-
+                      )
+                          .regular()
+                          .fontSize(16)
+                          .color(kGrey400)
+                          .letterSpacing(-0.18)
+                          .alignText(TextAlign.center),
                       AppCountDown(
                         endTime: endTime,
                         onEnd: onEnd,
                       ),
-
                     ],
                   ),
                 ),
@@ -173,13 +183,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     );
   }
 
-
-  void signup(){
+  void signup() {
     AppNavigator.pushReplacementNamed(context, AppRoute.personalDetailScreen);
   }
 
-  void resetPassword(){
+  void resetPassword() {
     AppNavigator.pushReplacementNamed(context, AppRoute.resetPasswordScreen);
   }
-
 }

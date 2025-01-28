@@ -1,4 +1,3 @@
-
 import 'package:aider_mobile_app/core/auth/domain/models/statistics/statistic_model.dart';
 import 'package:aider_mobile_app/src/features/kyc/domain/verification_model/verification_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -14,12 +13,14 @@ class UserModel with _$UserModel {
   const UserModel._();
   const factory UserModel({
     final int? id,
+    final String? uid,
     final String? externalId,
     final String? firstName,
     final String? lastName,
     final String? displayName,
     final String? gender,
     final String? email,
+    final String? password,
     final String? callingCode,
     final String? phone,
     final String? birthday,
@@ -35,6 +36,10 @@ class UserModel with _$UserModel {
     final bool? canReceiveEmailUpdates,
     final bool? canReceivePushNotifications,
     final bool? hasDefaultWallet,
+    final String? pushNotificationToken,
+    final String? userTypeId,
+    final bool? termsAndConditions,
+    final String? deviceOs,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -44,16 +49,15 @@ class UserModel with _$UserModel {
 
   VerificationModel? get userIdentification => userIdentifications?.first;
 
-  String get fullName => '${firstName?? ''} ${lastName?? ''}';
+  String get fullName => '${firstName ?? ''} ${lastName ?? ''}';
 
-  String get greetingName{
-    if((firstName?? '').isEmpty) return '';
-    final splitNameList = (firstName?? '').replaceAll('-', ' ').split(' ');
+  String get greetingName {
+    if ((firstName ?? '').isEmpty) return '';
+    final splitNameList = (firstName ?? '').replaceAll('-', ' ').split(' ');
     return splitNameList.first;
   }
 
-  bool get hasProfilePhoto => (profilePhotoUrl?? '').isNotEmpty;
+  bool get hasProfilePhoto => (profilePhotoUrl ?? '').isNotEmpty;
 
   bool get userHasWallet => hasDefaultWallet ?? false;
-
 }

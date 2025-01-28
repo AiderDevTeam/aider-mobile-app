@@ -5,6 +5,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
+import 'package:aider_mobile_app/core/providers/auth_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_keyboard_action.dart';
@@ -18,8 +19,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../../../core/constants/colors.dart';
 import '../../../../../../core/utils/app_theme_util.dart';
-import '../../../../../../core/view_models/base_view.dart';
-import '../../../../../../core/view_models/user_view_model.dart';
+import '../../../../../../core/providers/base_view.dart';
+import '../../../../../../core/providers/user_provider.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/common/linear_percent_indicator.dart';
 import '../../../../../shared_widgets/common/zloading.dart';
@@ -42,8 +43,8 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final signUpRequest = context.read<UserViewModel>().getSignupRequestBody;
-      phoneNumberController.text = signUpRequest['phone']?? '';
+      final signUpRequest = context.read<AuthProvider>().getSignupRequestBody;
+      phoneNumberController.text = signUpRequest.phone ?? '';
     });
     super.initState();
   }
@@ -61,19 +62,18 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       title: 'Create an account',
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
-          onPressed: () async{
+          onPressed: () async {
             if (formKey.currentState!.validate()) {
-              final userProvider = context.read<UserViewModel>();
-              userProvider.setOTPData({
+              final authProvider = context.read<AuthProvider>();
+
+              authProvider.setOTPData({
                 'action': kSignupAction,
                 "email": emailController.text,
               });
 
-              await userProvider.signUpOTP(
+              await authProvider.signUpOTP(
                 context,
-                requestBody: {
-                  "email": emailController.text,
-                },
+                email: emailController.text,
               );
             } else {
               setState(() => autoValidate = AutovalidateMode.onUserInteraction);
@@ -105,7 +105,10 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                     padding: EdgeInsets.zero,
                     barRadius: const Radius.circular(100),
                   ).flexible(),
-                  const Text('1/3').extraBold().fontSize(20).color(kPrimaryBlack),
+                  const Text('1/3')
+                      .extraBold()
+                      .fontSize(20)
+                      .color(kPrimaryBlack),
                 ],
               ),
               const VSpace(height: 48.0),
@@ -123,58 +126,72 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                   children: [
                     const FormLabel(text: 'Email'),
                     const VSpace(height: 8.0),
-                    BaseView<UserViewModel>(
+                    BaseView<UserProvider>(
                         builder: (context, userConsumer, child) {
-                          return AppInputField(
-                            hintText: 'Enter email',
-                            keyboardType: TextInputType.emailAddress,
-                            controller: emailController,
-                            validator: (value) {
-                              if (value!.isEmpty) return 'Email is required';
-                              if(!value.isValidEmail()){
-                                return 'Email address is invalid';
-                              }
-                              return null;
-                            },
-                            onChanged: (value){
-                              if (_debounce?.isActive ?? false) _debounce?.cancel();
-                              _debounce = Timer(const Duration(seconds: 1), () async {
-                                if (value!.isNotEmpty && value.isValidEmail()) {
-                                  if (userConsumer.getComponentLoading('verifyEmail')) return;
-                                  await context.read<UserViewModel>().verifyEmail(
+                      return AppInputField(
+                        hintText: 'Enter email',
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        validator: (value) {
+                          if (value!.isEmpty) return 'Email is required';
+                          if (!value.isValidEmail()) {
+                            return 'Email address is invalid';
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          if (_debounce?.isActive ?? false) _debounce?.cancel();
+                          _debounce =
+                              Timer(const Duration(seconds: 1), () async {
+                            if (value!.isNotEmpty && value.isValidEmail()) {
+                              if (userConsumer
+                                  .isComponentLoading('verifyEmail')) return;
+                              await context.read<UserProvider>().verifyEmail(
                                     context,
-                                    requestBody: {
-                                      "email": value,
-                                    },
+                                    email: value,
                                   );
-                                }
-                              });
-                            },
-                            suffixIcon: userConsumer.getComponentLoading('verifyEmail')?
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const ZLoading().paddingOnly(right: 16.0),
-                              ],
-                            ) : userConsumer.emailAvailableStatus == 'available'?
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: kSuccess700,
-                                  size: AppThemeUtil.radius(24.0),
-                                ).paddingOnly(right: 16.0),
-                              ],
-                            ) : null,
-                            customBorderColor: (userConsumer.emailAvailableStatus.isNotEmpty && userConsumer.emailAvailableStatus != kAvailable)? kError600:null,
-                            helperText: (userConsumer.emailAvailableStatus.isNotEmpty && userConsumer.emailAvailableStatus != kAvailable)? userConsumer.emailAvailableStatus : ' ',
-                            helperStyleColor: (userConsumer.emailAvailableStatus.isNotEmpty && userConsumer.emailAvailableStatus != kAvailable)? kError600 : null,
-                          );
-                        }
-                    ),
+                            }
+                          });
+                        },
+                        suffixIcon: userConsumer
+                                .isComponentLoading('verifyEmail')
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const ZLoading().paddingOnly(right: 16.0),
+                                ],
+                              )
+                            : userConsumer.emailAvailableStatus == 'available'
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: kSuccess700,
+                                        size: AppThemeUtil.radius(24.0),
+                                      ).paddingOnly(right: 16.0),
+                                    ],
+                                  )
+                                : null,
+                        customBorderColor: (userConsumer
+                                    .emailAvailableStatus.isNotEmpty &&
+                                userConsumer.emailAvailableStatus != kAvailable)
+                            ? kError600
+                            : null,
+                        helperText: (userConsumer
+                                    .emailAvailableStatus.isNotEmpty &&
+                                userConsumer.emailAvailableStatus != kAvailable)
+                            ? userConsumer.emailAvailableStatus
+                            : ' ',
+                        helperStyleColor: (userConsumer
+                                    .emailAvailableStatus.isNotEmpty &&
+                                userConsumer.emailAvailableStatus != kAvailable)
+                            ? kError600
+                            : null,
+                      );
+                    }),
                   ],
                 ),
               )

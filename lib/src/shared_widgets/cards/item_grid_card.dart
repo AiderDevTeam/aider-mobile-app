@@ -25,7 +25,7 @@ class ItemGridView extends StatelessWidget {
       shrinkWrap: true,
       primary: false,
       itemCount: sections.length,
-      itemBuilder: (context, index){
+      itemBuilder: (context, index) {
         final section = sections[index];
         return Column(
           children: [
@@ -38,7 +38,7 @@ class ItemGridView extends StatelessWidget {
             //     onPressed: () {
             //       // sl.get<MixpanelService>().trackAuthEvent(
             //       //     'See All ${(section['name']?? '').toString().ucWords}',
-            //       //     context.read<UserViewModel>().getUser,
+            //       //     context.read<UserViewProvider>().getUser,
             //       //     section: section as Map<String, dynamic>
             //       // );
             //       // if(section['type'] == 'category'){
@@ -61,14 +61,15 @@ class ItemGridView extends StatelessWidget {
               leftWidget: const Text('Top categories')
                   .bold()
                   .fontSize(20)
-                  .letterSpacing(-0.22).overflowText(TextOverflow.ellipsis).flexible(),
+                  .letterSpacing(-0.22)
+                  .overflowText(TextOverflow.ellipsis)
+                  .flexible(),
               rightWidget: AppTextButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 text: "See all",
               ).paddingOnly(left: 8.0),
             ),
-            if(section['type'] == 'top categories')...[
+            if (section['type'] == 'top categories') ...[
               // const CategoriesCard(subCategories: [],)
               // Wrap(
               //   spacing: 16,
@@ -101,7 +102,7 @@ class ItemGridView extends StatelessWidget {
               // ),
             ],
 
-            if(section['type'] == 'banner')...[
+            if (section['type'] == 'banner') ...[
               AppCard(
                 width: double.infinity,
                 height: AppThemeUtil.height(350),
@@ -119,13 +120,16 @@ class ItemGridView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Text("Party prep and setup").semiBold().fontSize(24).height(30, 24),
+                    const Text("Party prep and setup")
+                        .semiBold()
+                        .fontSize(24)
+                        .height(30, 24),
                     const VSpace(height: 12),
                     AppPrimaryButton(
                       text: "See Listings",
                       minWidth: AppThemeUtil.width(111),
                       // height: AppThemeUtil.height(36),
-                      onPressed: (){},
+                      onPressed: () {},
                       color: kPrimaryWhite,
                       textColor: kPrimaryBlack,
                       borderColor: kGrey700,
@@ -134,14 +138,14 @@ class ItemGridView extends StatelessWidget {
                 ),
               ),
             ],
-            if(section['type'] == 'shop')...[
+            if (section['type'] == 'shop') ...[
               // ShopHorizontalListView(section: section),
             ],
-            if(section['type'] == 'product')...[
+            if (section['type'] == 'product') ...[
               // SectionProductGridView(section: section),
             ]
           ],
-        ).paddingOnly(bottom: index== sections.length? 0.0: 20.0);
+        ).paddingOnly(bottom: index == sections.length ? 0.0 : 20.0);
       },
     );
   }

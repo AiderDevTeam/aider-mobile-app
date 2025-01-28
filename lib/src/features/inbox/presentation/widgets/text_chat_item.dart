@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/text_style.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/cards/app_card.dart';
 import '../../../../shared_widgets/common/h_space.dart';
 import '../../../../shared_widgets/common/svg_icon.dart';
@@ -32,7 +32,10 @@ class TextChatItem extends StatelessWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: message.senderExternalId == context.read<UserViewModel>().getUser.externalId? message.senderMessage.toString() : message.receiverMessage.toString(),
+              text: message.senderExternalId ==
+                      context.read<UserProvider>().getUser.externalId
+                  ? message.senderMessage.toString()
+                  : message.receiverMessage.toString(),
               style: kBoldFontStyle.copyWith(
                 fontSize: AppThemeUtil.radius(14),
                 color: kGrey1200,

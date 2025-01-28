@@ -21,6 +21,7 @@ AddressModel _$AddressModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AddressModel {
   int? get id => throw _privateConstructorUsedError;
+  String? get uid => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   String? get city => throw _privateConstructorUsedError;
   String? get originName => throw _privateConstructorUsedError;
@@ -47,6 +48,7 @@ abstract class $AddressModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      String? uid,
       String? externalId,
       String? city,
       String? originName,
@@ -72,6 +74,7 @@ class _$AddressModelCopyWithImpl<$Res, $Val extends AddressModel>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? city = freezed,
     Object? originName = freezed,
@@ -85,6 +88,10 @@ class _$AddressModelCopyWithImpl<$Res, $Val extends AddressModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -127,6 +134,7 @@ abstract class _$$AddressModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
+      String? uid,
       String? externalId,
       String? city,
       String? originName,
@@ -150,6 +158,7 @@ class __$$AddressModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? city = freezed,
     Object? originName = freezed,
@@ -163,6 +172,10 @@ class __$$AddressModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -200,6 +213,7 @@ class __$$AddressModelImplCopyWithImpl<$Res>
 class _$AddressModelImpl implements _AddressModel {
   const _$AddressModelImpl(
       {this.id,
+      this.uid,
       this.externalId,
       this.city,
       this.originName,
@@ -213,6 +227,8 @@ class _$AddressModelImpl implements _AddressModel {
 
   @override
   final int? id;
+  @override
+  final String? uid;
   @override
   final String? externalId;
   @override
@@ -230,7 +246,7 @@ class _$AddressModelImpl implements _AddressModel {
 
   @override
   String toString() {
-    return 'AddressModel(id: $id, externalId: $externalId, city: $city, originName: $originName, country: $country, countryCode: $countryCode, latitude: $latitude, longitude: $longitude)';
+    return 'AddressModel(id: $id, uid: $uid, externalId: $externalId, city: $city, originName: $originName, country: $country, countryCode: $countryCode, latitude: $latitude, longitude: $longitude)';
   }
 
   @override
@@ -239,6 +255,7 @@ class _$AddressModelImpl implements _AddressModel {
         (other.runtimeType == runtimeType &&
             other is _$AddressModelImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.city, city) || other.city == city) &&
@@ -255,8 +272,8 @@ class _$AddressModelImpl implements _AddressModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, externalId, city, originName,
-      country, countryCode, latitude, longitude);
+  int get hashCode => Object.hash(runtimeType, id, uid, externalId, city,
+      originName, country, countryCode, latitude, longitude);
 
   /// Create a copy of AddressModel
   /// with the given fields replaced by the non-null parameter values.
@@ -277,6 +294,7 @@ class _$AddressModelImpl implements _AddressModel {
 abstract class _AddressModel implements AddressModel {
   const factory _AddressModel(
       {final int? id,
+      final String? uid,
       final String? externalId,
       final String? city,
       final String? originName,
@@ -290,6 +308,8 @@ abstract class _AddressModel implements AddressModel {
 
   @override
   int? get id;
+  @override
+  String? get uid;
   @override
   String? get externalId;
   @override

@@ -8,22 +8,24 @@ part of 'wallet_model.dart';
 
 _$WalletModelImpl _$$WalletModelImplFromJson(Map<String, dynamic> json) =>
     _$WalletModelImpl(
-      id: (json['id'] as num?)?.toInt(),
+      uid: json['uid'] as String?,
+      userId: json['userId'] as String?,
       externalId: json['externalId'] as String?,
       bankName: json['bankName'] as String?,
       bankCode: json['bankCode'] as String?,
       accountNumber: json['accountNumber'] as String?,
       accountName: json['accountName'] as String?,
-      isDefault: json['default'] as bool?,
+      isDefault: json['isDefault'] as bool?,
     );
 
 Map<String, dynamic> _$$WalletModelImplToJson(_$WalletModelImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'uid': instance.uid,
+      'userId': instance.userId,
       'externalId': instance.externalId,
       'bankName': instance.bankName,
       'bankCode': instance.bankCode,
       'accountNumber': instance.accountNumber,
       'accountName': instance.accountName,
-      'default': instance.isDefault,
+      'isDefault': instance.isDefault,
     };

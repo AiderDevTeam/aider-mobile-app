@@ -9,8 +9,8 @@ import '../../../../../core/constants/colors.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../shared_widgets/common/h_space.dart';
@@ -42,12 +42,13 @@ class AfterVerification extends StatelessWidget {
           AppNavigator.pop(context);
         }
       },
-      child: BaseView<UserViewModel>(builder: (context, userViewConsumer, child) {
+      child:
+          BaseView<UserProvider>(builder: (context, userViewConsumer, child) {
         VerificationModel? kycStatus =
-        userViewConsumer.getUser.userIdentifications?.firstWhere(
-              (model) => model.type == param['kycType'],
+            userViewConsumer.getUser.userIdentifications?.firstWhere(
+          (model) => model.type == param['kycType'],
         );
-        final user = context.read<UserViewModel>().getUser;
+        final user = context.read<UserProvider>().getUser;
         ZLoggerService.logOnInfo('KYC Details.... $user');
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,8 +104,7 @@ class AfterVerification extends StatelessWidget {
                       // padding: EdgeInsets.all(10),
                       decoration: const BoxDecoration(
                           color: kPrimaryWhite,
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(100))),
+                          borderRadius: BorderRadius.all(Radius.circular(100))),
                     ),
                     const HSpace(width: 8),
                     const Text(
@@ -144,7 +144,8 @@ class AfterVerification extends StatelessWidget {
                 ),
               ).onPressed(() {
                 context.read<KycViewModel>().clearCaptureInfo();
-                AppNavigator.pushReplacementNamed(context, AppRoute.verifyIdentityScreen);
+                AppNavigator.pushReplacementNamed(
+                    context, AppRoute.verifyIdentityScreen);
               }),
               const VSpace(height: 20),
               KycRejectionCard(
@@ -152,9 +153,7 @@ class AfterVerification extends StatelessWidget {
               ),
             ],
           ],
-        ).paddingSymmetric(
-          horizontal: kWidthPadding
-        );
+        ).paddingSymmetric(horizontal: kWidthPadding);
       }),
       // Column(
       //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,7 +167,7 @@ class AfterVerification extends StatelessWidget {
       //       'Your details have been submitted. Progress will be updated as soon as possible.',
       //     ).regular().fontSize(16).color(kGrey500),
       //     const VSpace(height: 32),
-      //     BaseView<UserViewModel>(builder: (context, userViewConsumer, child) {
+      //     BaseView<UserViewProvider>(builder: (context, userViewConsumer, child) {
       //       VerificationModel? kycStatus =
       //           userViewConsumer.getUser.userIdentifications?.firstWhere(
       //         (model) => model.type == param['kycType'],

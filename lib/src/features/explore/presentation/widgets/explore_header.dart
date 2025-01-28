@@ -10,7 +10,7 @@ import '../../../../../core/constants/colors.dart';
 
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/svg_icon.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 
@@ -28,14 +28,14 @@ class ExploreHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<UserViewModel>().getUser;
+    final user = context.read<UserProvider>().getUser;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Hi, ${user.displayName?? ''}',
+              'Hi, ${user.displayName ?? ''}',
             ).semiBold().fontSize(24).letterSpacing(-0.48).color(kPrimaryBlack),
             // Container(
             //   width: AppThemeUtil.radius(44),
@@ -56,24 +56,25 @@ class ExploreHeader extends StatelessWidget {
           ],
         ),
         const VSpace(height: 18.0),
-        if(hasSearchBar) AppInputField(
-          hintText: "Find anything",
-          roundedBorderSize: 30,
-          customBorderColor: kGrey100,
-          textAlign: TextAlign.center,
-          // prefixIcon: AppIcon(
-          //   CupertinoIcons.search,
-          //   color: kGrey500,
-          //   size: AppThemeUtil.radius(16.0),
-          // ),
-          readOnly: true,
-          filled: true,
-          // fillColor: kGrey50,
-          helperHeight: 0.1,
-          onTap: (){
-            AppNavigator.pushNamed(context, AppRoute.search);
-          },
-        ).paddingOnly(bottom: 12.0),
+        if (hasSearchBar)
+          AppInputField(
+            hintText: "Find anything",
+            roundedBorderSize: 30,
+            customBorderColor: kGrey100,
+            textAlign: TextAlign.center,
+            // prefixIcon: AppIcon(
+            //   CupertinoIcons.search,
+            //   color: kGrey500,
+            //   size: AppThemeUtil.radius(16.0),
+            // ),
+            readOnly: true,
+            filled: true,
+            // fillColor: kGrey50,
+            helperHeight: 0.1,
+            onTap: () {
+              AppNavigator.pushNamed(context, AppRoute.search);
+            },
+          ).paddingOnly(bottom: 12.0),
       ],
     );
   }

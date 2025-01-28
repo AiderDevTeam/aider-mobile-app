@@ -14,8 +14,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../domain/verification_model/verification_model.dart';
 import '../view_model/kyc_view_model.dart';
 
@@ -71,88 +71,93 @@ class _VerifyIdentityState extends State<VerifyIdentity> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final kycType = kycTypes[index];
-                return BaseView<UserViewModel>(
+                return BaseView<UserProvider>(
                     builder: (context, userViewConsumer, child) {
-                    final userIdentifications = userViewConsumer.getUser.userIdentifications;
+                  final userIdentifications =
+                      userViewConsumer.getUser.userIdentifications;
 
-                    // Find the matching user identification based on the type
-                    final matchingIdentification = userIdentifications?.firstWhere(
-                          (identification) =>
-                      identification.type?.toLowerCase() == kycType['type'].toLowerCase(),
-                      orElse: () => const VerificationModel(
-                        externalId: '',
-                        idNumber: '',
-                        documentUrl: '',
-                        selfieUrl: '',
-                        type: '',
-                        status: '',
-                        rejectionReason: '',
-                      ),
-                    );
+                  // Find the matching user identification based on the type
+                  final matchingIdentification =
+                      userIdentifications?.firstWhere(
+                    (identification) =>
+                        identification.type?.toLowerCase() ==
+                        kycType['type'].toLowerCase(),
+                    orElse: () => const VerificationModel(
+                      externalId: '',
+                      idNumber: '',
+                      documentUrl: '',
+                      selfieUrl: '',
+                      type: '',
+                      status: '',
+                      rejectionReason: '',
+                    ),
+                  );
 
-                    return AppCard(
-                      height: AppThemeUtil.height(72),
-                      decoration: ShapeDecoration(
-                        color: kGrey50,
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                          BorderRadius.circular(AppThemeUtil.radius(12)),
-                        ),
+                  return AppCard(
+                    height: AppThemeUtil.height(72),
+                    decoration: ShapeDecoration(
+                      color: kGrey50,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(AppThemeUtil.radius(12)),
                       ),
-                      child: AppListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
-                        leading: ZSvgIcon(
-                          "UserFocus.svg",
-                          size: AppThemeUtil.radius(28.0),
-                        ),
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              kycType['type'].toUpperCase(),
-                            )
-                                .semiBold()
-                                .fontSize(14)
-                                .letterSpacing(-0.15)
-                                .color(kGrey1200),
-                            Text(matchingIdentification?.status?.toUpperCase() ?? '').semiBold()
-                                .fontSize(14)
-                                .letterSpacing(-0.15)
-                                .color(kAider700),
-                          ],
-                        ),
-                        trailing: Icon(
-                          CupertinoIcons.forward,
-                          size: AppThemeUtil.radius(32),
-                          color: kGrey500,
-                        ),
+                    ),
+                    child: AppListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
+                      leading: ZSvgIcon(
+                        "UserFocus.svg",
+                        size: AppThemeUtil.radius(28.0),
                       ),
-                    ).onPressed(() {
-                      if (kycType['type'] == 'bvn') {
-                        context.read<KycViewModel>().clearCaptureInfo();
-                        AppNavigator.pushNamed(
-                            context, AppRoute.bvnVerificationScreen);
-                        return;
-                      }
-                      if (kycType['type'] == 'nin') {
-                        context.read<KycViewModel>().clearCaptureInfo();
-                        AppNavigator.pushNamed(
-                            context, AppRoute.ninVerificationScreenOne);
-                        return;
-                      }
-                      if (kycType['type'] == 'driver license') {
-                        context.read<KycViewModel>().clearCaptureInfo();
-                        AppNavigator.pushNamed(
-                            context, AppRoute.driversVerificationScreen);
-                        return;
-                      }
-                      if (kycType['type'] == 'passport') {
-                        context.read<KycViewModel>().clearCaptureInfo();
-                        AppNavigator.pushNamed(context, AppRoute.passportScreen);
-                        return;
-                      }
-                    }).paddingSymmetric(vertical: AppThemeUtil.height(16.0));
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            kycType['type'].toUpperCase(),
+                          )
+                              .semiBold()
+                              .fontSize(14)
+                              .letterSpacing(-0.15)
+                              .color(kGrey1200),
+                          Text(matchingIdentification?.status?.toUpperCase() ??
+                                  '')
+                              .semiBold()
+                              .fontSize(14)
+                              .letterSpacing(-0.15)
+                              .color(kAider700),
+                        ],
+                      ),
+                      trailing: Icon(
+                        CupertinoIcons.forward,
+                        size: AppThemeUtil.radius(32),
+                        color: kGrey500,
+                      ),
+                    ),
+                  ).onPressed(() {
+                    if (kycType['type'] == 'bvn') {
+                      context.read<KycViewModel>().clearCaptureInfo();
+                      AppNavigator.pushNamed(
+                          context, AppRoute.bvnVerificationScreen);
+                      return;
+                    }
+                    if (kycType['type'] == 'nin') {
+                      context.read<KycViewModel>().clearCaptureInfo();
+                      AppNavigator.pushNamed(
+                          context, AppRoute.ninVerificationScreenOne);
+                      return;
+                    }
+                    if (kycType['type'] == 'driver license') {
+                      context.read<KycViewModel>().clearCaptureInfo();
+                      AppNavigator.pushNamed(
+                          context, AppRoute.driversVerificationScreen);
+                      return;
+                    }
+                    if (kycType['type'] == 'passport') {
+                      context.read<KycViewModel>().clearCaptureInfo();
+                      AppNavigator.pushNamed(context, AppRoute.passportScreen);
+                      return;
+                    }
+                  }).paddingSymmetric(vertical: AppThemeUtil.height(16.0));
                 });
               }),
         ],

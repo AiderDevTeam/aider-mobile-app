@@ -1,4 +1,3 @@
-
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/common.dart';
-import '../../../../../core/view_models/base_view.dart';
+import '../../../../../core/providers/base_view.dart';
 import '../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../shared_widgets/common/aider_empty_state.dart';
 import '../../../../shared_widgets/common/app_load_more.dart';
@@ -16,7 +15,10 @@ import '../../../../shared_widgets/common/error_response_message.dart';
 import '../../../../shared_widgets/common/product_list_view_builder.dart';
 
 class ListedProductsScreen extends StatefulWidget {
-  const ListedProductsScreen({super.key, this.navigateFromListing = false,});
+  const ListedProductsScreen({
+    super.key,
+    this.navigateFromListing = false,
+  });
 
   final bool navigateFromListing;
 
@@ -25,20 +27,18 @@ class ListedProductsScreen extends StatefulWidget {
 }
 
 class _ListedProductsScreenState extends State<ListedProductsScreen> {
-  Future<void> fetchUserProducts([String? nextPage]) async{
-    await context.read<ProductViewModel>().fetchUserProducts(
-        context,
+  Future<void> fetchUserProducts([String? nextPage]) async {
+    await context.read<ProductViewModel>().fetchUserProducts(context,
         loadingComponent: 'fetchProducts',
         nextPage: nextPage,
         queryParam: {
           'pageSize': kProductPerPage,
-        }
-    );
+        });
   }
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fetchUserProducts();
     });
     super.initState();
@@ -49,30 +49,35 @@ class _ListedProductsScreenState extends State<ListedProductsScreen> {
     return PopScope(
       canPop: !widget.navigateFromListing,
       child: AppScreenScaffold(
-        onNavigateBack: !widget.navigateFromListing ? null : (){
-          AppNavigator.pushNamedAndRemoveUntil(context, AppRoute.homeScreen, (p0) => false);
-        },
-        title: 'Items listed',
-        child: BaseView<ProductViewModel>(
-          builder: (context, productConsumer, child) {
-            if(productConsumer.getComponentLoading('fetchProducts') && productConsumer.getProducts.isEmpty){
+          onNavigateBack: !widget.navigateFromListing
+              ? null
+              : () {
+                  AppNavigator.pushNamedAndRemoveUntil(
+                      context, AppRoute.homeScreen, (p0) => false);
+                },
+          title: 'Items listed',
+          child: BaseView<ProductViewModel>(
+              builder: (context, productConsumer, child) {
+            if (productConsumer.isComponentLoading('fetchProducts') &&
+                productConsumer.getProducts.isEmpty) {
               return const Center(
                 child: ZLoading(),
               );
             }
 
-            if(productConsumer.isComponentErrorType('fetchProducts')){
+            if (productConsumer.isComponentErrorType('fetchProducts')) {
               return Center(
                 child: ErrorResponseMessage(
-                  message: productConsumer.componentErrorType?['error']?? '',
-                  onRetry: () async{
-                    await fetchUserProducts(productConsumer.getProductMeta?.next);
+                  message: productConsumer.componentErrorType?['error'] ?? '',
+                  onRetry: () async {
+                    await fetchUserProducts(
+                        productConsumer.getProductMeta?.next);
                   },
                 ),
               );
             }
 
-            if(productConsumer.getProducts.isEmpty) {
+            if (productConsumer.getProducts.isEmpty) {
               return Padding(
                 padding: EdgeInsets.only(
                   top: MediaQuery.of(context).size.height * 0.20,
@@ -88,7 +93,8 @@ class _ListedProductsScreenState extends State<ListedProductsScreen> {
               onRefresh: fetchUserProducts,
               child: AppLoadMore(
                 isFinish: productConsumer.getProductMeta?.next == null,
-                onLoadMore: () => fetchUserProducts(productConsumer.getProductMeta?.next),
+                onLoadMore: () =>
+                    fetchUserProducts(productConsumer.getProductMeta?.next),
                 children: [
                   ProductListViewBuilder(
                     products: productConsumer.getProducts,
@@ -97,8 +103,7 @@ class _ListedProductsScreenState extends State<ListedProductsScreen> {
                 ],
               ).paddingSymmetric(horizontal: kWidthPadding),
             );
-          })
-      ),
+          })),
     );
   }
 }

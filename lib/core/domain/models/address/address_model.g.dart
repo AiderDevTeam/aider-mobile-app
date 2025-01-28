@@ -9,6 +9,7 @@ part of 'address_model.dart';
 _$AddressModelImpl _$$AddressModelImplFromJson(Map<String, dynamic> json) =>
     _$AddressModelImpl(
       id: (json['id'] as num?)?.toInt(),
+      uid: json['uid'] as String?,
       externalId: json['externalId'] as String?,
       city: json['city'] as String?,
       originName: json['originName'] as String?,
@@ -21,6 +22,7 @@ _$AddressModelImpl _$$AddressModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$AddressModelImplToJson(_$AddressModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'uid': instance.uid,
       'externalId': instance.externalId,
       'city': instance.city,
       'originName': instance.originName,

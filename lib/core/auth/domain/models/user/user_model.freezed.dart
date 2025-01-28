@@ -21,12 +21,14 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$UserModel {
   int? get id => throw _privateConstructorUsedError;
+  String? get uid => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   String? get firstName => throw _privateConstructorUsedError;
   String? get lastName => throw _privateConstructorUsedError;
   String? get displayName => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
   String? get callingCode => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   String? get birthday => throw _privateConstructorUsedError;
@@ -43,6 +45,10 @@ mixin _$UserModel {
   bool? get canReceiveEmailUpdates => throw _privateConstructorUsedError;
   bool? get canReceivePushNotifications => throw _privateConstructorUsedError;
   bool? get hasDefaultWallet => throw _privateConstructorUsedError;
+  String? get pushNotificationToken => throw _privateConstructorUsedError;
+  String? get userTypeId => throw _privateConstructorUsedError;
+  bool? get termsAndConditions => throw _privateConstructorUsedError;
+  String? get deviceOs => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -61,12 +67,14 @@ abstract class $UserModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      String? uid,
       String? externalId,
       String? firstName,
       String? lastName,
       String? displayName,
       String? gender,
       String? email,
+      String? password,
       String? callingCode,
       String? phone,
       String? birthday,
@@ -81,7 +89,11 @@ abstract class $UserModelCopyWith<$Res> {
       bool? canReceiveSMS,
       bool? canReceiveEmailUpdates,
       bool? canReceivePushNotifications,
-      bool? hasDefaultWallet});
+      bool? hasDefaultWallet,
+      String? pushNotificationToken,
+      String? userTypeId,
+      bool? termsAndConditions,
+      String? deviceOs});
 
   $StatisticModelCopyWith<$Res>? get statistics;
 }
@@ -102,12 +114,14 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? displayName = freezed,
     Object? gender = freezed,
     Object? email = freezed,
+    Object? password = freezed,
     Object? callingCode = freezed,
     Object? phone = freezed,
     Object? birthday = freezed,
@@ -123,12 +137,20 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? canReceiveEmailUpdates = freezed,
     Object? canReceivePushNotifications = freezed,
     Object? hasDefaultWallet = freezed,
+    Object? pushNotificationToken = freezed,
+    Object? userTypeId = freezed,
+    Object? termsAndConditions = freezed,
+    Object? deviceOs = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -152,6 +174,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String?,
       callingCode: freezed == callingCode
           ? _value.callingCode
@@ -213,6 +239,22 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.hasDefaultWallet
           : hasDefaultWallet // ignore: cast_nullable_to_non_nullable
               as bool?,
+      pushNotificationToken: freezed == pushNotificationToken
+          ? _value.pushNotificationToken
+          : pushNotificationToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userTypeId: freezed == userTypeId
+          ? _value.userTypeId
+          : userTypeId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      termsAndConditions: freezed == termsAndConditions
+          ? _value.termsAndConditions
+          : termsAndConditions // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      deviceOs: freezed == deviceOs
+          ? _value.deviceOs
+          : deviceOs // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -241,12 +283,14 @@ abstract class _$$UserModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
+      String? uid,
       String? externalId,
       String? firstName,
       String? lastName,
       String? displayName,
       String? gender,
       String? email,
+      String? password,
       String? callingCode,
       String? phone,
       String? birthday,
@@ -261,7 +305,11 @@ abstract class _$$UserModelImplCopyWith<$Res>
       bool? canReceiveSMS,
       bool? canReceiveEmailUpdates,
       bool? canReceivePushNotifications,
-      bool? hasDefaultWallet});
+      bool? hasDefaultWallet,
+      String? pushNotificationToken,
+      String? userTypeId,
+      bool? termsAndConditions,
+      String? deviceOs});
 
   @override
   $StatisticModelCopyWith<$Res>? get statistics;
@@ -281,12 +329,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? displayName = freezed,
     Object? gender = freezed,
     Object? email = freezed,
+    Object? password = freezed,
     Object? callingCode = freezed,
     Object? phone = freezed,
     Object? birthday = freezed,
@@ -302,12 +352,20 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? canReceiveEmailUpdates = freezed,
     Object? canReceivePushNotifications = freezed,
     Object? hasDefaultWallet = freezed,
+    Object? pushNotificationToken = freezed,
+    Object? userTypeId = freezed,
+    Object? termsAndConditions = freezed,
+    Object? deviceOs = freezed,
   }) {
     return _then(_$UserModelImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -331,6 +389,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String?,
       callingCode: freezed == callingCode
           ? _value.callingCode
@@ -392,6 +454,22 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.hasDefaultWallet
           : hasDefaultWallet // ignore: cast_nullable_to_non_nullable
               as bool?,
+      pushNotificationToken: freezed == pushNotificationToken
+          ? _value.pushNotificationToken
+          : pushNotificationToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userTypeId: freezed == userTypeId
+          ? _value.userTypeId
+          : userTypeId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      termsAndConditions: freezed == termsAndConditions
+          ? _value.termsAndConditions
+          : termsAndConditions // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      deviceOs: freezed == deviceOs
+          ? _value.deviceOs
+          : deviceOs // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -401,12 +479,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
 class _$UserModelImpl extends _UserModel {
   const _$UserModelImpl(
       {this.id,
+      this.uid,
       this.externalId,
       this.firstName,
       this.lastName,
       this.displayName,
       this.gender,
       this.email,
+      this.password,
       this.callingCode,
       this.phone,
       this.birthday,
@@ -421,7 +501,11 @@ class _$UserModelImpl extends _UserModel {
       this.canReceiveSMS,
       this.canReceiveEmailUpdates,
       this.canReceivePushNotifications,
-      this.hasDefaultWallet})
+      this.hasDefaultWallet,
+      this.pushNotificationToken,
+      this.userTypeId,
+      this.termsAndConditions,
+      this.deviceOs})
       : _addresses = addresses,
         _wallets = wallets,
         _userIdentifications = userIdentifications,
@@ -432,6 +516,8 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   final int? id;
+  @override
+  final String? uid;
   @override
   final String? externalId;
   @override
@@ -444,6 +530,8 @@ class _$UserModelImpl extends _UserModel {
   final String? gender;
   @override
   final String? email;
+  @override
+  final String? password;
   @override
   final String? callingCode;
   @override
@@ -499,10 +587,18 @@ class _$UserModelImpl extends _UserModel {
   final bool? canReceivePushNotifications;
   @override
   final bool? hasDefaultWallet;
+  @override
+  final String? pushNotificationToken;
+  @override
+  final String? userTypeId;
+  @override
+  final bool? termsAndConditions;
+  @override
+  final String? deviceOs;
 
   @override
   String toString() {
-    return 'UserModel(id: $id, externalId: $externalId, firstName: $firstName, lastName: $lastName, displayName: $displayName, gender: $gender, email: $email, callingCode: $callingCode, phone: $phone, birthday: $birthday, idVerificationStatus: $idVerificationStatus, idVerified: $idVerified, joinedAt: $joinedAt, profilePhotoUrl: $profilePhotoUrl, addresses: $addresses, statistics: $statistics, wallets: $wallets, userIdentifications: $userIdentifications, canReceiveSMS: $canReceiveSMS, canReceiveEmailUpdates: $canReceiveEmailUpdates, canReceivePushNotifications: $canReceivePushNotifications, hasDefaultWallet: $hasDefaultWallet)';
+    return 'UserModel(id: $id, uid: $uid, externalId: $externalId, firstName: $firstName, lastName: $lastName, displayName: $displayName, gender: $gender, email: $email, password: $password, callingCode: $callingCode, phone: $phone, birthday: $birthday, idVerificationStatus: $idVerificationStatus, idVerified: $idVerified, joinedAt: $joinedAt, profilePhotoUrl: $profilePhotoUrl, addresses: $addresses, statistics: $statistics, wallets: $wallets, userIdentifications: $userIdentifications, canReceiveSMS: $canReceiveSMS, canReceiveEmailUpdates: $canReceiveEmailUpdates, canReceivePushNotifications: $canReceivePushNotifications, hasDefaultWallet: $hasDefaultWallet, pushNotificationToken: $pushNotificationToken, userTypeId: $userTypeId, termsAndConditions: $termsAndConditions, deviceOs: $deviceOs)';
   }
 
   @override
@@ -511,6 +607,7 @@ class _$UserModelImpl extends _UserModel {
         (other.runtimeType == runtimeType &&
             other is _$UserModelImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.firstName, firstName) ||
@@ -521,6 +618,8 @@ class _$UserModelImpl extends _UserModel {
                 other.displayName == displayName) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
             (identical(other.callingCode, callingCode) ||
                 other.callingCode == callingCode) &&
             (identical(other.phone, phone) || other.phone == phone) &&
@@ -550,7 +649,15 @@ class _$UserModelImpl extends _UserModel {
                 other.canReceivePushNotifications ==
                     canReceivePushNotifications) &&
             (identical(other.hasDefaultWallet, hasDefaultWallet) ||
-                other.hasDefaultWallet == hasDefaultWallet));
+                other.hasDefaultWallet == hasDefaultWallet) &&
+            (identical(other.pushNotificationToken, pushNotificationToken) ||
+                other.pushNotificationToken == pushNotificationToken) &&
+            (identical(other.userTypeId, userTypeId) ||
+                other.userTypeId == userTypeId) &&
+            (identical(other.termsAndConditions, termsAndConditions) ||
+                other.termsAndConditions == termsAndConditions) &&
+            (identical(other.deviceOs, deviceOs) ||
+                other.deviceOs == deviceOs));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -558,12 +665,14 @@ class _$UserModelImpl extends _UserModel {
   int get hashCode => Object.hashAll([
         runtimeType,
         id,
+        uid,
         externalId,
         firstName,
         lastName,
         displayName,
         gender,
         email,
+        password,
         callingCode,
         phone,
         birthday,
@@ -578,7 +687,11 @@ class _$UserModelImpl extends _UserModel {
         canReceiveSMS,
         canReceiveEmailUpdates,
         canReceivePushNotifications,
-        hasDefaultWallet
+        hasDefaultWallet,
+        pushNotificationToken,
+        userTypeId,
+        termsAndConditions,
+        deviceOs
       ]);
 
   /// Create a copy of UserModel
@@ -600,12 +713,14 @@ class _$UserModelImpl extends _UserModel {
 abstract class _UserModel extends UserModel {
   const factory _UserModel(
       {final int? id,
+      final String? uid,
       final String? externalId,
       final String? firstName,
       final String? lastName,
       final String? displayName,
       final String? gender,
       final String? email,
+      final String? password,
       final String? callingCode,
       final String? phone,
       final String? birthday,
@@ -620,7 +735,11 @@ abstract class _UserModel extends UserModel {
       final bool? canReceiveSMS,
       final bool? canReceiveEmailUpdates,
       final bool? canReceivePushNotifications,
-      final bool? hasDefaultWallet}) = _$UserModelImpl;
+      final bool? hasDefaultWallet,
+      final String? pushNotificationToken,
+      final String? userTypeId,
+      final bool? termsAndConditions,
+      final String? deviceOs}) = _$UserModelImpl;
   const _UserModel._() : super._();
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
@@ -628,6 +747,8 @@ abstract class _UserModel extends UserModel {
 
   @override
   int? get id;
+  @override
+  String? get uid;
   @override
   String? get externalId;
   @override
@@ -640,6 +761,8 @@ abstract class _UserModel extends UserModel {
   String? get gender;
   @override
   String? get email;
+  @override
+  String? get password;
   @override
   String? get callingCode;
   @override
@@ -670,6 +793,14 @@ abstract class _UserModel extends UserModel {
   bool? get canReceivePushNotifications;
   @override
   bool? get hasDefaultWallet;
+  @override
+  String? get pushNotificationToken;
+  @override
+  String? get userTypeId;
+  @override
+  bool? get termsAndConditions;
+  @override
+  String? get deviceOs;
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.

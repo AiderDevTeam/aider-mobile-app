@@ -13,8 +13,8 @@ import '../../../../../core/constants/common.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/cards/app_card.dart';
 import '../../../../shared_widgets/common/aider_empty_state.dart';
 import '../../../../shared_widgets/common/app_load_more.dart';
@@ -34,11 +34,10 @@ class RentalScoreTabScreen extends StatefulWidget {
 }
 
 class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
-
   Future<void> fetchRenterReviews([String? nextPage, page = 1]) async {
     if (!mounted) return;
     await context.read<ReviewViewModel>().fetchRenterReviews(context,
-        userExternalId: context.read<UserViewModel>().getUser.externalId ?? "",
+        userExternalId: context.read<UserProvider>().getUser.externalId ?? "",
         queryParam: {
           'page': page,
           'pageSize': kProductPerPage,
@@ -49,34 +48,33 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await fetchRenterReviews();
-
     });
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    final statistics = context.read<UserViewModel>().getUser.statistics;
+    final statistics = context.read<UserProvider>().getUser.statistics;
     return BaseView<ReviewViewModel>(
       builder: (context, reviewConsumer, child) {
-        if (reviewConsumer
-            .getComponentLoading('fetchRenterReviews')) {
+        if (reviewConsumer.isComponentLoading('fetchRenterReviews')) {
           return const Center(
             child: ZLoading(),
-          );// const ReviewLoadingEffect();
+          ); // const ReviewLoadingEffect();
         }
-        if (reviewConsumer
-            .isComponentErrorType('fetchRenterReviews')) {
+        if (reviewConsumer.isComponentErrorType('fetchRenterReviews')) {
           return Center(
             child: ErrorResponseMessage(
               message: reviewConsumer.componentErrorType?['error'] ?? '',
               onRetry: () async {
-                await fetchRenterReviews(reviewConsumer.getRenterReviewsMeta?.next);
+                await fetchRenterReviews(
+                    reviewConsumer.getRenterReviewsMeta?.next);
               },
             ),
           );
         }
 
-        if(reviewConsumer.getRenterReviews.isEmpty) {
+        if (reviewConsumer.getRenterReviews.isEmpty) {
           return Padding(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.20,
@@ -91,10 +89,15 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
           onRefresh: fetchRenterReviews,
           child: AppLoadMore(
             isFinish: reviewConsumer.getRenterReviewsMeta?.next == null,
-            onLoadMore: () => fetchRenterReviews(reviewConsumer.getRenterReviewsMeta?.next),
+            onLoadMore: () =>
+                fetchRenterReviews(reviewConsumer.getRenterReviewsMeta?.next),
             children: [
               RowText(
-                rightWidget: Text('${reviewConsumer.getRenterReviews.length} ${(reviewConsumer.getRenterReviews.length) > 1? 'Reviews':'Review'}').bold().fontSize(16.0).color(kPrimaryBlack),
+                rightWidget: Text(
+                        '${reviewConsumer.getRenterReviews.length} ${(reviewConsumer.getRenterReviews.length) > 1 ? 'Reviews' : 'Review'}')
+                    .bold()
+                    .fontSize(16.0)
+                    .color(kPrimaryBlack),
                 leftWidget: Row(
                   children: [
                     ZSvgIcon(
@@ -103,7 +106,11 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
                       size: AppThemeUtil.radius(32.0),
                     ),
                     const HSpace(width: 4.0),
-                    Text("${statistics?.renterAverageRating ?? 0}").extraBold().fontSize(28).letterSpacing(-0.44).color(kPrimaryBlack),
+                    Text("${statistics?.renterAverageRating ?? 0}")
+                        .extraBold()
+                        .fontSize(28)
+                        .letterSpacing(-0.44)
+                        .color(kPrimaryBlack),
                   ],
                 ),
               ),
@@ -117,7 +124,7 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
                 shrinkWrap: true,
                 primary: false,
                 itemCount: reviewConsumer.getRenterReviews.length,
-                itemBuilder: (context, index){
+                itemBuilder: (context, index) {
                   final review = reviewConsumer.getRenterReviews[index];
                   return AppCard(
                     width: double.infinity,
@@ -125,7 +132,8 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
                     decoration: ShapeDecoration(
                       color: kGrey50,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
+                        borderRadius:
+                            BorderRadius.circular(AppThemeUtil.radius(12)),
                       ),
                     ),
                     child: Column(
@@ -135,19 +143,27 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           rightWidget: Text(
                             review.date ?? '',
-                          ).regular().fontSize(12).color(kGrey700).alignText(TextAlign.right),
+                          )
+                              .regular()
+                              .fontSize(12)
+                              .color(kGrey700)
+                              .alignText(TextAlign.right),
                           leftWidget: Row(
                             children: [
-                              (review.reviewer?.hasProfilePhoto == true) ?
-                              NetworkImageView(
-                                imageUrl: review.reviewer?.profilePhotoUrl ?? '',
-                                width: AppThemeUtil.radius(70),
-                                height: AppThemeUtil.radius(70),
-                                radius: 32.0,
-                              ) : CircleAvatar(
-                                maxRadius: AppThemeUtil.radius(32.0),
-                                backgroundImage: const AssetImage('$kImagePath/profile_placeholder.png'),
-                              ),
+                              (review.reviewer?.hasProfilePhoto == true)
+                                  ? NetworkImageView(
+                                      imageUrl:
+                                          review.reviewer?.profilePhotoUrl ??
+                                              '',
+                                      width: AppThemeUtil.radius(70),
+                                      height: AppThemeUtil.radius(70),
+                                      radius: 32.0,
+                                    )
+                                  : CircleAvatar(
+                                      maxRadius: AppThemeUtil.radius(32.0),
+                                      backgroundImage: const AssetImage(
+                                          '$kImagePath/profile_placeholder.png'),
+                                    ),
                               const HSpace(width: 12),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +174,8 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
                                   const VSpace(height: 8),
                                   Wrap(
                                     runSpacing: 12.0,
-                                    children: List.generate(review.rating ?? 0, (index) {
+                                    children: List.generate(review.rating ?? 0,
+                                        (index) {
                                       return ZSvgIcon(
                                         'star.svg',
                                         color: kWarning700,
@@ -170,8 +187,10 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
                               )
                             ],
                           ),
-                        ).onPressed((){
-                          AppNavigator.pushNamed(context, AppRoute.vendorProfileScreen, arguments: review.reviewer?? const UserModel());
+                        ).onPressed(() {
+                          AppNavigator.pushNamed(
+                              context, AppRoute.vendorProfileScreen,
+                              arguments: review.reviewer ?? const UserModel());
                         }),
                         const VSpace(height: 12),
                         Text(

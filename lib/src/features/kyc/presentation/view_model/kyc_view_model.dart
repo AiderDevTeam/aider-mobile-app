@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 
-import '../../../../../core/auth/data/repositories/user_repository.dart';
+import '../../../../../core/auth/data/repositories/user_repository_v2.dart';
 import '../../../../../core/auth/domain/models/user/user_model.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/routing/app_navigator.dart';
@@ -12,14 +12,14 @@ import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../core/utils/helper_util.dart';
 import '../../../../../core/utils/media_file_util.dart';
-import '../../../../../core/view_models/base_view_model.dart';
+import '../../../../../core/providers/base_provider.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../data/repositories/kyc_repository.dart';
 import '../../domain/verification_model/verification_model.dart';
 
-class KycViewModel extends BaseViewModel {
+class KycViewModel extends BaseProvider {
   final _kycRepository = sl.get<KycRepository>();
-  final _userRepository = sl.get<UserRepository>();
+  final _userRepository = sl.get<UserRepositoryV2>();
   static Map<String, dynamic> _capturedNinInfo = {};
   UserModel _user = const UserModel();
 
@@ -93,12 +93,13 @@ class KycViewModel extends BaseViewModel {
     ZLoggerService.logOnInfo("Fetched userKYC result: $result");
 
     return result.fold(
-          (failure) {
+      (failure) {
         ZLoggerService.logOnError("Failed to fetch user KYC data: $failure");
         return null;
       },
-          (userKYC) {
-        assert(userKYC != null && userKYC.isNotEmpty, "userKYC is null or empty");
+      (userKYC) {
+        assert(
+            userKYC != null && userKYC.isNotEmpty, "userKYC is null or empty");
         setUser = _user.copyWith(userIdentifications: userKYC);
         ZLoggerService.logOnInfo("Updated user: $_user");
         return userKYC;
@@ -106,8 +107,8 @@ class KycViewModel extends BaseViewModel {
     );
   }
 
-  Future<void> _persistUser() async{
-    final result = await _userRepository.persistUser(_user);
+  Future<void> _persistUser() async {
+    final result = await _userRepository.updateUser(user: _user);
     result.fold((l) => null, (user) => null);
   }
 

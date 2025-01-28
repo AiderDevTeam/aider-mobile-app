@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/common.dart';
 import '../../../../../core/routing/app_navigator.dart';
-import '../../../../../core/view_models/base_view.dart';
+import '../../../../../core/providers/base_view.dart';
 import '../../../../shared_widgets/common/app_icon.dart';
 import '../../../../shared_widgets/common/app_load_more.dart';
 import '../../../../shared_widgets/common/error_response_message.dart';
@@ -38,13 +38,13 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> searchAllProducts([String? nextPage]) async {
     if (!mounted) return;
     await context.read<SearchViewModel>().searchAllProducts(
-      context,
-      requestBody: {"searchInput": searchController.text},
-      nextPage: nextPage,
-      queryParam: {
-        'pageSize': 10,
-      },
-    );
+          context,
+          requestBody: {"searchInput": searchController.text},
+          nextPage: nextPage,
+          queryParam: {
+            'pageSize': 10,
+          },
+        );
   }
 
   @override
@@ -128,8 +128,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     //   context.read<SearchViewModel>().setSearchCallbackResponse(false, notify: true);
                     // }),
                     onFieldSubmitted: (String value) async {
-                      if(value.isEmpty) return;
-                      await context.read<SearchViewModel>().searchAllProducts(context, requestBody: {"searchInput": value}, queryParam: {'pageSize': kProductPerPage},);
+                      if (value.isEmpty) return;
+                      await context.read<SearchViewModel>().searchAllProducts(
+                        context,
+                        requestBody: {"searchInput": value},
+                        queryParam: {'pageSize': kProductPerPage},
+                      );
                     },
                     helperHeight: 0.1,
                   ).flexible(),
@@ -142,12 +146,15 @@ class _SearchScreenState extends State<SearchScreen> {
               height: 1,
             ),
             BaseView<SearchViewModel>(
-              builder: (context, searchConsumer, child){
-                if(searchConsumer.getComponentLoading('searchAllProducts') && searchConsumer.getProducts.isEmpty){
+              builder: (context, searchConsumer, child) {
+                if (searchConsumer.isComponentLoading('searchAllProducts') &&
+                    searchConsumer.getProducts.isEmpty) {
                   return const ProductLoadingEffect();
                 }
 
-                if(searchConsumer.errorType != null && searchConsumer.errorType.toString().toLowerCase().trim() == 'no record found'){
+                if (searchConsumer.errorType != null &&
+                    searchConsumer.errorType.toString().toLowerCase().trim() ==
+                        'no record found') {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -160,12 +167,13 @@ class _SearchScreenState extends State<SearchScreen> {
                   );
                 }
 
-                if(searchConsumer.errorType != null){
+                if (searchConsumer.errorType != null) {
                   return Center(
                     child: ErrorResponseMessage(
                       message: searchConsumer.errorType.toString(),
-                      onRetry: () async{
-                        await searchAllProducts(searchConsumer.getProductMeta?.next);
+                      onRetry: () async {
+                        await searchAllProducts(
+                            searchConsumer.getProductMeta?.next);
                       },
                     ),
                   );
@@ -175,19 +183,18 @@ class _SearchScreenState extends State<SearchScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if(searchResult.isNotEmpty) ...[
+                    if (searchResult.isNotEmpty) ...[
                       AppLoadMore(
                         isFinish: searchConsumer.getProductMeta?.next == null,
-                        onLoadMore: () => searchAllProducts(searchConsumer.getProductMeta?.next),
+                        onLoadMore: () => searchAllProducts(
+                            searchConsumer.getProductMeta?.next),
                         children: [
                           ProductGridView(
                             products: searchConsumer.getProducts,
                             primary: false,
                           ),
                         ],
-                      ).paddingSymmetric(
-                          horizontal: kWidthPadding
-                      ).expanded()
+                      ).paddingSymmetric(horizontal: kWidthPadding).expanded()
                     ],
                   ],
                 );
@@ -201,18 +208,20 @@ class _SearchScreenState extends State<SearchScreen> {
 
   _onSearchChanged(String? query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    if(query!.isEmpty){
-      context.read<SearchViewModel>().setSearchCallbackResponse(false, notify: true);
+    if (query!.isEmpty) {
+      context
+          .read<SearchViewModel>()
+          .setSearchCallbackResponse(false, notify: true);
     }
-    _debounce = Timer(const Duration(milliseconds: 500), () async{
-      if(query.trim().isEmpty) return;
-      await context.read<SearchViewModel>().searchAllProducts(context,
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      if (query.trim().isEmpty) return;
+      await context.read<SearchViewModel>().searchAllProducts(
+        context,
         requestBody: {"searchInput": searchController.text},
         queryParam: {
-        'pageSize': 10,
+          'pageSize': 10,
         },
       );
     });
   }
 }
-

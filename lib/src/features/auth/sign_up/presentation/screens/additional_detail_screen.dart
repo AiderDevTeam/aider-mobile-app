@@ -2,6 +2,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
+import 'package:aider_mobile_app/core/providers/auth_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/forms/app_dropdown_field.dart';
@@ -18,7 +19,6 @@ import '../../../../../../core/utils/app_theme_util.dart';
 import '../../../../../../core/utils/helper_util.dart';
 import '../../../../../../core/utils/input_formatter_util.dart';
 import '../../../../../../core/constants/colors.dart';
-import '../../../../../../core/view_models/user_view_model.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/common/linear_percent_indicator.dart';
 import '../../../../../shared_widgets/modals/location_modal.dart';
@@ -41,7 +41,6 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
   final dobFocusNode = FocusNode();
   Map<String, dynamic> pickedLocation = {};
 
-
   @override
   void dispose() {
     dobController.dispose();
@@ -56,12 +55,17 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           onPressed: () async {
-            final userProvider = context.read<UserViewModel>();
+            final authProvider = context.read<AuthProvider>();
+
             if (formKey.currentState!.validate()) {
-              userProvider.setSignupRequestBody({
-                "birthday": dobController.text.split('/').reversed.join('-'),
-                "gender": selectedGender?.toLowerCase(),
-              });
+              var requestBody = authProvider.getSignupRequestBody;
+              requestBody = requestBody.copyWith(
+                birthday: dobController.text.split('/').reversed.join('-'),
+                gender: selectedGender?.toLowerCase(),
+              );
+
+              authProvider.setSignupRequestBody = requestBody;
+
               AppNavigator.pushNamed(
                 context,
                 AppRoute.userTypeScreen,
@@ -136,7 +140,6 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
                     inputFormatters:
                         InputFormatterUtil.maskInput(mask: "##/##/####"),
                   ),
-
                   const FormLabel(text: 'Gender'),
                   const VSpace(height: 8.0),
                   AppDropdownField(
@@ -155,7 +158,6 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
                       return null;
                     },
                   ),
-
                   const VSpace(height: 24.0),
                   const FormLabel(text: 'Location'),
                   const VSpace(height: 8.0),
@@ -163,19 +165,21 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
                     controller: locationController,
                     hintText: 'Location',
                     readOnly: true,
-                    validator: (value){
-                      if(value!.isEmpty) return 'Enter your location';
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Enter your location';
                       return null;
                     },
-                    onTap: () async{
-                      final result = await AppDialogUtil.showScrollableBottomSheet(
+                    onTap: () async {
+                      final result =
+                          await AppDialogUtil.showScrollableBottomSheet(
                         context: context,
                         builder: (context) => const LocationModal(),
                       );
-                      if(result != null){
-                        locationController.text = result['originName']?? '';
-                        if(!context.mounted) return;
-                        context.read<UserViewModel>().setSignupRequestBody(result);
+                      if (result != null) {
+                        locationController.text = result['originName'] ?? '';
+                        if (!context.mounted) return;
+                        context.read<AuthProvider>().setSignupRequestBody =
+                            result;
                       }
                     },
                     suffixIcon: ZSvgIcon(

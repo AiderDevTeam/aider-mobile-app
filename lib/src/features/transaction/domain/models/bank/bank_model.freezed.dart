@@ -22,7 +22,7 @@ BankModel _$BankModelFromJson(Map<String, dynamic> json) {
 mixin _$BankModel {
   int? get id => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
-  String? get bankCode => throw _privateConstructorUsedError;
+  String? get code => throw _privateConstructorUsedError;
   String? get country => throw _privateConstructorUsedError;
   String? get currency => throw _privateConstructorUsedError;
   String? get longCode => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $BankModelCopyWith<$Res> {
   $Res call(
       {int? id,
       String? externalId,
-      String? bankCode,
+      String? code,
       String? country,
       String? currency,
       String? longCode,
@@ -72,7 +72,7 @@ class _$BankModelCopyWithImpl<$Res, $Val extends BankModel>
   $Res call({
     Object? id = freezed,
     Object? externalId = freezed,
-    Object? bankCode = freezed,
+    Object? code = freezed,
     Object? country = freezed,
     Object? currency = freezed,
     Object? longCode = freezed,
@@ -88,9 +88,9 @@ class _$BankModelCopyWithImpl<$Res, $Val extends BankModel>
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
               as String?,
-      bankCode: freezed == bankCode
-          ? _value.bankCode
-          : bankCode // ignore: cast_nullable_to_non_nullable
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
               as String?,
       country: freezed == country
           ? _value.country
@@ -127,7 +127,7 @@ abstract class _$$BankModelImplCopyWith<$Res>
   $Res call(
       {int? id,
       String? externalId,
-      String? bankCode,
+      String? code,
       String? country,
       String? currency,
       String? longCode,
@@ -150,7 +150,7 @@ class __$$BankModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? externalId = freezed,
-    Object? bankCode = freezed,
+    Object? code = freezed,
     Object? country = freezed,
     Object? currency = freezed,
     Object? longCode = freezed,
@@ -166,9 +166,9 @@ class __$$BankModelImplCopyWithImpl<$Res>
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
               as String?,
-      bankCode: freezed == bankCode
-          ? _value.bankCode
-          : bankCode // ignore: cast_nullable_to_non_nullable
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
               as String?,
       country: freezed == country
           ? _value.country
@@ -200,7 +200,7 @@ class _$BankModelImpl implements _BankModel {
   const _$BankModelImpl(
       {this.id,
       this.externalId,
-      this.bankCode,
+      this.code,
       this.country,
       this.currency,
       this.longCode,
@@ -215,7 +215,7 @@ class _$BankModelImpl implements _BankModel {
   @override
   final String? externalId;
   @override
-  final String? bankCode;
+  final String? code;
   @override
   final String? country;
   @override
@@ -229,7 +229,7 @@ class _$BankModelImpl implements _BankModel {
 
   @override
   String toString() {
-    return 'BankModel(id: $id, externalId: $externalId, bankCode: $bankCode, country: $country, currency: $currency, longCode: $longCode, name: $name, sortCode: $sortCode)';
+    return 'BankModel(id: $id, externalId: $externalId, code: $code, country: $country, currency: $currency, longCode: $longCode, name: $name, sortCode: $sortCode)';
   }
 
   @override
@@ -240,8 +240,7 @@ class _$BankModelImpl implements _BankModel {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
-            (identical(other.bankCode, bankCode) ||
-                other.bankCode == bankCode) &&
+            (identical(other.code, code) || other.code == code) &&
             (identical(other.country, country) || other.country == country) &&
             (identical(other.currency, currency) ||
                 other.currency == currency) &&
@@ -254,8 +253,8 @@ class _$BankModelImpl implements _BankModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, externalId, bankCode,
-      country, currency, longCode, name, sortCode);
+  int get hashCode => Object.hash(runtimeType, id, externalId, code, country,
+      currency, longCode, name, sortCode);
 
   /// Create a copy of BankModel
   /// with the given fields replaced by the non-null parameter values.
@@ -277,7 +276,7 @@ abstract class _BankModel implements BankModel {
   const factory _BankModel(
       {final int? id,
       final String? externalId,
-      final String? bankCode,
+      final String? code,
       final String? country,
       final String? currency,
       final String? longCode,
@@ -292,7 +291,7 @@ abstract class _BankModel implements BankModel {
   @override
   String? get externalId;
   @override
-  String? get bankCode;
+  String? get code;
   @override
   String? get country;
   @override

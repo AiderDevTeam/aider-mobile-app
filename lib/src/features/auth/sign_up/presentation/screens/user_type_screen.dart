@@ -11,11 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../../core/constants/colors.dart';
+import '../../../../../../core/providers/auth_provider.dart';
 import '../../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../../core/utils/app_theme_util.dart';
 import '../../../../../../core/utils/helper_util.dart';
-import '../../../../../../core/view_models/base_view.dart';
-import '../../../../../../core/view_models/user_view_model.dart';
+import '../../../../../../core/providers/base_view.dart';
+import '../../../../../../core/providers/user_provider.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/cards/app_card.dart';
 import '../../../../../shared_widgets/common/aider_empty_state.dart';
@@ -33,7 +34,7 @@ class UserTypeScreen extends StatefulWidget {
 
 class _UserTypeScreenState extends State<UserTypeScreen> {
   ValueNotifier<String?> selectedItem = ValueNotifier<String?>(null);
-  ValueNotifier<int?> typeId = ValueNotifier<int?>(null);
+  ValueNotifier<String?> typeId = ValueNotifier<String?>(null);
 
   void toggleSelection(String item) {
     if (selectedItem.value == item) {
@@ -46,7 +47,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UserViewModel>().userType(context);
+      context.read<UserProvider>().fetchUserType(context);
     });
     super.initState();
   }
@@ -58,17 +59,19 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           onPressed: () async {
-            final authProvider = context.read<UserViewModel>();
+            final authProvider = context.read<AuthProvider>();
             if (selectedItem.value != null) {
-              await authProvider.authentication(
+              var requestBody = authProvider.getSignupRequestBody;
+              requestBody = requestBody.copyWith(
+                userTypeId: typeId.value,
+                termsAndConditions: true,
+                deviceOs: HelperUtil.getOSPlatform,
+              );
+
+              authProvider.setSignupRequestBody = requestBody;
+              await authProvider.signup(
                 context,
-                type: 'sign up',
-                requestBody: {
-                  ...authProvider.getSignupRequestBody,
-                  "userTypeId": typeId.value,
-                  "termsAndConditions": true,
-                  "deviceOs": HelperUtil.getOSPlatform,
-                },
+                user: requestBody,
               );
             } else {
               AppDialogUtil.showWarningAlert(
@@ -114,9 +117,9 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                 .color(kPrimaryBlack)
                 .letterSpacing(-0.15),
             const VSpace(height: 32.0),
-            BaseView<UserViewModel>(
+            BaseView<UserProvider>(
               builder: (context, userConsumer, child) {
-                if (userConsumer.getComponentLoading('userTypes') &&
+                if (userConsumer.isComponentLoading('userTypes') &&
                     userConsumer.getUserTypes.isEmpty) {
                   return const Center(
                     child: ZLoading(),
@@ -128,13 +131,17 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                     child: ErrorResponseMessage(
                       message: userConsumer.componentErrorType?['error'] ?? '',
                       onRetry: () async {
-                        await context.read<UserViewModel>().userType(context);
+                        await context
+                            .read<UserProvider>()
+                            .fetchUserType(context);
                       },
                     ),
                   );
                 }
 
                 if (userConsumer.getUserTypes.isEmpty) {
+                  print(
+                      'userConsumer.getUserTypes: ${userConsumer.getUserTypes}');
                   return const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -159,21 +166,21 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                           backgroundColor: kGrey100,
                           padding: EdgeInsets.all(AppThemeUtil.radius(20)),
                           decoration: ShapeDecoration(
-                            color: (userType['type'] == 'vendor' &&
+                            color: (userType.name == 'vendor' &&
                                     selectedValue == 'vendor')
                                 ? kAider100
-                                : (userType['type'] == 'renter' &&
+                                : (userType.name == 'renter' &&
                                         selectedValue == 'renter')
                                     ? kAider100
                                     : kGrey100,
                             shape: RoundedRectangleBorder(
-                              side: (userType['type'] == 'vendor' &&
+                              side: (userType.name == 'vendor' &&
                                       selectedValue == 'vendor')
                                   ? const BorderSide(
                                       width: 1,
                                       color: kAiderDefault,
                                     )
-                                  : (userType['type'] == 'renter' &&
+                                  : (userType.name == 'renter' &&
                                           selectedValue == 'renter')
                                       ? const BorderSide(
                                           width: 1,
@@ -196,7 +203,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      (userType['type'] == 'vendor')
+                                      (userType.name == 'vendor')
                                           ? AppCard(
                                               width: AppThemeUtil.width(103),
                                               height:
@@ -242,7 +249,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                                         children: [
                                           const VSpace(height: 7.72),
                                           Text(
-                                            userType['type']
+                                            userType.name
                                                 .toString()
                                                 .toUpperCase(),
                                           )
@@ -251,7 +258,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                                               .letterSpacing(-0.15)
                                               .color(kPrimaryBlack),
                                           const VSpace(height: 12),
-                                          (userType['type'] == 'vendor')
+                                          (userType.name == 'vendor')
                                               ? const Text(
                                                   'I’m here to rent out items as a\nbusiness owner or just to make\nsome cash. ',
                                                   maxLines: 3,
@@ -273,9 +280,9 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                                     ],
                                   ),
                                   AppRadio(
-                                    selected: (userType['type'] == 'vendor')
+                                    selected: (userType.name == 'vendor')
                                         ? selectedValue == 'vendor'
-                                        : (userType['type'] == 'renter')
+                                        : (userType.name == 'renter')
                                             ? selectedValue == 'renter'
                                             : selectedValue == 'renter',
                                   ),
@@ -285,14 +292,14 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                           ),
                         ).paddingOnly(bottom: 20).onPressed(
                           () {
-                            if (userType['type'] == 'vendor') {
+                            if (userType.name == 'vendor') {
                               toggleSelection('vendor');
-                              typeId.value = userType['id'];
+                              typeId.value = userType.uid;
                               return;
                             }
-                            if (userType['type'] == 'renter') {
+                            if (userType.name == 'renter') {
                               toggleSelection('renter');
-                              typeId.value = userType['id'];
+                              typeId.value = userType.uid;
                               return;
                             }
                           },

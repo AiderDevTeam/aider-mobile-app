@@ -1,5 +1,3 @@
-
-
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/text_style.dart';
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/view_models/base_view.dart';
-import '../../../../../core/view_models/user_view_model.dart';
+import '../../../../../core/providers/base_view.dart';
+import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/app_badge.dart';
 import '../../../../shared_widgets/common/svg_icon.dart';
 import 'package:badges/badges.dart' as badge;
@@ -57,38 +55,43 @@ class HomeBottomNavigationBar extends StatelessWidget {
             items: [
               BottomNavigationBarItem(
                 icon: ZSvgIcon(
-                  currentIndex == 0 ? 'explore.svg':'explore_outline.svg',
+                  currentIndex == 0 ? 'explore.svg' : 'explore_outline.svg',
                   size: AppThemeUtil.radius(24.0),
                   color: currentIndex == 0 ? kAider700 : kGrey300,
                 ).paddingSymmetric(vertical: 4.0),
                 label: 'Explore',
               ),
               BottomNavigationBarItem(
-                icon: BaseView<UserViewModel>(
+                icon: BaseView<UserProvider>(
                     builder: (context, userProvider, child) {
-                      final userStatistic = userProvider.getUser.statistics;
-                      if(userStatistic?.totalPendingBookingsCount == null || userStatistic?.totalPendingBookingsCount == 0){
-                        return ZSvgIcon(
-                          currentIndex == 1 ? 'rental.svg':'rental_outline.svg',
-                          size: AppThemeUtil.radius(24.0),
-                          color: currentIndex == 1 ? kAider700 : kGrey500,
-                        ).paddingSymmetric(vertical: 4.0);
-                      }
-                      return AppBadge(
-                        badgeColor: kAider700,
-                        position: badge.BadgePosition.topEnd(top: -10, end: -7),
-                        badgeContent: Text("${userStatistic?.totalPendingBookingsCount}").bold().fontSize(12).color(kPrimaryWhite),
-                        showBadge: true,
-                        borderSide: const BorderSide(color: kPrimaryWhite, width: 2.5),
-                        padding: const EdgeInsets.all(6.5),
-                        child: ZSvgIcon(
-                          currentIndex == 1 ? 'rental.svg':'rental_outline.svg',
-                          size: AppThemeUtil.radius(24.0),
-                          color: currentIndex == 1 ? kAider700 : kGrey500,
-                        ).paddingSymmetric(vertical: 4.0),
-                      );
-                    }
-                ),
+                  final userStatistic = userProvider.getUser.statistics;
+                  if (userStatistic?.totalPendingBookingsCount == null ||
+                      userStatistic?.totalPendingBookingsCount == 0) {
+                    return ZSvgIcon(
+                      currentIndex == 1 ? 'rental.svg' : 'rental_outline.svg',
+                      size: AppThemeUtil.radius(24.0),
+                      color: currentIndex == 1 ? kAider700 : kGrey500,
+                    ).paddingSymmetric(vertical: 4.0);
+                  }
+                  return AppBadge(
+                    badgeColor: kAider700,
+                    position: badge.BadgePosition.topEnd(top: -10, end: -7),
+                    badgeContent:
+                        Text("${userStatistic?.totalPendingBookingsCount}")
+                            .bold()
+                            .fontSize(12)
+                            .color(kPrimaryWhite),
+                    showBadge: true,
+                    borderSide:
+                        const BorderSide(color: kPrimaryWhite, width: 2.5),
+                    padding: const EdgeInsets.all(6.5),
+                    child: ZSvgIcon(
+                      currentIndex == 1 ? 'rental.svg' : 'rental_outline.svg',
+                      size: AppThemeUtil.radius(24.0),
+                      color: currentIndex == 1 ? kAider700 : kGrey500,
+                    ).paddingSymmetric(vertical: 4.0),
+                  );
+                }),
                 label: 'Rentals',
               ),
               BottomNavigationBarItem(
@@ -100,36 +103,49 @@ class HomeBottomNavigationBar extends StatelessWidget {
                 label: 'List',
               ),
               BottomNavigationBarItem(
-                icon: BaseView<UserViewModel>(
+                icon: BaseView<UserProvider>(
                     builder: (context, userProvider, child) {
-                      final userStatistic = userProvider.getUser.statistics;
-                      if(userStatistic?.totalVendorBookingsPendingAcceptanceCount == 0 || userStatistic?.totalVendorBookingsPendingAcceptanceCount ==null){
-                        return ZSvgIcon(
-                          currentIndex == 3 ? 'inbox_outline.svg':'inbox_outline.svg',
-                          size: AppThemeUtil.radius(24.0),
-                          color: currentIndex == 3 ? kAider700 : kGrey500,
-                        ).paddingSymmetric(vertical: 4.0);
-                      }
-                      return AppBadge(
-                        badgeColor: kAider700,
-                        position: badge.BadgePosition.topEnd(top: -10, end: -7),
-                        badgeContent: Text("${userStatistic?.totalVendorBookingsPendingAcceptanceCount}").bold().fontSize(12).color(kPrimaryWhite),
-                        showBadge: true,
-                        borderSide: const BorderSide(color: kPrimaryWhite, width: 2.5),
-                        padding: const EdgeInsets.all(6.5),
-                        child: ZSvgIcon(
-                          currentIndex == 3 ? 'inbox_outline.svg':'inbox_outline.svg',
-                          size: AppThemeUtil.radius(24.0),
-                          color: currentIndex == 3 ? kAider700 : kGrey500,
-                        ).paddingSymmetric(vertical: 4.0),
-                      );
-                    }
-                ),
+                  final userStatistic = userProvider.getUser.statistics;
+                  if (userStatistic
+                              ?.totalVendorBookingsPendingAcceptanceCount ==
+                          0 ||
+                      userStatistic
+                              ?.totalVendorBookingsPendingAcceptanceCount ==
+                          null) {
+                    return ZSvgIcon(
+                      currentIndex == 3
+                          ? 'inbox_outline.svg'
+                          : 'inbox_outline.svg',
+                      size: AppThemeUtil.radius(24.0),
+                      color: currentIndex == 3 ? kAider700 : kGrey500,
+                    ).paddingSymmetric(vertical: 4.0);
+                  }
+                  return AppBadge(
+                    badgeColor: kAider700,
+                    position: badge.BadgePosition.topEnd(top: -10, end: -7),
+                    badgeContent: Text(
+                            "${userStatistic?.totalVendorBookingsPendingAcceptanceCount}")
+                        .bold()
+                        .fontSize(12)
+                        .color(kPrimaryWhite),
+                    showBadge: true,
+                    borderSide:
+                        const BorderSide(color: kPrimaryWhite, width: 2.5),
+                    padding: const EdgeInsets.all(6.5),
+                    child: ZSvgIcon(
+                      currentIndex == 3
+                          ? 'inbox_outline.svg'
+                          : 'inbox_outline.svg',
+                      size: AppThemeUtil.radius(24.0),
+                      color: currentIndex == 3 ? kAider700 : kGrey500,
+                    ).paddingSymmetric(vertical: 4.0),
+                  );
+                }),
                 label: 'Inbox',
               ),
               BottomNavigationBarItem(
                 icon: ZSvgIcon(
-                  currentIndex == 4 ? 'profile.svg':'profile_outline.svg',
+                  currentIndex == 4 ? 'profile.svg' : 'profile_outline.svg',
                   size: AppThemeUtil.radius(24.0),
                   color: currentIndex == 4 ? kAider700 : kGrey500,
                 ).paddingSymmetric(vertical: 4.0),
@@ -137,7 +153,6 @@ class HomeBottomNavigationBar extends StatelessWidget {
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 }
