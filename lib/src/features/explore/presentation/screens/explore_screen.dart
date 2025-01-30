@@ -29,12 +29,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Future<void> fetchSections([int page = 1]) async {
     if (!mounted) return;
     await context.read<ExploreViewProvider>().fetchSections(
-      context,
-      queryParams: {
-        'page': page,
-        'dataPerPage': kSectionPerPage,
-      },
-    );
+          context,
+          page: page,
+        );
   }
 
   @override

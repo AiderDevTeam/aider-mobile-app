@@ -25,7 +25,7 @@ import '../../../../shared_widgets/common/svg_icon.dart';
 import '../../../../shared_widgets/common/v_space.dart';
 import '../../../review/presentation/view_models/review_view_model.dart';
 import '../../domain/models/product/product_model.dart';
-import '../view_models/product_view_model.dart';
+import '../providers/product_provider.dart';
 import 'product_detail_carousel.dart';
 import 'renting/renting_modal.dart';
 
@@ -83,8 +83,8 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
             //   return;
             // }
 
-            context.read<ProductViewModel>().removeDates();
-            context.read<ProductViewModel>().setQuantity = 1;
+            context.read<ProductProvider>().removeDates();
+            context.read<ProductProvider>().setQuantity = 1;
             AppDialogUtil.showScrollableBottomSheet(
               context: context,
               builder: (context) => RentingModal(product: widget.product),

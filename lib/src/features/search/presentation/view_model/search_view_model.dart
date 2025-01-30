@@ -108,17 +108,17 @@ class SearchViewModel extends BaseProvider {
 
   /// POPULAR LOCATIONS
   void emitPopularLocations() {
-    SocketService().emit('sendProductAddresses');
+    // SocketService().emit('sendProductAddresses');
     ZLoggerService.logOnInfo('EMITTING PRODUCT ADDRESSES');
   }
 
   void fetchPopularLocations() {
-    SocketService().once('fetchProductAddresses', (data) {
-      ZLoggerService.logOnInfo(
-          'FETCHING ADDRESSES \n ---- $data ---- \n${DateTime.now()}');
-      if (data != null) setPopularLocations = AddressList.fromJson(data).list;
-    });
+    // SocketService().once('fetchProductAddresses', (data) {
+    //   ZLoggerService.logOnInfo(
+    //       'FETCHING ADDRESSES \n ---- $data ---- \n${DateTime.now()}');
+    //   if (data != null) setPopularLocations = AddressList.fromJson(data).list;
+    // });
 
-    SocketService().off('fetchProductAddresses');
+    // SocketService().off('fetchProductAddresses');
   }
 }

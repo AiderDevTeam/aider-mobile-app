@@ -8,7 +8,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:aider_mobile_app/core/providers/base_view.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_expandable.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class _SubCategoryModalContentState extends State<SubCategoryModalContent> {
             .fontSize(12.0)
             .alignCenterLeft(),
         const VSpace(height: 20.0),
-        BaseView<ProductViewModel>(builder: (context, productConsumer, child) {
+        BaseView<ProductProvider>(builder: (context, productConsumer, child) {
           final subCategories =
               productConsumer.getSelectedCategory.subCategories ?? [];
           return ListView.builder(

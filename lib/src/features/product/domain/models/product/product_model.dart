@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:aider_mobile_app/core/domain/models/address/address_model.dart';
@@ -19,7 +18,10 @@ class ProductModel with _$ProductModel {
   const ProductModel._();
   const factory ProductModel({
     final int? id,
+    final String? uid,
+    final String? userId,
     final String? externalId,
+    final String? subCategoryItemId,
     final String? name,
     final String? description,
     final int? quantity,
@@ -37,22 +39,25 @@ class ProductModel with _$ProductModel {
     final List<ReviewModel>? reviews,
   }) = _ProductModel;
 
-      factory ProductModel.fromJson(Map<String, dynamic> json) =>
+  factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
 
-  bool get hasPhotos => (photos?? []).isNotEmpty;
-  String get firstPhoto => hasPhotos? (photos?.first.photoUrl?? '') : '';
+  bool get hasPhotos => (photos ?? []).isNotEmpty;
+  String get firstPhoto => hasPhotos ? (photos?.first.photoUrl ?? '') : '';
 
-  bool get hasPrices => (prices?? []).isNotEmpty;
-  String get getFirstPrice => (hasPrices? (prices?[0].price?? 0):0).toString().toCurrencyFormat;
+  bool get hasPrices => (prices ?? []).isNotEmpty;
+  String get getFirstPrice =>
+      (hasPrices ? (prices?[0].price ?? 0) : 0).toString().toCurrencyFormat;
 
   static String encode(List<ProductModel> objects) => json.encode(
-    objects.map<Map<String, dynamic>>((obj) => obj.toJson()).toList(),
-  );
+        objects.map<Map<String, dynamic>>((obj) => obj.toJson()).toList(),
+      );
 
-  static List<ProductModel> decode(String objects) => objects.isEmpty ? [] :
-  (json.decode(objects) as List<dynamic>)
-      .map<ProductModel>((obj) => ProductModel.fromJson(obj)).toList();
+  static List<ProductModel> decode(String objects) => objects.isEmpty
+      ? []
+      : (json.decode(objects) as List<dynamic>)
+          .map<ProductModel>((obj) => ProductModel.fromJson(obj))
+          .toList();
 }
 
 class ProductList {
@@ -60,8 +65,7 @@ class ProductList {
   final List<ProductModel> list;
 
   factory ProductList.fromJson(List parsedJson) {
-    final list = parsedJson.map((obj) => ProductModel.fromJson(obj) ).toList();
+    final list = parsedJson.map((obj) => ProductModel.fromJson(obj)).toList();
     return ProductList(list: list);
   }
-
 }

@@ -5,7 +5,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/core/utils/input_formatter_util.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_keyboard_action.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
@@ -28,7 +28,8 @@ class ProductDescriptionScreen extends StatefulWidget {
   const ProductDescriptionScreen({super.key});
 
   @override
-  State<ProductDescriptionScreen> createState() => _ProductDescriptionScreenState();
+  State<ProductDescriptionScreen> createState() =>
+      _ProductDescriptionScreenState();
 }
 
 class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
@@ -40,18 +41,22 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
   final quantityFocusNode = FocusNode();
   final priceController = TextEditingController();
   final priceFocusNode = FocusNode();
-  final autoValidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
+  final autoValidateMode =
+      ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
   final location = ValueNotifier<Map<String, dynamic>?>(null);
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final productDescriptionProvider = context.read<ProductViewModel>().getProductDescription;
-      descriptionController.text = productDescriptionProvider['description'] ?? '';
+      final productDescriptionProvider =
+          context.read<ProductProvider>().getProductDescription;
+      descriptionController.text =
+          productDescriptionProvider['description'] ?? '';
       quantityController.text = productDescriptionProvider['quantity'] ?? '';
       priceController.text = productDescriptionProvider['itemValue'] ?? '';
       if (productDescriptionProvider['location'] != null) {
-        locationController.text = productDescriptionProvider['location']['originName'] ?? '';
+        locationController.text =
+            productDescriptionProvider['location']['originName'] ?? '';
       }
     });
     super.initState();
@@ -74,16 +79,18 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
         child: AppPrimaryButton(
           onPressed: () async {
             if (formKey.currentState!.validate()) {
-              final productProvider = context.read<ProductViewModel>();
+              final productProvider = context.read<ProductProvider>();
               await productProvider.listProduct(
                 context,
-                requestBody: {
-                  ...productProvider.getProductRequestBody,
-                  'description': descriptionController.text,
-                  'quantity': quantityController.text,
-                  'value': priceController.text.replaceAll(",", ""),
-                  'address': location.value ?? context.read<ProductViewModel>().getProductDescription['location'],
-                },
+                requestBody: productProvider.getProductRequestBody.copyWith(
+                  description: descriptionController.text,
+                  quantity: int.parse(quantityController.text),
+                  value: double.parse(priceController.text.replaceAll(",", "")),
+                ),
+                address: location.value ??
+                    context
+                        .read<ProductProvider>()
+                        .getProductDescription['location'],
               );
             }
           },
@@ -118,7 +125,9 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                         keyboardType: TextInputType.multiline,
                         textInputAction: TextInputAction.newline,
                         onChanged: (val) {
-                          context.read<ProductViewModel>().setProductDescription = {"description": val};
+                          context
+                              .read<ProductProvider>()
+                              .setProductDescription = {"description": val};
                         },
                         validator: (value) {
                           if (value!.isEmpty) return 'Write descriptions';
@@ -134,14 +143,20 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                         keyboardType: TextInputType.number,
                         hintText: '0',
                         onChanged: (val) {
-                          context.read<ProductViewModel>().setProductDescription = {"quantity": val};
+                          context
+                              .read<ProductProvider>()
+                              .setProductDescription = {"quantity": val};
                         },
                         validator: (value) {
                           if (value!.isEmpty) return 'Enter quantity';
-                          if (int.parse(value) <= 0) return 'Enter quantity more than 0';
+                          if (int.parse(value) <= 0)
+                            return 'Enter quantity more than 0';
                           return null;
                         },
-                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[1-9][0-9]*$'))],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^[1-9][0-9]*$'))
+                        ],
                       ),
                       const VSpace(height: 12.0),
                       const FormLabel(text: 'Item value'),
@@ -152,30 +167,45 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                         hintText: '0.0',
                         onChanged: (val) {
                           print("Item val not change -> $val");
-                          print("Item val changed -> ${val?.replaceAll(",", "")}");
-                          context.read<ProductViewModel>().setProductDescription = {"itemValue": val?.replaceAll(",", "")};
+                          print(
+                              "Item val changed -> ${val?.replaceAll(",", "")}");
+                          context
+                              .read<ProductProvider>()
+                              .setProductDescription = {
+                            "itemValue": val?.replaceAll(",", "")
+                          };
                         },
                         validator: (value) {
                           if (value!.isEmpty) return 'Enter item value';
-                          if (double.parse(value.replaceAll(",", "")) <= 0) return 'Enter value more than 0';
+                          if (double.parse(value.replaceAll(",", "")) <= 0)
+                            return 'Enter value more than 0';
                           return null;
                         },
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true, signed: false),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
                           InputFormatterUtil.thousandsSeparatorInputSeparator,
                         ],
                         prefixIcon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('₦').medium().fontSize(14).color(kGrey1200).letterSpacing(-0.15).paddingOnly(left: 16.0).alignCenterLeft(),
+                            const Text('₦')
+                                .medium()
+                                .fontSize(14)
+                                .color(kGrey1200)
+                                .letterSpacing(-0.15)
+                                .paddingOnly(left: 16.0)
+                                .alignCenterLeft(),
                           ],
                         ),
                       ),
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: kBlue100,
-                          borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                          borderRadius:
+                              BorderRadius.circular(AppThemeUtil.radius(12.0)),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +216,12 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                               size: AppThemeUtil.radius(20),
                             ),
                             const HSpace(width: 10.0),
-                            const Text('Enter the price the item is worth in the market').regular().color(kGrey800).fontSize(14.0).flexible()
+                            const Text(
+                                    'Enter the price the item is worth in the market')
+                                .regular()
+                                .color(kGrey800)
+                                .fontSize(14.0)
+                                .flexible()
                           ],
                         ).paddingAll(14.0),
                       ),
@@ -198,16 +233,22 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                         hintText: 'Search location',
                         readOnly: true,
                         onTap: () async {
-                          final result = await AppDialogUtil.showScrollableBottomSheet(
+                          final result =
+                              await AppDialogUtil.showScrollableBottomSheet(
                             context: context,
                             builder: (context) => const LocationModal(),
                           );
                           if (result != null) {
-                            locationController.text = result['originName'] ?? '';
+                            locationController.text =
+                                result['originName'] ?? '';
                             if (!mounted) return;
                             location.value = result;
 
-                            context.read<ProductViewModel>().setProductDescription = {"location": location.value};
+                            context
+                                .read<ProductProvider>()
+                                .setProductDescription = {
+                              "location": location.value
+                            };
                           }
                         },
                         suffixIcon: ZSvgIcon(
@@ -219,7 +260,8 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: kBlue100,
-                          borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                          borderRadius:
+                              BorderRadius.circular(AppThemeUtil.radius(12.0)),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +272,8 @@ class _ProductDescriptionScreenState extends State<ProductDescriptionScreen> {
                               size: AppThemeUtil.radius(20),
                             ),
                             const HSpace(width: 10.0),
-                            const Text('Leave blank if the item is in the same location as the address you set in your profile')
+                            const Text(
+                                    'Leave blank if the item is in the same location as the address you set in your profile')
                                 .regular()
                                 .color(kGrey800)
                                 .fontSize(14.0)

@@ -18,7 +18,7 @@ import '../../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../../shared_widgets/common/app_bottom_nav_wrapper.dart';
 import '../../../../../shared_widgets/common/h_space.dart';
 import '../../../domain/models/product/product_model.dart';
-import '../../view_models/product_view_model.dart';
+import '../../providers/product_provider.dart';
 
 class RentingSummaryModalContent extends StatefulWidget {
   const RentingSummaryModalContent({
@@ -31,10 +31,12 @@ class RentingSummaryModalContent extends StatefulWidget {
   final ProductModel product;
 
   @override
-  State<RentingSummaryModalContent> createState() => _RentingSummaryModalContentState();
+  State<RentingSummaryModalContent> createState() =>
+      _RentingSummaryModalContentState();
 }
 
-class _RentingSummaryModalContentState extends State<RentingSummaryModalContent> {
+class _RentingSummaryModalContentState
+    extends State<RentingSummaryModalContent> {
   final _quantity = ValueNotifier<int>(1);
   int _duration = 0;
 
@@ -42,12 +44,15 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final productProvider = context.read<ProductViewModel>();
+      final productProvider = context.read<ProductProvider>();
       _quantity.value = productProvider.getQuantity;
-      if (productProvider.getDates['startDate'] == productProvider.getDates['endDate']) {
+      if (productProvider.getDates['startDate'] ==
+          productProvider.getDates['endDate']) {
         _duration = 1;
       } else {
-        _duration = HelperUtil.getDuration(productProvider.getDates['startDate'], productProvider.getDates['endDate']);
+        _duration = HelperUtil.getDuration(
+            productProvider.getDates['startDate'],
+            productProvider.getDates['endDate']);
       }
       // _duration = HelperUtil.getDuration(productProvider.getDates['startDate'], productProvider.getDates['endDate']);
     });
@@ -57,7 +62,7 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-    final productProvider = context.read<ProductViewModel>();
+    final productProvider = context.read<ProductProvider>();
     return Scaffold(
       body: ListView(
         children: [
@@ -72,12 +77,18 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('SELECTED DATE').bold().fontSize(12.0).color(kGrey700),
+                const Text('SELECTED DATE')
+                    .bold()
+                    .fontSize(12.0)
+                    .color(kGrey700),
                 const VSpace(height: 12.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(_duration == 1 ? '$_duration Day' : '$_duration Days').medium().fontSize(14.0).color(kGrey800),
+                    Text(_duration == 1 ? '$_duration Day' : '$_duration Days')
+                        .medium()
+                        .fontSize(14.0)
+                        .color(kGrey800),
                     Text('${(productProvider.getDates['startDate'] as DateTime).format('MMM d')} - ${(productProvider.getDates['endDate'] as DateTime).format('MMM d')}')
                         .bold()
                         .fontSize(14.0)
@@ -107,7 +118,6 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
               ],
             ),
           ),
-
           const VSpace(height: 12.0),
           AppCard(
             backgroundColor: kGrey50,
@@ -120,13 +130,25 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Location of exchange').bold().fontSize(12.0).color(kGrey700),
+                const Text('Location of exchange')
+                    .bold()
+                    .fontSize(12.0)
+                    .color(kGrey700),
                 const VSpace(height: 12.0),
-                Text("${productProvider.getLocation['originName']}").semiBold().fontSize(14.0).color(kGrey1200),
+                Text("${productProvider.getLocation['originName']}")
+                    .semiBold()
+                    .fontSize(14.0)
+                    .color(kGrey1200),
                 const VSpace(height: 20.0),
-                const Text('Time of exchange').bold().fontSize(12.0).color(kGrey700),
+                const Text('Time of exchange')
+                    .bold()
+                    .fontSize(12.0)
+                    .color(kGrey700),
                 const VSpace(height: 12.0),
-                Text("${productProvider.getTimeOfExchange}").semiBold().fontSize(14.0).color(kGrey1200),
+                Text("${productProvider.getTimeOfExchange}")
+                    .semiBold()
+                    .fontSize(14.0)
+                    .color(kGrey1200),
                 const VSpace(height: 12.0),
                 Align(
                   alignment: Alignment.centerRight,
@@ -162,7 +184,10 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('PRICE DETAILS').bold().fontSize(12.0).color(kGrey700),
+                const Text('PRICE DETAILS')
+                    .bold()
+                    .fontSize(12.0)
+                    .color(kGrey700),
                 const VSpace(height: 12.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -181,7 +206,10 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('SERVICE FEE').bold().fontSize(12.0).color(kGrey700),
+                    const Text('SERVICE FEE')
+                        .bold()
+                        .fontSize(12.0)
+                        .color(kGrey700),
                     Text('$kCurrency ${calculateTenPercent(HelperUtil.getTotalDurationPrice(product.prices ?? [], _duration).toString())}')
                         .bold()
                         .fontSize(16.0)
@@ -191,7 +219,6 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
               ],
             ),
           ),
-
           const VSpace(height: 12.0),
           AppCard(
             backgroundColor: kGrey50,
@@ -248,12 +275,18 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
                   return;
                 }
 
-                await productProvider.requestForItem(context, product.externalId ?? '', requestBody: {
-                  "quantity": productProvider.getQuantity,
-                  "startDate": (productProvider.getDates['startDate'] as DateTime).format('y-MM-dd'),
-                  "endDate": (productProvider.getDates['endDate'] as DateTime).format('y-MM-dd'),
-                  "exchangeSchedule": {}
-                });
+                await productProvider.requestForItem(
+                    context, product.externalId ?? '',
+                    requestBody: {
+                      "quantity": productProvider.getQuantity,
+                      "startDate":
+                          (productProvider.getDates['startDate'] as DateTime)
+                              .format('y-MM-dd'),
+                      "endDate":
+                          (productProvider.getDates['endDate'] as DateTime)
+                              .format('y-MM-dd'),
+                      "exchangeSchedule": {}
+                    });
               },
               text: 'Submit request',
               fontSize: 14.0,
@@ -274,23 +307,26 @@ class _RentingSummaryModalContentState extends State<RentingSummaryModalContent>
     return result.toString().toCurrencyFormat;
   }
 
-double calculateTotalTenPercent(List<ProductPriceModel> prices, int duration) {
-  double totalTenPercent = 0.0;
+  double calculateTotalTenPercent(
+      List<ProductPriceModel> prices, int duration) {
+    double totalTenPercent = 0.0;
 
-  // Iterate over each day within the given duration
-  for (int day = 1; day <= duration; day++) {
-    // Find the applicable price for the current day
-    final priceForDay = prices.firstWhere(
-      (price) => day >= (price.startDay ?? 0) && (price.endDay == null || day <= price.endDay!),
-      orElse: () => const ProductPriceModel(price: 0.0),
-    );
+    // Iterate over each day within the given duration
+    for (int day = 1; day <= duration; day++) {
+      // Find the applicable price for the current day
+      final priceForDay = prices.firstWhere(
+        (price) =>
+            day >= (price.startDay ?? 0) &&
+            (price.endDay == null || day <= price.endDay!),
+        orElse: () => const ProductPriceModel(price: 0.0),
+      );
 
-    // Calculate 10% of the price for the current day and add to the total
-    totalTenPercent += 0.10 * (priceForDay.price ?? 0.0);
+      // Calculate 10% of the price for the current day and add to the total
+      totalTenPercent += 0.10 * (priceForDay.price ?? 0.0);
+    }
+
+    return totalTenPercent;
   }
-
-  return totalTenPercent;
-}
 
   String calculateTenPercent(String totalAmount) {
     // Convert the string to a double
@@ -303,9 +339,12 @@ double calculateTotalTenPercent(List<ProductPriceModel> prices, int duration) {
     return tenPercent.toString().toCurrencyFormat;
   }
 
-  String calculateTotalWithTenPercent(String totalDurationPrice, String tenPercentValue) {
-    final sanitizedDurationPriceValue = totalDurationPrice.replaceAll(RegExp(r'[^\d.]'), '');
-    final sanitizedPercentValue = tenPercentValue.replaceAll(RegExp(r'[^\d.]'), '');
+  String calculateTotalWithTenPercent(
+      String totalDurationPrice, String tenPercentValue) {
+    final sanitizedDurationPriceValue =
+        totalDurationPrice.replaceAll(RegExp(r'[^\d.]'), '');
+    final sanitizedPercentValue =
+        tenPercentValue.replaceAll(RegExp(r'[^\d.]'), '');
 
     double totalDurationPriceDouble = double.parse(sanitizedDurationPriceValue);
     double tenPercentValueDouble = double.parse(sanitizedPercentValue);
@@ -314,5 +353,4 @@ double calculateTotalTenPercent(List<ProductPriceModel> prices, int duration) {
 
     return total.toString().toCurrencyFormat;
   }
-
 }

@@ -7,7 +7,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/forms/app_input_field.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/screen_empty_state.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
@@ -38,7 +38,7 @@ class _CategoryModalContentState extends State<CategoryModalContent> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductViewModel>().fetchPopularCategories();
+      context.read<ProductProvider>().fetchPopularSubCategoryItems(context);
     });
     super.initState();
   }
@@ -91,9 +91,11 @@ class _CategoryModalContentState extends State<CategoryModalContent> {
                 .fontSize(12.0)
                 .paddingSymmetric(horizontal: kWidthPadding),
             const VSpace(height: 20.0),
-            BaseView<ProductViewModel>(
+            BaseView<ProductProvider>(
                 builder: (context, productConsumer, child) {
-              if (productConsumer.getSubCategoryItems.isEmpty) {
+              final filteredItems = productConsumer
+                  .getFilteredPopularSubCategoryItems(searchController.text);
+              if (filteredItems.isEmpty) {
                 return const ScreenEmptyState(
                   title: 'Categories',
                   subtitle: 'No popular categories to display',
@@ -102,9 +104,8 @@ class _CategoryModalContentState extends State<CategoryModalContent> {
               return Wrap(
                 spacing: AppThemeUtil.width(8.0),
                 runSpacing: AppThemeUtil.height(12.0),
-                children: List.generate(
-                    productConsumer.getSubCategoryItems.length, (index) {
-                  final item = productConsumer.getSubCategoryItems[index];
+                children: List.generate(filteredItems.length, (index) {
+                  final item = filteredItems[index];
                   return Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: AppThemeUtil.width(16),
@@ -141,8 +142,7 @@ class _CategoryModalContentState extends State<CategoryModalContent> {
   _onSearchChanged(String? query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      context.read<ProductViewModel>().emitPopularCategories(query);
-      context.read<ProductViewModel>().fetchPopularCategories();
+      setState(() {});
     });
   }
 }

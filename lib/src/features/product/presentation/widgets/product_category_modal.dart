@@ -1,6 +1,5 @@
-
 import 'package:aider_mobile_app/core/constants/colors.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/features/product/presentation/widgets/category_modal_content.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,61 +30,74 @@ class _ProductCategoryModalState extends State<ProductCategoryModal> {
 
   @override
   Widget build(BuildContext context) {
-    final double progress = _pageController.hasClients ? (_pageController.page ?? 0) : 0;
+    final double progress =
+        _pageController.hasClients ? (_pageController.page ?? 0) : 0;
     return DraggableBottomSheet(
       initialChildSize: getInitialChildSize(progress, 0.70),
       minChildSize: 0.60,
-      builder: (context, scrollController){
+      builder: (context, scrollController) {
         return DraggableBottomSheetContent(
           draggableKey: GlobalKey(),
           scrollController: scrollController,
           title: getTitle(progress),
-          goBack: progress < 1? null : (){
-            _pageController.animateToPage(
-              (progress - 1).toInt(),
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.ease,
-            );
-          },
+          goBack: progress < 1
+              ? null
+              : () {
+                  _pageController.animateToPage(
+                    (progress - 1).toInt(),
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.ease,
+                  );
+                },
           content: PageView(
             physics: const NeverScrollableScrollPhysics(),
             controller: _pageController,
             children: [
-              CategoryModalContent(pageController: _pageController, scrollController: scrollController),
-              AllCategoryModalContent(pageController: _pageController,),
-              SubCategoryModalContent(pageController: _pageController,),
+              CategoryModalContent(
+                  pageController: _pageController,
+                  scrollController: scrollController),
+              AllCategoryModalContent(
+                pageController: _pageController,
+              ),
+              SubCategoryModalContent(
+                pageController: _pageController,
+              ),
             ],
           ),
-          bottomNavigationBar: progress > 0.3 ? null : AppBottomNavWrapper(
-            child: AppPrimaryButton(
-              onPressed: (){
-                context.read<ProductViewModel>().emitCategories();
-                _pageController.animateToPage(
-                  1,
-                  duration: const Duration(milliseconds: 400),
-                  curve: Curves.ease,
-                );
-              },
-              text: 'See all categories',
-              color: kPrimaryWhite,
-              textColor: kGrey1000,
-              borderColor: kGrey700,
-            ),
-          ),
+          bottomNavigationBar: progress > 0.3
+              ? null
+              : AppBottomNavWrapper(
+                  child: AppPrimaryButton(
+                    onPressed: () {
+                      // context
+                      //     .read<ProductProvider>()
+                      //     .fetchSubCategoryItems(context);
+                      _pageController.animateToPage(
+                        1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.ease,
+                      );
+                    },
+                    text: 'See all categories',
+                    color: kPrimaryWhite,
+                    textColor: kGrey1000,
+                    borderColor: kGrey700,
+                  ),
+                ),
         );
       },
     );
   }
 
-
-  double getInitialChildSize(double progress, double init){
-    if(progress == 0) return init;
-    if(progress > 1) return init + (progress/(6.6*progress));
-    return init + (progress/(6.6));
+  double getInitialChildSize(double progress, double init) {
+    if (progress == 0) return init;
+    if (progress > 1) return init + (progress / (6.6 * progress));
+    return init + (progress / (6.6));
   }
 
-  String getTitle(double progress){
-    if(progress > 1.2) return context.read<ProductViewModel>().getCategoryModalTitle;
+  String getTitle(double progress) {
+    if (progress > 1.2)
+      return context.read<ProductProvider>().getCategoryModalTitle;
     return 'Select category';
   }
 }

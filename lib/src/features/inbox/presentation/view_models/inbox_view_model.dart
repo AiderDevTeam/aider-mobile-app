@@ -25,16 +25,16 @@ class InboxViewModel extends BaseProvider {
 
   /// INBOX
   void emitRenderConversations(String externalId) {
-    SocketService().emit('sendRenterConversation', {
-      "externalId": externalId,
-    });
+    // SocketService().emit('sendRenterConversation', {
+    //   "externalId": externalId,
+    // });
     ZLoggerService.logOnInfo('EMITTING RENTER CONVERSATIONS');
   }
 
   void emitVendorConversations(String externalId) {
-    SocketService().emit('sendVendorConversation', {
-      "externalId": externalId,
-    });
+    // SocketService().emit('sendVendorConversation', {
+    //   "externalId": externalId,
+    // });
     ZLoggerService.logOnInfo('EMITTING VENDOR CONVERSATIONS');
   }
 
@@ -44,19 +44,19 @@ class InboxViewModel extends BaseProvider {
   void fetchVendorConversations() {
     try {
       setLoading(true, component: 'receivedInbox');
-      SocketService().once('fetchVendorConversation', (data) {
-        ZLoggerService.logOnInfo(
-            'FETCHING RECEIVED CONVERSATIONS \n ---- $data ---- \n${DateTime.now()}');
-        if (data != null) {
-          _receivedChats = ChatList.fromJson(data).list;
-          notifyListeners();
-          _persistReceivedChat();
-        }
-      });
+      // SocketService().once('fetchVendorConversation', (data) {
+      //   ZLoggerService.logOnInfo(
+      //       'FETCHING RECEIVED CONVERSATIONS \n ---- $data ---- \n${DateTime.now()}');
+      //   if (data != null) {
+      //   _receivedChats = ChatList.fromJson(data).list;
+      //   notifyListeners();
+      //   _persistReceivedChat();
+      // }
+      // });
 
-      SocketService().off('fetchVendorConversations');
+      // SocketService().off('fetchVendorConversations');
     } catch (e) {
-      SocketService().off('fetchVendorConversations');
+      // SocketService().off('fetchVendorConversations');
     } finally {
       setLoading(false, component: 'receivedInbox');
     }
@@ -68,19 +68,19 @@ class InboxViewModel extends BaseProvider {
   void fetchRenterConversations() {
     try {
       setLoading(true, component: 'sentInbox');
-      SocketService().once('fetchRenterConversation', (data) {
-        ZLoggerService.logOnInfo(
-            'FETCHING SENT CONVERSATIONS \n ---- $data ---- \n${DateTime.now()}');
-        if (data != null) {
-          _sentChats = ChatList.fromJson(data).list;
-          notifyListeners();
-          _persistSentChat();
-        }
-      });
+      // SocketService().once('fetchRenterConversation', (data) {
+      //   ZLoggerService.logOnInfo(
+      //       'FETCHING SENT CONVERSATIONS \n ---- $data ---- \n${DateTime.now()}');
+      //   if (data != null) {
+      //     _sentChats = ChatList.fromJson(data).list;
+      //     notifyListeners();
+      //     _persistSentChat();
+      //   }
+      // });
 
-      SocketService().off('fetchRenterConversations');
+      // SocketService().off('fetchRenterConversations');
     } catch (e) {
-      SocketService().off('fetchRenterConversations');
+      // SocketService().off('fetchRenterConversations');
     } finally {
       setLoading(false, component: 'sentInbox');
     }
@@ -88,9 +88,9 @@ class InboxViewModel extends BaseProvider {
 
   /// CHAT MESSAGES
   void emitMessages(int conversationId) {
-    SocketService().emit('sendMessages', {
-      "conversationId": conversationId,
-    });
+    // SocketService().emit('sendMessages', {
+    //   "conversationId": conversationId,
+    // });
     ZLoggerService.logOnInfo('EMITTING MESSAGES');
   }
 
@@ -104,40 +104,39 @@ class InboxViewModel extends BaseProvider {
     try {
       setLoading(true, component: 'messages');
       clearMessages();
-      SocketService().on('fetchMessages', (data) {
-        ZLoggerService.logOnInfo(
-            'FETCHING MESSAGES \n ---- $data ---- \n${DateTime.now()}');
+      // SocketService().on('fetchMessages', (data) {
+      //   ZLoggerService.logOnInfo(
+      //       'FETCHING MESSAGES \n ---- $data ---- \n${DateTime.now()}');
 
-        if (data != null) {
-          if (data.runtimeType != List) {
-            final message = MessageModel.fromJson(data ?? {});
-            final index = _messages.indexWhere((obj) =>
-                obj.externalId == message.externalId &&
-                obj.conversationId == message.conversationId);
-            if (index >= 0) {
-              _messages[index] = message;
-            } else {
-              final newIndex = _messages.indexWhere(
-                  (obj) => obj.conversationId == message.conversationId);
+      //   if (data != null) {
+      //     if (data.runtimeType != List) {
+      //       final message = MessageModel.fromJson(data ?? {});
+      //       final index = _messages.indexWhere((obj) =>
+      //           obj.externalId == message.externalId &&
+      //           obj.conversationId == message.conversationId);
+      //     if (index >= 0) {
+      //       _messages[index] = message;
+      //     } else {
+      //       final newIndex = _messages.indexWhere(
+      //           (obj) => obj.conversationId == message.conversationId);
 
-              if (newIndex >= 0) {
-                _messages.insert(0, message);
-              }
-            }
-            notifyListeners();
-            return;
-          }
-          _messages = MessageList.fromJson(data).list;
-          notifyListeners();
-        }
-      });
+      //         if (newIndex >= 0) {
+      //           _messages.insert(0, message);
+      //         }
+      //     }
+      //     notifyListeners();
+      //     return;
+      //   }
+      //   _messages = MessageList.fromJson(data).list;
+      //   notifyListeners();
+      // });
     } finally {
       setLoading(false, component: 'messages');
     }
   }
 
   void closeFetchMessage() {
-    SocketService().off('fetchMessages');
+    // SocketService().off('fetchMessages');
   }
 
   bool get canNudge =>

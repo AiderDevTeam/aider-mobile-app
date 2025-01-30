@@ -1,5 +1,5 @@
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/product_list_view_builder.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class VendorListedProductTab extends StatefulWidget {
 
 class _VendorListedProductTabState extends State<VendorListedProductTab> {
   Future<void> fetchVendorProducts([String? nextPage]) async {
-    await context.read<ProductViewModel>().fetchVendorProducts(context,
+    await context.read<ProductProvider>().fetchVendorProducts(context,
         vendorExternalId: widget.vendorExternalId,
         nextPage: nextPage,
         queryParam: {
@@ -45,7 +45,7 @@ class _VendorListedProductTabState extends State<VendorListedProductTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseView<ProductViewModel>(
+    return BaseView<ProductProvider>(
         builder: (context, productConsumer, child) {
       if (productConsumer.isComponentLoading('fetchVendorProducts') &&
           productConsumer.getVendorProducts.isEmpty) {

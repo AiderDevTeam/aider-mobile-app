@@ -30,7 +30,7 @@ import '../../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart
 import '../../../../explore/presentation/providers/explore_view_provider.dart';
 import '../../../../explore/presentation/widgets/suggestion_tag.dart';
 import '../../../../product/domain/models/category/sub_category_item_model.dart';
-import '../../../../product/presentation/view_models/product_view_model.dart';
+import '../../../../product/presentation/providers/product_provider.dart';
 import '../../view_model/search_view_model.dart';
 
 class FilterModal extends StatefulWidget {
@@ -59,19 +59,16 @@ class _FilterModalState extends State<FilterModal> {
   Future<void> fetchProductsByCategory([int page = 1]) async {
     if (!mounted) return;
     await context.read<ExploreViewProvider>().fetchProductsByCategory(
-      context,
-      categoryExternalId: widget.categoryExternalId,
-      queryParams: {
-        'page': page,
-        'dataPerPage': kProductPerPage,
-      },
-    );
+          context,
+          categoryExternalId: widget.categoryExternalId,
+          page: page,
+        );
   }
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProductViewModel>().fetchPopularCategories();
+      context.read<ProductProvider>().fetchPopularSubCategoryItems(context);
       context.read<SearchViewModel>().fetchPopularLocations();
     });
     super.initState();
@@ -100,6 +97,7 @@ class _FilterModalState extends State<FilterModal> {
                 List<int?> subCategoryItemIds =
                     appliedFilters.map((obj) => obj.id).toList();
                 Map<String, dynamic> requestBody = {
+                  "categoryExternalId": widget.categoryExternalId,
                   "priceRange": {
                     "min": num.parse(startController.text.replaceAll(',', '')),
                     "max": num.parse(endController.text.replaceAll(',', '')),
@@ -128,9 +126,7 @@ class _FilterModalState extends State<FilterModal> {
                       loadingComponent: widget.type == 'products'
                           ? "products"
                           : "fetchProductsByCategory",
-                      queryParam: {
-                        'pageSize': kProductPerPage,
-                      },
+                      page: 1,
                       requestBody: requestBody,
                     );
               },
@@ -250,7 +246,7 @@ class _FilterModalState extends State<FilterModal> {
                   .color(kGrey700)
                   .paddingSymmetric(horizontal: kWidthPadding),
               const VSpace(height: 20),
-              BaseView<ProductViewModel>(
+              BaseView<ProductProvider>(
                   builder: (context, productConsumer, child) {
                 if (productConsumer.getSubCategoryItems.isEmpty) {
                   return const ScreenEmptyState(

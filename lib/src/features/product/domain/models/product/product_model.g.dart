@@ -9,7 +9,10 @@ part of 'product_model.dart';
 _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
     _$ProductModelImpl(
       id: (json['id'] as num?)?.toInt(),
+      uid: json['uid'] as String?,
+      userId: json['userId'] as String?,
       externalId: json['externalId'] as String?,
+      subCategoryItemId: json['subCategoryItemId'] as String?,
       name: json['name'] as String?,
       description: json['description'] as String?,
       quantity: (json['quantity'] as num?)?.toInt(),
@@ -46,7 +49,10 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'uid': instance.uid,
+      'userId': instance.userId,
       'externalId': instance.externalId,
+      'subCategoryItemId': instance.subCategoryItemId,
       'name': instance.name,
       'description': instance.description,
       'quantity': instance.quantity,

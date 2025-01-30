@@ -9,7 +9,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/core/utils/input_formatter_util.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/features/product/presentation/widgets/product_image_placeholder.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
@@ -47,7 +47,8 @@ class EditListedProductScreen extends StatefulWidget {
   final ProductModel product;
 
   @override
-  State<EditListedProductScreen> createState() => _EditListedProductScreenState();
+  State<EditListedProductScreen> createState() =>
+      _EditListedProductScreenState();
 }
 
 class _EditListedProductScreenState extends State<EditListedProductScreen> {
@@ -62,7 +63,8 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
   final valueController = TextEditingController();
   final valueFocusNode = FocusNode();
   final priceFocusNodes = ValueNotifier<List<FocusNode>>([]);
-  final autoValidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
+  final autoValidateMode =
+      ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
   final images = ValueNotifier<List<Map<String, dynamic>>>([]);
   final priceControllers = ValueNotifier<List<TextEditingController>>([]);
   final location = ValueNotifier<Map<String, dynamic>?>(null);
@@ -72,7 +74,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<ProductViewModel>().retrievePriceStructure();
+      await context.read<ProductProvider>().retrievePriceStructure();
 
       final product = widget.product;
       itemNameController.text = product.name ?? '';
@@ -80,7 +82,10 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
       subCategoryItem = product.subCategoryItem;
       categoryController.text = product.subCategoryItem?.name ?? '';
       int index = 0;
-      images.value = (product.photos ?? []).map((obj) => {'id': obj.id, 'index': index++, 'imageUrl': obj.photoUrl}).toList();
+      images.value = (product.photos ?? [])
+          .map((obj) =>
+              {'id': obj.id, 'index': index++, 'imageUrl': obj.photoUrl})
+          .toList();
       locationController.text = product.address?.originName ?? '';
       location.value = product.address?.toJson();
       quantityController.text = (product.quantity ?? '').toString();
@@ -159,7 +164,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                     borderColor: kError600,
                     onYesPressed: () async {
                       AppNavigator.pop(context);
-                      await context.read<ProductViewModel>().deleteProduct(
+                      await context.read<ProductProvider>().deleteProduct(
                             context,
                             productExternalId: product.externalId ?? '',
                           );
@@ -178,19 +183,23 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
               onPressed: () async {
                 if (formKey.currentState!.validate()) {
                   if (priceControllers.value.isEmpty) {
-                    AppDialogUtil.showWarningAlert(context, 'Select rental price');
+                    AppDialogUtil.showWarningAlert(
+                        context, 'Select rental price');
                     return;
                   }
                   List<Map<String, dynamic>> prices = [];
                   for (int i = 0; i < priceControllers.value.length; i++) {
                     prices.add({
-                      "price": priceControllers.value[i].text.replaceAll(",", ""),
-                      "productPriceId": productPrices.value[i]['productPriceId'],
-                      "priceStructureId": productPrices.value[i]['priceStructureId'],
+                      "price":
+                          priceControllers.value[i].text.replaceAll(",", ""),
+                      "productPriceId": productPrices.value[i]
+                          ['productPriceId'],
+                      "priceStructureId": productPrices.value[i]
+                          ['priceStructureId'],
                     });
                   }
 
-                  await context.read<ProductViewModel>().updateProduct(
+                  await context.read<ProductProvider>().updateProduct(
                     context,
                     productExternalId: product.externalId ?? '',
                     requestBody: {
@@ -255,7 +264,9 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                               children: List.generate(
                                 4,
                                 (index) {
-                                  final photo = imageValues.firstWhere((obj) => obj['index'] == index, orElse: () => <String, dynamic>{});
+                                  final photo = imageValues.firstWhere(
+                                      (obj) => obj['index'] == index,
+                                      orElse: () => <String, dynamic>{});
                                   return ProductImagePlaceholder(
                                     file: photo['file'],
                                     imageUrl: photo['imageUrl'],
@@ -264,48 +275,80 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                       await showDialog<File?>(
                                         context: context,
                                         builder: (context) => AlertDialog(
-                                          title: const Text("Select Image Source"),
+                                          title:
+                                              const Text("Select Image Source"),
                                           surfaceTintColor: kPrimaryWhite,
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
                                               ListTile(
-                                                leading: const Icon(Icons.camera),
-                                                title: const Text('Take a picture'),
+                                                leading:
+                                                    const Icon(Icons.camera),
+                                                title: const Text(
+                                                    'Take a picture'),
                                                 onTap: () async {
-                                                  if (await PermissionUtil.getCameraPermissions()) {
-                                                    final croppedFile = await MediaFileUtil.getPickedSourceImage();
+                                                  if (await PermissionUtil
+                                                      .getCameraPermissions()) {
+                                                    final croppedFile =
+                                                        await MediaFileUtil
+                                                            .getPickedSourceImage();
                                                     if (croppedFile != null) {
-                                                      images.value = List.from(imageValues)
-                                                        ..add({
-                                                          'index': index,
-                                                          'file': croppedFile,
-                                                        });
+                                                      images.value =
+                                                          List.from(imageValues)
+                                                            ..add({
+                                                              'index': index,
+                                                              'file':
+                                                                  croppedFile,
+                                                            });
 
                                                       if (!mounted) return;
-                                                      await Future.delayed(const Duration(milliseconds: 500));
+                                                      await Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  500));
 
-                                                      if (!context.mounted) return;
+                                                      if (!context.mounted)
+                                                        return;
                                                       AppDialogUtil.popUpModal(
                                                         context,
-                                                        modalContent: QuestionModalContent(
+                                                        modalContent:
+                                                            QuestionModalContent(
                                                           title: 'Item Photo',
-                                                          questionText: 'Do you want add photo to this item?',
-                                                          onYesPressed: () async {
-                                                            AppNavigator.pop(context);
-                                                            await context.read<ProductViewModel>().addProductPhoto(
+                                                          questionText:
+                                                              'Do you want add photo to this item?',
+                                                          onYesPressed:
+                                                              () async {
+                                                            AppNavigator.pop(
+                                                                context);
+                                                            await context
+                                                                .read<
+                                                                    ProductProvider>()
+                                                                .addProductPhoto(
                                                               context,
-                                                              productExternalId: product.externalId ?? '',
+                                                              productExternalId:
+                                                                  product.externalId ??
+                                                                      '',
                                                               requestBody: {
-                                                                "photos[]": croppedFile,
+                                                                "photos[]":
+                                                                    croppedFile,
                                                               },
                                                             );
-                                                            if (!context.mounted) return;
-                                                            Navigator.of(context).pop();
+                                                            if (!context
+                                                                .mounted)
+                                                              return;
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                           onNoPressed: () {
-                                                            AppNavigator.pop(context);
-                                                            images.value = List.from(imageValues)..removeWhere((obj) => obj['index'] == index);
+                                                            AppNavigator.pop(
+                                                                context);
+                                                            images.value = List
+                                                                .from(
+                                                                    imageValues)
+                                                              ..removeWhere((obj) =>
+                                                                  obj['index'] ==
+                                                                  index);
                                                           },
                                                         ),
                                                       );
@@ -314,42 +357,73 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                                 },
                                               ),
                                               ListTile(
-                                                leading: const Icon(Icons.photo_library),
-                                                title: const Text('Choose from gallery'),
+                                                leading: const Icon(
+                                                    Icons.photo_library),
+                                                title: const Text(
+                                                    'Choose from gallery'),
                                                 onTap: () async {
-                                                  if (await PermissionUtil.getStoragePermission()) {
-                                                    final croppedFile = await MediaFileUtil.getPickedImage();
+                                                  if (await PermissionUtil
+                                                      .getStoragePermission()) {
+                                                    final croppedFile =
+                                                        await MediaFileUtil
+                                                            .getPickedImage();
                                                     if (croppedFile != null) {
-                                                      images.value = List.from(imageValues)
-                                                        ..add({
-                                                          'index': index,
-                                                          'file': croppedFile,
-                                                        });
+                                                      images.value =
+                                                          List.from(imageValues)
+                                                            ..add({
+                                                              'index': index,
+                                                              'file':
+                                                                  croppedFile,
+                                                            });
 
                                                       if (!mounted) return;
-                                                      await Future.delayed(const Duration(milliseconds: 500));
+                                                      await Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  500));
 
-                                                      if (!context.mounted) return;
+                                                      if (!context.mounted)
+                                                        return;
                                                       AppDialogUtil.popUpModal(
                                                         context,
-                                                        modalContent: QuestionModalContent(
+                                                        modalContent:
+                                                            QuestionModalContent(
                                                           title: 'Item Photo',
-                                                          questionText: 'Do you want add photo to this item?',
-                                                          onYesPressed: () async {
-                                                            AppNavigator.pop(context);
-                                                            await context.read<ProductViewModel>().addProductPhoto(
+                                                          questionText:
+                                                              'Do you want add photo to this item?',
+                                                          onYesPressed:
+                                                              () async {
+                                                            AppNavigator.pop(
+                                                                context);
+                                                            await context
+                                                                .read<
+                                                                    ProductProvider>()
+                                                                .addProductPhoto(
                                                               context,
-                                                              productExternalId: product.externalId ?? '',
+                                                              productExternalId:
+                                                                  product.externalId ??
+                                                                      '',
                                                               requestBody: {
-                                                                "photos[]": croppedFile,
+                                                                "photos[]":
+                                                                    croppedFile,
                                                               },
                                                             );
-                                                            if (!context.mounted) return;
-                                                            Navigator.of(context).pop();
+                                                            if (!context
+                                                                .mounted)
+                                                              return;
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                           onNoPressed: () {
-                                                            AppNavigator.pop(context);
-                                                            images.value = List.from(imageValues)..removeWhere((obj) => obj['index'] == index);
+                                                            AppNavigator.pop(
+                                                                context);
+                                                            images.value = List
+                                                                .from(
+                                                                    imageValues)
+                                                              ..removeWhere((obj) =>
+                                                                  obj['index'] ==
+                                                                  index);
                                                           },
                                                         ),
                                                       );
@@ -368,20 +442,27 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                           context,
                                           modalContent: QuestionModalContent(
                                             title: 'Delete from Photos',
-                                            questionText: 'Are you sure you want to delete this photo?',
+                                            questionText:
+                                                'Are you sure you want to delete this photo?',
                                             color: kError700,
                                             borderColor: kError600,
                                             onYesPressed: () async {
                                               AppNavigator.pop(context);
-                                              final result = await context.read<ProductViewModel>().deleteProductPhoto(
+                                              final result = await context
+                                                  .read<ProductProvider>()
+                                                  .deleteProductPhoto(
                                                 context,
-                                                productExternalId: product.externalId ?? '',
+                                                productExternalId:
+                                                    product.externalId ?? '',
                                                 requestBody: {
                                                   "photoId": photo['id'],
                                                 },
                                               );
                                               if (result) {
-                                                images.value = List.from(imageValues)..removeWhere((obj) => obj['index'] == index);
+                                                images.value = List.from(
+                                                    imageValues)
+                                                  ..removeWhere((obj) =>
+                                                      obj['index'] == index);
                                               }
                                             },
                                             reverseYesNo: true,
@@ -390,9 +471,15 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
 
                                         return;
                                       }
-                                      images.value = List.from(imageValues)..removeWhere((obj) => obj['index'] == index);
+                                      images.value = List.from(imageValues)
+                                        ..removeWhere(
+                                            (obj) => obj['index'] == index);
                                     },
-                                    canDelete: imageValues.where((item) => item['imageUrl'] != null).length > 1,
+                                    canDelete: imageValues
+                                            .where((item) =>
+                                                item['imageUrl'] != null)
+                                            .length >
+                                        1,
                                     update: true,
                                   );
                                 },
@@ -435,13 +522,17 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                           return null;
                         },
                         onTap: () async {
-                          context.read<ProductViewModel>().emitPopularCategories();
-                          final result = await AppDialogUtil.showScrollableBottomSheet(
+                          // context
+                          //     .read<ProductProvider>()
+                          //     .emitPopularCategories();
+                          final result =
+                              await AppDialogUtil.showScrollableBottomSheet(
                             context: context,
                             builder: (context) => const ProductCategoryModal(),
                           );
                           if (result != null) {
-                            categoryController.text = (result as SubCategoryItemModel).name ?? '';
+                            categoryController.text =
+                                (result as SubCategoryItemModel).name ?? '';
                             subCategoryItem = result;
                           }
                         },
@@ -458,21 +549,25 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                           builder: (context, priceControllerValues, child) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: List.generate(priceControllerValues.length, (index) {
+                              children: List.generate(
+                                  priceControllerValues.length, (index) {
                                 final controller = priceControllerValues[index];
                                 final focusNode = priceFocusNodes.value[index];
                                 final price = productPrices.value[index];
                                 return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     AppInputField(
                                       controller: controller,
                                       hintText: 'Enter price per day',
                                       validator: (value) {
-                                        if (value!.isEmpty) return 'Enter price per day';
+                                        if (value!.isEmpty)
+                                          return 'Enter price per day';
                                         return null;
                                       },
-                                      focusNode: HelperUtil.isIOS ? focusNode : null,
+                                      focusNode:
+                                          HelperUtil.isIOS ? focusNode : null,
                                       prefixIcon: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -497,18 +592,25 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                               .alignCenterRight(),
                                         ],
                                       ),
-                                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true, signed: false),
                                       inputFormatters: [
-                                        FilteringTextInputFormatter.allow(RegExp(r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
-                                        InputFormatterUtil.thousandsSeparatorInputSeparator,
+                                        FilteringTextInputFormatter.allow(RegExp(
+                                            r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
+                                        InputFormatterUtil
+                                            .thousandsSeparatorInputSeparator,
                                       ],
                                     ).flexible(flex: 9),
                                     Container(
-                                      margin: EdgeInsets.only(bottom: AppThemeUtil.height(24.0)),
-                                      padding: EdgeInsets.all(AppThemeUtil.radius(16.0)),
+                                      margin: EdgeInsets.only(
+                                          bottom: AppThemeUtil.height(24.0)),
+                                      padding: EdgeInsets.all(
+                                          AppThemeUtil.radius(16.0)),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: kGrey200),
-                                        borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                                        borderRadius: BorderRadius.circular(
+                                            AppThemeUtil.radius(12.0)),
                                       ),
                                       child: ZSvgIcon(
                                         'minus.svg',
@@ -517,34 +619,52 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                       ),
                                     ).onPressed(() async {
                                       if (price['productPriceId'] == null) {
-                                        priceControllers.value = List.from(priceControllerValues)..removeAt(index);
-                                        productPrices.value = List.from(productPrices.value)..removeAt(index);
-                                        priceFocusNodes.value = List.from(priceFocusNodes.value)..removeAt(index);
+                                        priceControllers.value =
+                                            List.from(priceControllerValues)
+                                              ..removeAt(index);
+                                        productPrices.value =
+                                            List.from(productPrices.value)
+                                              ..removeAt(index);
+                                        priceFocusNodes.value =
+                                            List.from(priceFocusNodes.value)
+                                              ..removeAt(index);
                                         return;
                                       }
 
-                                      if (priceControllerValues.length == 1) return;
+                                      if (priceControllerValues.length == 1)
+                                        return;
 
                                       AppDialogUtil.popUpModal(
                                         context,
                                         modalContent: QuestionModalContent(
                                           title: 'Delete Price',
-                                          questionText: 'Are you sure you want to delete this price?',
+                                          questionText:
+                                              'Are you sure you want to delete this price?',
                                           color: kError700,
                                           borderColor: kError600,
                                           onYesPressed: () async {
                                             AppNavigator.pop(context);
-                                            final result = await context.read<ProductViewModel>().deleteProductPrice(
+                                            final result = await context
+                                                .read<ProductProvider>()
+                                                .deleteProductPrice(
                                               context,
-                                              productExternalId: product.externalId ?? '',
+                                              productExternalId:
+                                                  product.externalId ?? '',
                                               requestBody: {
-                                                "productPriceId": price['productPriceId'],
+                                                "productPriceId":
+                                                    price['productPriceId'],
                                               },
                                             );
                                             if (result) {
-                                              priceControllers.value = List.from(priceControllerValues)..removeAt(index);
-                                              productPrices.value = List.from(productPrices.value)..removeAt(index);
-                                              priceFocusNodes.value = List.from(priceFocusNodes.value)..removeAt(index);
+                                              priceControllers.value = List
+                                                  .from(priceControllerValues)
+                                                ..removeAt(index);
+                                              productPrices.value =
+                                                  List.from(productPrices.value)
+                                                    ..removeAt(index);
+                                              priceFocusNodes.value = List.from(
+                                                  priceFocusNodes.value)
+                                                ..removeAt(index);
                                               return;
                                             }
                                           },
@@ -560,7 +680,8 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                       ValueListenableBuilder(
                         valueListenable: priceControllers,
                         builder: (context, priceControllerValues, child) {
-                          if (priceControllerValues.length >= 3) return const SizedBox.shrink();
+                          if (priceControllerValues.length >= 3)
+                            return const SizedBox.shrink();
 
                           return Container(
                             padding: EdgeInsets.symmetric(
@@ -569,12 +690,16 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: kGrey50,
-                              borderRadius: BorderRadius.circular(AppThemeUtil.radius(30.0)),
+                              borderRadius: BorderRadius.circular(
+                                  AppThemeUtil.radius(30.0)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('Add price').semiBold().fontSize(14.0).color(kGrey1200),
+                                const Text('Add price')
+                                    .semiBold()
+                                    .fontSize(14.0)
+                                    .color(kGrey1200),
                                 const HSpace(width: 8.0),
                                 Icon(
                                   Icons.add,
@@ -586,9 +711,12 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                           ).onPressed(() async {
                             if (priceControllers.value.length == 3) return;
 
-                            context.read<ProductViewModel>().emitPriceStructure();
+                            context
+                                .read<ProductProvider>()
+                                .fetchPriceStructure(context);
 
-                            final result = await AppDialogUtil.showScrollableBottomSheet(
+                            final result =
+                                await AppDialogUtil.showScrollableBottomSheet(
                               context: context,
                               builder: (context) => RentalPriceModal(
                                 prices: const [],
@@ -597,9 +725,14 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                               ),
                             );
                             if (result != null) {
-                              priceControllers.value = List.from(priceControllers.value)..add(TextEditingController());
-                              productPrices.value = List.from(productPrices.value)..add(result);
-                              priceFocusNodes.value = List.from(priceFocusNodes.value)..add(FocusNode());
+                              priceControllers.value =
+                                  List.from(priceControllers.value)
+                                    ..add(TextEditingController());
+                              productPrices.value =
+                                  List.from(productPrices.value)..add(result);
+                              priceFocusNodes.value =
+                                  List.from(priceFocusNodes.value)
+                                    ..add(FocusNode());
                             }
                           });
                         },
@@ -614,15 +747,20 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                               const VSpace(height: 8.0),
                               AppInputField(
                                 controller: quantityController,
-                                focusNode: HelperUtil.isIOS ? quantityFocusNode : null,
+                                focusNode:
+                                    HelperUtil.isIOS ? quantityFocusNode : null,
                                 keyboardType: TextInputType.number,
                                 hintText: '0',
                                 validator: (value) {
                                   if (value!.isEmpty) return 'Enter quantity';
-                                  if (int.parse(value) <= 0) return 'Enter quantity more than 0';
+                                  if (int.parse(value) <= 0)
+                                    return 'Enter quantity more than 0';
                                   return null;
                                 },
-                                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[1-9][0-9]*$'))],
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^[1-9][0-9]*$'))
+                                ],
                               ),
                             ],
                           ).flexible(),
@@ -634,17 +772,23 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                               const VSpace(height: 8.0),
                               AppInputField(
                                 controller: valueController,
-                                focusNode: HelperUtil.isIOS ? valueFocusNode : null,
+                                focusNode:
+                                    HelperUtil.isIOS ? valueFocusNode : null,
                                 hintText: '0.0',
                                 validator: (value) {
                                   if (value!.isEmpty) return 'Enter item value';
-                                  if (double.parse(value.replaceAll(",", "")) <= 0) return 'Enter value more than 0';
+                                  if (double.parse(value.replaceAll(",", "")) <=
+                                      0) return 'Enter value more than 0';
                                   return null;
                                 },
-                                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true, signed: false),
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(RegExp(r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
-                                  InputFormatterUtil.thousandsSeparatorInputSeparator,
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
+                                  InputFormatterUtil
+                                      .thousandsSeparatorInputSeparator,
                                 ],
                                 prefixIcon: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -671,12 +815,14 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                         hintText: 'Search location',
                         readOnly: true,
                         onTap: () async {
-                          final result = await AppDialogUtil.showScrollableBottomSheet(
+                          final result =
+                              await AppDialogUtil.showScrollableBottomSheet(
                             context: context,
                             builder: (context) => const LocationModal(),
                           );
                           if (result != null) {
-                            locationController.text = result['originName'] ?? '';
+                            locationController.text =
+                                result['originName'] ?? '';
                             if (!mounted) return;
                             location.value = result;
                           }
@@ -690,7 +836,8 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                       DecoratedBox(
                         decoration: BoxDecoration(
                           color: kBlue100,
-                          borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                          borderRadius:
+                              BorderRadius.circular(AppThemeUtil.radius(12.0)),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -701,7 +848,8 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                               size: AppThemeUtil.radius(20),
                             ),
                             const HSpace(width: 10.0),
-                            const Text('Leave blank if the item is in the same location as the address you set in your profile')
+                            const Text(
+                                    'Leave blank if the item is in the same location as the address you set in your profile')
                                 .regular()
                                 .color(kGrey800)
                                 .fontSize(14.0)
@@ -721,14 +869,18 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
 
   void _setProductPrices(ProductModel product) {
     for (ProductPriceModel price in (product.prices ?? [])) {
-      priceControllers.value = List.from(priceControllers.value)..add(TextEditingController(text: (price.price ?? '').toString()));
-      priceFocusNodes.value = List.from(priceFocusNodes.value)..add(FocusNode());
+      priceControllers.value = List.from(priceControllers.value)
+        ..add(TextEditingController(text: (price.price ?? '').toString()));
+      priceFocusNodes.value = List.from(priceFocusNodes.value)
+        ..add(FocusNode());
       productPrices.value = List.from(productPrices.value)
         ..add({
           "productPriceId": price.id,
           "startDay": price.startDay,
           "endDay": price.endDay,
-          "name": price.endDay == null ? '${price.startDay}+' : '${price.startDay}-${price.endDay}',
+          "name": price.endDay == null
+              ? '${price.startDay}+'
+              : '${price.startDay}-${price.endDay}',
         });
     }
   }

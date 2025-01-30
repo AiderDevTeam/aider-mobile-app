@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/providers/base_view.dart';
 import '../../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
-import '../../view_models/product_view_model.dart';
+import '../../providers/product_provider.dart';
 
 class RentalPriceModal extends StatefulWidget {
   const RentalPriceModal({
@@ -34,7 +34,7 @@ class _RentalPriceModalState extends State<RentalPriceModal> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) context.read<ProductViewModel>().fetchPriceStructure();
+      if (mounted) context.read<ProductProvider>().fetchPriceStructure(context);
     });
     super.initState();
   }
@@ -50,7 +50,7 @@ class _RentalPriceModalState extends State<RentalPriceModal> {
           draggableKey: GlobalKey(),
           scrollController: scrollController,
           title: 'Rental price (₦) per',
-          content: BaseView<ProductViewModel>(
+          content: BaseView<ProductProvider>(
               builder: (context, productConsumer, child) {
             return ListView.builder(
               padding:

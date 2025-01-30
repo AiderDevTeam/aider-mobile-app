@@ -24,6 +24,7 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       idVerified: json['idVerified'] as bool?,
       joinedAt: json['joinedAt'] as String?,
       profilePhotoUrl: json['profilePhotoUrl'] as String?,
+      itemsListed: (json['itemsListed'] as num?)?.toInt(),
       addresses: (json['addresses'] as List<dynamic>?)
           ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -64,6 +65,7 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'idVerified': instance.idVerified,
       'joinedAt': instance.joinedAt,
       'profilePhotoUrl': instance.profilePhotoUrl,
+      'itemsListed': instance.itemsListed,
       'addresses': instance.addresses,
       'statistics': instance.statistics,
       'wallets': instance.wallets,

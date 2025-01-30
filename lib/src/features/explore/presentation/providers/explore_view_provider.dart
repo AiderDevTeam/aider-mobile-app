@@ -36,17 +36,16 @@ class ExploreViewProvider extends BaseProvider {
     }
   }
 
-  Future<void> fetchSections(BuildContext context,
-      {required Map<String, dynamic> queryParams}) async {
+  Future<void> fetchSections(BuildContext context, {required int page}) async {
     setComponentErrorType = null;
-    if (queryParams['page'] == 1) {
+    if (page == 1) {
       _sectionCurrentPageNumber = 1;
       _hasNoSectionData = false;
     }
     setLoading(true, component: 'sections');
 
-    final result =
-        await _exploreRepository.fetchSections(queryParams: queryParams);
+    final result = await _exploreRepository.fetchSections(
+        page: page, dataPerPage: kSectionPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -55,9 +54,9 @@ class ExploreViewProvider extends BaseProvider {
       };
       setLoading(false, component: 'sections');
     }, (right) {
-      _sectionCurrentPageNumber = queryParams['page'] + 1;
+      _sectionCurrentPageNumber = page + 1;
       _hasNoSectionData = right.length < kSectionPerPage;
-      setSections(right, append: queryParams['page'] > 1);
+      setSections(right, append: page > 1);
       setLoading(
         false,
         component: 'sections',
@@ -82,10 +81,9 @@ class ExploreViewProvider extends BaseProvider {
   bool get hasNoCategoryData => _categoryHasNoData;
 
   Future<void> fetchCategories(BuildContext context,
-      {required String sectionExternalId,
-      required Map<String, dynamic> queryParams}) async {
+      {required String sectionExternalId, required int page}) async {
     setComponentErrorType = null;
-    if (queryParams['page'] == 1) {
+    if (page == 1) {
       _categoryCurrentPageNumber = 1;
       clearCategories();
       _categoryHasNoData = false;
@@ -93,7 +91,9 @@ class ExploreViewProvider extends BaseProvider {
     setLoading(true, component: 'categories');
 
     final result = await _exploreRepository.fetchCategories(
-        sectionExternalId: sectionExternalId, queryParams: queryParams);
+        sectionExternalId: sectionExternalId,
+        page: page,
+        dataPerPage: kProductPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -102,9 +102,9 @@ class ExploreViewProvider extends BaseProvider {
       };
       setLoading(false, component: 'categories');
     }, (right) {
-      _categoryCurrentPageNumber = queryParams['page'] + 1;
-      _categoryHasNoData = right.length < kDataPerPage;
-      setCategories(right, append: queryParams['page'] > 1);
+      _categoryCurrentPageNumber = page + 1;
+      _categoryHasNoData = right.length < kProductPerPage;
+      setCategories(right, append: page > 1);
       setLoading(
         false,
         component: 'categories',
@@ -133,10 +133,9 @@ class ExploreViewProvider extends BaseProvider {
   bool get hasNoProductData => _productHasNoData;
 
   Future<void> fetchProducts(BuildContext context,
-      {required String sectionExternalId,
-      required Map<String, dynamic> queryParams}) async {
+      {required String sectionExternalId, required int page}) async {
     setComponentErrorType = null;
-    if (queryParams['page'] == 1) {
+    if (page == 1) {
       _productCurrentPageNumber = 1;
       clearProducts();
       _productHasNoData = false;
@@ -144,7 +143,9 @@ class ExploreViewProvider extends BaseProvider {
     setLoading(true, component: 'products');
 
     final result = await _exploreRepository.fetchProducts(
-        sectionExternalId: sectionExternalId, queryParams: queryParams);
+        sectionExternalId: sectionExternalId,
+        page: page,
+        dataPerPage: kProductPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -153,9 +154,9 @@ class ExploreViewProvider extends BaseProvider {
       };
       setLoading(false, component: 'products');
     }, (right) {
-      _productCurrentPageNumber = queryParams['page'] + 1;
+      _productCurrentPageNumber = page + 1;
       _productHasNoData = right.length < kProductPerPage;
-      setProducts(right, append: queryParams['page'] > 1);
+      setProducts(right, append: page > 1);
       setLoading(
         false,
         component: 'products',
@@ -198,9 +199,9 @@ class ExploreViewProvider extends BaseProvider {
   Future<void> fetchProductsByCategory(BuildContext context,
       {required String categoryExternalId,
       String loadingComponent = 'fetchProductsByCategory',
-      required Map<String, dynamic> queryParams}) async {
+      required int page}) async {
     setComponentErrorType = null;
-    if (queryParams['page'] == 1) {
+    if (page == 1) {
       _categoryProductCurrentPageNumber = 1;
       clearCategoryProducts();
       _categoryProductHasNoData = false;
@@ -208,7 +209,9 @@ class ExploreViewProvider extends BaseProvider {
     setLoading(true, component: loadingComponent);
 
     final result = await _exploreRepository.fetchProductsByCategory(
-        categoryExternalId: categoryExternalId, queryParams: queryParams);
+        categoryExternalId: categoryExternalId,
+        page: page,
+        dataPerPage: kProductPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -217,9 +220,9 @@ class ExploreViewProvider extends BaseProvider {
       };
       setLoading(false, component: loadingComponent);
     }, (right) {
-      _categoryProductCurrentPageNumber = queryParams['page'] + 1;
+      _categoryProductCurrentPageNumber = page + 1;
       _categoryProductHasNoData = right.length < kProductPerPage;
-      setCategoryProducts(right, append: queryParams['page'] > 1);
+      setCategoryProducts(right, append: page > 1);
       setLoading(
         false,
         component: loadingComponent,
@@ -228,11 +231,13 @@ class ExploreViewProvider extends BaseProvider {
   }
 
   ///FILTER
-  Future<void> fetchFilteredProducts(BuildContext context,
-      {required String type,
-      required Map<String, dynamic> requestBody,
-      String? loadingComponent,
-      required Map<String, dynamic> queryParam}) async {
+  Future<void> fetchFilteredProducts(
+    BuildContext context, {
+    required String type,
+    required Map<String, dynamic> requestBody,
+    String? loadingComponent,
+    required int page,
+  }) async {
     if (type == 'fetchProductsByCategory') {
       setComponentErrorType = null;
       // clearCategoryProducts();
@@ -242,7 +247,7 @@ class ExploreViewProvider extends BaseProvider {
         AppDialogUtil.loadingDialog(context);
       }
       final result = await _exploreRepository.fetchFilteredProducts(
-          requestBody: requestBody, queryParams: queryParam);
+          requestBody: requestBody, page: page, dataPerPage: kProductPerPage);
       if (context.mounted) {
         AppNavigator.pop(context);
       }
@@ -265,7 +270,7 @@ class ExploreViewProvider extends BaseProvider {
       });
     } else {
       setComponentErrorType = null;
-      if (queryParam['page'] == 1) {
+      if (page == 1) {
         _productCurrentPageNumber = 1;
         clearProducts();
         _productHasNoData = false;
@@ -275,7 +280,7 @@ class ExploreViewProvider extends BaseProvider {
         AppDialogUtil.loadingDialog(context);
       }
       final result = await _exploreRepository.fetchFilteredProducts(
-          requestBody: requestBody, queryParams: queryParam);
+          requestBody: requestBody, page: page, dataPerPage: kProductPerPage);
       if (context.mounted) {
         AppNavigator.pop(context);
       }

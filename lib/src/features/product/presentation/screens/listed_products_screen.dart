@@ -1,7 +1,7 @@
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,12 +28,10 @@ class ListedProductsScreen extends StatefulWidget {
 
 class _ListedProductsScreenState extends State<ListedProductsScreen> {
   Future<void> fetchUserProducts([String? nextPage]) async {
-    await context.read<ProductViewModel>().fetchUserProducts(context,
+    await context.read<ProductProvider>().fetchUserProducts(context,
         loadingComponent: 'fetchProducts',
         nextPage: nextPage,
-        queryParam: {
-          'pageSize': kProductPerPage,
-        });
+        pageSize: kProductPerPage);
   }
 
   @override
@@ -56,7 +54,7 @@ class _ListedProductsScreenState extends State<ListedProductsScreen> {
                       context, AppRoute.homeScreen, (p0) => false);
                 },
           title: 'Items listed',
-          child: BaseView<ProductViewModel>(
+          child: BaseView<ProductProvider>(
               builder: (context, productConsumer, child) {
             if (productConsumer.isComponentLoading('fetchProducts') &&
                 productConsumer.getProducts.isEmpty) {

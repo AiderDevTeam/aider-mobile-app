@@ -21,7 +21,10 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ProductModel {
   int? get id => throw _privateConstructorUsedError;
+  String? get uid => throw _privateConstructorUsedError;
+  String? get userId => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
+  String? get subCategoryItemId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   int? get quantity => throw _privateConstructorUsedError;
@@ -58,7 +61,10 @@ abstract class $ProductModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      String? uid,
+      String? userId,
       String? externalId,
+      String? subCategoryItemId,
       String? name,
       String? description,
       int? quantity,
@@ -96,7 +102,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
+    Object? userId = freezed,
     Object? externalId = freezed,
+    Object? subCategoryItemId = freezed,
     Object? name = freezed,
     Object? description = freezed,
     Object? quantity = freezed,
@@ -118,9 +127,21 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      subCategoryItemId: freezed == subCategoryItemId
+          ? _value.subCategoryItemId
+          : subCategoryItemId // ignore: cast_nullable_to_non_nullable
               as String?,
       name: freezed == name
           ? _value.name
@@ -239,7 +260,10 @@ abstract class _$$ProductModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
+      String? uid,
+      String? userId,
       String? externalId,
+      String? subCategoryItemId,
       String? name,
       String? description,
       int? quantity,
@@ -278,7 +302,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
+    Object? userId = freezed,
     Object? externalId = freezed,
+    Object? subCategoryItemId = freezed,
     Object? name = freezed,
     Object? description = freezed,
     Object? quantity = freezed,
@@ -300,9 +327,21 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      subCategoryItemId: freezed == subCategoryItemId
+          ? _value.subCategoryItemId
+          : subCategoryItemId // ignore: cast_nullable_to_non_nullable
               as String?,
       name: freezed == name
           ? _value.name
@@ -373,7 +412,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
 class _$ProductModelImpl extends _ProductModel {
   const _$ProductModelImpl(
       {this.id,
+      this.uid,
+      this.userId,
       this.externalId,
+      this.subCategoryItemId,
       this.name,
       this.description,
       this.quantity,
@@ -401,7 +443,13 @@ class _$ProductModelImpl extends _ProductModel {
   @override
   final int? id;
   @override
+  final String? uid;
+  @override
+  final String? userId;
+  @override
   final String? externalId;
+  @override
+  final String? subCategoryItemId;
   @override
   final String? name;
   @override
@@ -467,7 +515,7 @@ class _$ProductModelImpl extends _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, externalId: $externalId, name: $name, description: $description, quantity: $quantity, status: $status, value: $value, postedAt: $postedAt, prices: $prices, photos: $photos, shareLink: $shareLink, address: $address, user: $user, subCategoryItem: $subCategoryItem, rating: $rating, unavailableBookingDates: $unavailableBookingDates, reviews: $reviews)';
+    return 'ProductModel(id: $id, uid: $uid, userId: $userId, externalId: $externalId, subCategoryItemId: $subCategoryItemId, name: $name, description: $description, quantity: $quantity, status: $status, value: $value, postedAt: $postedAt, prices: $prices, photos: $photos, shareLink: $shareLink, address: $address, user: $user, subCategoryItem: $subCategoryItem, rating: $rating, unavailableBookingDates: $unavailableBookingDates, reviews: $reviews)';
   }
 
   @override
@@ -476,8 +524,12 @@ class _$ProductModelImpl extends _ProductModel {
         (other.runtimeType == runtimeType &&
             other is _$ProductModelImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
+            (identical(other.subCategoryItemId, subCategoryItemId) ||
+                other.subCategoryItemId == subCategoryItemId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -503,25 +555,29 @@ class _$ProductModelImpl extends _ProductModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      externalId,
-      name,
-      description,
-      quantity,
-      status,
-      value,
-      postedAt,
-      const DeepCollectionEquality().hash(_prices),
-      const DeepCollectionEquality().hash(_photos),
-      shareLink,
-      address,
-      user,
-      subCategoryItem,
-      rating,
-      const DeepCollectionEquality().hash(_unavailableBookingDates),
-      const DeepCollectionEquality().hash(_reviews));
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        id,
+        uid,
+        userId,
+        externalId,
+        subCategoryItemId,
+        name,
+        description,
+        quantity,
+        status,
+        value,
+        postedAt,
+        const DeepCollectionEquality().hash(_prices),
+        const DeepCollectionEquality().hash(_photos),
+        shareLink,
+        address,
+        user,
+        subCategoryItem,
+        rating,
+        const DeepCollectionEquality().hash(_unavailableBookingDates),
+        const DeepCollectionEquality().hash(_reviews)
+      ]);
 
   /// Create a copy of ProductModel
   /// with the given fields replaced by the non-null parameter values.
@@ -542,7 +598,10 @@ class _$ProductModelImpl extends _ProductModel {
 abstract class _ProductModel extends ProductModel {
   const factory _ProductModel(
       {final int? id,
+      final String? uid,
+      final String? userId,
       final String? externalId,
+      final String? subCategoryItemId,
       final String? name,
       final String? description,
       final int? quantity,
@@ -566,7 +625,13 @@ abstract class _ProductModel extends ProductModel {
   @override
   int? get id;
   @override
+  String? get uid;
+  @override
+  String? get userId;
+  @override
   String? get externalId;
+  @override
+  String? get subCategoryItemId;
   @override
   String? get name;
   @override

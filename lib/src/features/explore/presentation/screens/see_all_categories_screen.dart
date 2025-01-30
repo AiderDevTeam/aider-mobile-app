@@ -35,13 +35,10 @@ class _SeeAllCategoriesScreenState extends State<SeeAllCategoriesScreen> {
   Future<void> fetchCategories([int page = 1]) async {
     if (!mounted) return;
     await context.read<ExploreViewProvider>().fetchCategories(
-      context,
-      sectionExternalId: widget.param['externalId'],
-      queryParams: {
-        'page': page,
-        'dataPerPage': kDataPerPage,
-      },
-    );
+          context,
+          sectionExternalId: widget.param['externalId'],
+          page: page,
+        );
   }
 
   @override

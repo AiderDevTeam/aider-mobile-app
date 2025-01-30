@@ -1,7 +1,9 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:aider_mobile_app/core/domain/models/address/address_model.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
+import 'package:aider_mobile_app/core/services/cloudinary_service.dart';
 import 'package:aider_mobile_app/core/services/socket_service.dart';
 import 'package:aider_mobile_app/core/providers/base_provider.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
@@ -23,19 +25,21 @@ import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../../../shared_widgets/modals/success_modal_content.dart';
 import '../../data/repositories/product_repository.dart';
 import '../../domain/models/history/product_history_model.dart';
+import '../../domain/models/product_photo/product_photo_model.dart';
 import '../../domain/models/product_price/price_structure_model.dart';
 import '../../domain/models/product/product_model.dart';
 import 'can_rent_mixin.dart';
 
-class ProductViewModel extends BaseProvider with CanRent {
+class ProductProvider extends BaseProvider with CanRent {
   final _productRepository = sl.get<ProductRepository>();
-  Map<String, dynamic> _productRequestBody = {};
+  ProductModel _productRequestBody = const ProductModel();
   String _categoryModalTitle = '';
   List<PriceStructureModel> _priceStructure = [];
   ProductHistoryModel _userProductHistory = const ProductHistoryModel();
   ProductHistoryModel _vendorProductHistory = const ProductHistoryModel();
   List<CategoryModel> _categories = [];
   List<SubCategoryItemModel> _subCategoryItems = [];
+  List<SubCategoryItemModel> _popularSubCategoryItems = [];
   CategoryModel _selectedCategory = const CategoryModel();
   Map<String, dynamic> _productDescription = {};
 
@@ -50,12 +54,11 @@ class ProductViewModel extends BaseProvider with CanRent {
     _productDescription.clear();
   }
 
-  set setProductRequestBody(Map<String, dynamic> request) {
-    _productRequestBody = {..._productRequestBody, ...request};
+  set setProductRequestBody(ProductModel request) {
+    _productRequestBody = request;
   }
 
-  UnmodifiableMapView<String, dynamic> get getProductRequestBody =>
-      UnmodifiableMapView(_productRequestBody);
+  ProductModel get getProductRequestBody => _productRequestBody;
 
   void setModalWithCategory(CategoryModel categoryModel,
       [bool notify = false]) {
@@ -69,41 +72,42 @@ class ProductViewModel extends BaseProvider with CanRent {
 
   /// LIST A PRODUCT
   Future<void> listProduct(BuildContext context,
-      {required Map<String, dynamic> requestBody}) async {
+      {required ProductModel requestBody,
+      Map<String, dynamic>? address}) async {
     AppDialogUtil.loadingDialog(context);
 
-    if ((requestBody['photos[]'] ?? []).length > 0) {
-      List images = [];
-      for (final filePath in requestBody['photos[]']) {
-        final imagePath = await MediaFileUtil.getMultipartFile(filePath);
-        if (imagePath != null) images.add(imagePath);
+    ZLoggerService.logOnInfo('REQUEST BODY: ${requestBody}');
+
+    if ((requestBody.photos ?? []).isNotEmpty) {
+      List<ProductPhotoModel> images = [];
+      for (final photo in requestBody.photos ?? []) {
+        final imageUrl = await CloudinaryService.instance
+            .uploadImage(photo.photoUrl ?? '', (_, __) {});
+
+        images.add(ProductPhotoModel(photoUrl: imageUrl));
       }
-      requestBody['photos[]'] = images;
+      requestBody = requestBody.copyWith(photos: images);
     }
 
-    if (requestBody['address'] == null) requestBody.remove('address');
-
     if (context.mounted &&
-        requestBody['address'] != null &&
-        (requestBody['address']['placeId'] != null &&
-            requestBody['address']['placeId'].toString().isNotEmpty)) {
+        address != null &&
+        (address['placeId'] != null &&
+            address['placeId'].toString().isNotEmpty)) {
       final locationDetails = await context
           .read<LocationProvider>()
-          .fetchLocationDetails(requestBody['address']['placeId']);
+          .fetchLocationDetails(address['placeId']);
       final locality = HelperUtil.getLocalityFromAddressComponents(
           locationDetails?.addressComponents ?? []);
-      final address = {
-        "latitude": locationDetails?.geometry?['location']['lat'] ?? 0,
-        "longitude": locationDetails?.geometry?['location']['lng'] ?? 0,
-        "country": "Nigeria",
-        "countryCode": 'NG',
-        "originName": requestBody['address']['originName'],
-        "city": locality.first.isEmpty
-            ? requestBody['address']['originName']
-            : locality.first
-      };
+      final addressModel = AddressModel(
+        latitude: locationDetails?.geometry?['location']['lat'] ?? 0,
+        longitude: locationDetails?.geometry?['location']['lng'] ?? 0,
+        country: "Nigeria",
+        countryCode: 'NG',
+        originName: address['originName'],
+        city: locality.first.isEmpty ? address['originName'] : locality.first,
+      );
 
-      requestBody["address"] = jsonEncode(address);
+      requestBody = requestBody.copyWith(address: addressModel);
     }
 
     final result =
@@ -151,14 +155,14 @@ class ProductViewModel extends BaseProvider with CanRent {
   PaginationModel? get getProductMeta => _userProductHistory.meta;
 
   Future<void> fetchUserProducts(BuildContext context,
-      {required Map<String, dynamic> queryParam,
+      {int? pageSize,
       String loadingComponent = 'fetchProducts',
       String? nextPage}) async {
     setComponentErrorType = null;
     setLoading(true, component: loadingComponent);
 
     final result = await _productRepository.fetchUserProducts(
-        nextPage: nextPage, queryParam: queryParam);
+        nextPage: nextPage, pageSize: pageSize);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -181,11 +185,11 @@ class ProductViewModel extends BaseProvider with CanRent {
       {required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
     if (context.mounted &&
-        (context.read<ProductViewModel>().getPlaceId.isNotEmpty &&
-            context.read<ProductViewModel>().getPlaceId.isNotEmpty)) {
+        (context.read<ProductProvider>().getPlaceId.isNotEmpty &&
+            context.read<ProductProvider>().getPlaceId.isNotEmpty)) {
       final locationDetails = await context
           .read<LocationProvider>()
-          .fetchLocationDetails(context.read<ProductViewModel>().getPlaceId);
+          .fetchLocationDetails(context.read<ProductProvider>().getPlaceId);
       // final locality = HelperUtil.getLocalityFromAddressComponents(locationDetails?.addressComponents?? []);
       final longAndLat = {
         "latitude": locationDetails?.geometry?['location']['lat'] ?? 0,
@@ -193,9 +197,9 @@ class ProductViewModel extends BaseProvider with CanRent {
       };
 
       requestBody["exchangeSchedule"] = {
-        ...context.read<ProductViewModel>().getLocation,
+        ...context.read<ProductProvider>().getLocation,
         ...longAndLat,
-        "timeOfExchange": context.read<ProductViewModel>().getTimeOfExchange
+        "timeOfExchange": context.read<ProductProvider>().getTimeOfExchange
       };
     }
     final result = await _productRepository.requestForItem(productExternalId,
@@ -557,20 +561,17 @@ class ProductViewModel extends BaseProvider with CanRent {
     });
   }
 
-  void emitPriceStructure() {
-    SocketService().emit('sendPriceStructure');
-    ZLoggerService.logOnInfo('EMITTING PRICE STRUCTURE');
-  }
-
-  void fetchPriceStructure() {
-    SocketService().once('fetchPriceStructure', (data) {
-      ZLoggerService.logOnInfo(
-          'FETCHING PRICE STRUCTURE \n ---- $data ---- \n${DateTime.now()}');
-      if (data != null)
-        setPriceStructure = PriceStructureList.fromJson(data).list;
+  Future<void> fetchPriceStructure(BuildContext context) async {
+    final result = await _productRepository.fetchPriceStructure();
+    result.fold((l) {
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(l),
+        'component': 'fetchPriceStructure'
+      };
+    }, (priceStructure) {
+      setPriceStructure = priceStructure;
+      notifyListeners();
     });
-
-    SocketService().off('fetchPriceStructure');
   }
 
   /// SUB CATEGORIES
@@ -582,19 +583,17 @@ class ProductViewModel extends BaseProvider with CanRent {
     notifyListeners();
   }
 
-  void emitCategories() {
-    SocketService().emit('sendCategories');
-    ZLoggerService.logOnInfo('EMITTING CATEGORIES');
-  }
-
-  void fetchCategories() {
-    SocketService().once('fetchCategories', (data) {
-      ZLoggerService.logOnInfo(
-          'FETCHING CATEGORIES \n ---- $data ---- \n${DateTime.now()}');
-      if (data != null) setCategories = CategoryList.fromJson(data).list;
+  Future<void> fetchCategories(BuildContext context) async {
+    final result = await _productRepository.fetchCategories();
+    result.fold((l) {
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(l),
+        'component': 'fetchCategories'
+      };
+    }, (categories) {
+      setCategories = categories;
+      notifyListeners();
     });
-
-    SocketService().off('fetchCategories');
   }
 
   /// SUB CATEGORY ITEMS
@@ -606,24 +605,70 @@ class ProductViewModel extends BaseProvider with CanRent {
     notifyListeners();
   }
 
-  /// POPULAR CATEGORIES
-  void emitPopularCategories([String? itemName]) {
-    SocketService().emit('sendSubCategoryItems', {
-      "subCategoryItemName": itemName,
+  Future<void> fetchSubCategoryItems(BuildContext context) async {
+    final result = await _productRepository.fetchSubCategoryItems();
+    result.fold((l) {
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(l),
+        'component': 'fetchSubCategoryItems'
+      };
+    }, (subCategoryItems) {
+      setSubCategoryItems = subCategoryItems;
+      notifyListeners();
     });
-    ZLoggerService.logOnInfo('EMITTING SUB CATEGORY ITEMS');
   }
 
-  void fetchPopularCategories() {
-    SocketService().once('fetchSubCategoryItems', (data) {
-      ZLoggerService.logOnInfo(
-          'FETCHING SUB CATEGORY ITEMS \n ---- $data ---- \n${DateTime.now()}');
-      if (data != null)
-        setSubCategoryItems = SubCategoryItemList.fromJson(data).list;
-    });
+  UnmodifiableListView<SubCategoryItemModel> get getPopularSubCategoryItems =>
+      UnmodifiableListView(_popularSubCategoryItems);
 
-    SocketService().off('fetchSubCategoryItems');
+  List<SubCategoryItemModel> getFilteredPopularSubCategoryItems(String? query) {
+    if (query == null || query.isEmpty) {
+      return _popularSubCategoryItems;
+    }
+    return _popularSubCategoryItems
+        .where((item) =>
+            item.name != null &&
+            item.name!.toLowerCase().contains(query.toLowerCase()))
+        .toList();
   }
+
+  set setPopularSubCategoryItems(List<SubCategoryItemModel> subCategoryItems) {
+    _popularSubCategoryItems = subCategoryItems;
+    notifyListeners();
+  }
+
+  Future<void> fetchPopularSubCategoryItems(BuildContext context) async {
+    final result = await _productRepository.fetchPopularSubCategoryItems();
+    result.fold((l) {
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(l),
+        'component': 'fetchPopularSubCategoryItems'
+      };
+    }, (subCategoryItems) {
+      setPopularSubCategoryItems = subCategoryItems;
+      notifyListeners();
+    });
+  }
+
+  // int _productCount = 0;
+
+  // set setProductCount(int count) {
+  //   _productCount = count;
+  //   notifyListeners();
+  // }
+
+  // int get getProductCount => _productCount;
+  // Future<void> fetchProductCount(BuildContext context) async {
+  //   final result = await _productRepository.fetchProductCount();
+  //   result.fold((l) {
+  //     setComponentErrorType = {
+  //       'error': FailureToMessage.mapFailureToMessage(l),
+  //       'component': 'fetchProductCount'
+  //     };
+  //   }, (count) {
+  //     setProductCount = count;
+  //   });
+  // }
 
   /// LOCAL DB
   void _persistUserProductHistory() async {

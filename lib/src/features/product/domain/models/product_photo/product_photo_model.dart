@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-
 part 'product_photo_model.freezed.dart';
 part 'product_photo_model.g.dart';
 

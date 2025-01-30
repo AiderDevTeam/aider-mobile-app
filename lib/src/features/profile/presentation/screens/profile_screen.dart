@@ -30,6 +30,7 @@ import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/network_image_view.dart';
 import '../../../../shared_widgets/modals/question_modal_content.dart';
 import '../../../kyc/presentation/view_model/kyc_view_model.dart';
+import '../../../product/presentation/providers/product_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -237,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                           TextSpan(
                                             text:
-                                                '(${userConsumer.getUser.statistics?.listedItemsCount ?? 0})',
+                                                '(${userConsumer.getUser.itemsListed ?? 0})',
                                             style: kBoldFontStyle.copyWith(
                                               color: kGrey1200,
                                               fontSize:

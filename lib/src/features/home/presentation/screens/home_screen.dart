@@ -15,7 +15,7 @@ import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/services/push_notification_service.dart';
 import '../../../../../core/providers/base_view.dart';
 import '../../../inbox/presentation/screens/inbox_screen.dart';
-import '../../../product/presentation/view_models/product_view_model.dart';
+import '../../../product/presentation/providers/product_provider.dart';
 import '../widgets/bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //   return;
       // }
 
-      context.read<ProductViewModel>().clearProductDescription();
+      context.read<ProductProvider>().clearProductDescription();
       AppNavigator.pushNamed(context, AppRoute.listProductScreen);
       return;
     }

@@ -1,6 +1,5 @@
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
-import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
@@ -11,7 +10,6 @@ import '../../../../../core/constants/colors.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
 import '../../../../../core/providers/user_provider.dart';
-import '../../../../shared_widgets/common/svg_icon.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 
 class ExploreHeader extends StatelessWidget {

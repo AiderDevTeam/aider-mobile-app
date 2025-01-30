@@ -1,92 +1,107 @@
-import 'package:aider_mobile_app/core/services/http_service_requester.dart';
-import '../../../../../core/errors/error.dart';
-import '../../../../../core/services/api_routes.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../../core/constants/firestore_collections.dart';
+import '../../../../../core/services/remote_config_service.dart';
 import '../../../product/domain/models/category/category_model.dart';
 import '../../../product/domain/models/product/product_model.dart';
 
-abstract class ExploreRemoteDatasource{
-  Future<List> fetchSections({required Map<String, dynamic> queryParams});
-  Future<List<CategoryModel>> fetchCategories({required String sectionExternalId, required Map<String, dynamic> queryParams});
-  Future<List<ProductModel>> fetchProducts({required String sectionExternalId, required Map<String, dynamic> queryParams});
-  Future<List<ProductModel>> fetchProductsByCategory({required String categoryExternalId, required Map<String, dynamic> queryParams});
-  Future<List<ProductModel>> fetchFilteredProducts({required Map<String, dynamic> requestBody, required Map<String, dynamic> queryParams});
-
+abstract class ExploreRemoteDatasource {
+  Future<List> fetchSections({required int page, required int dataPerPage});
+  Future<List<CategoryModel>> fetchCategories(
+      {required String sectionExternalId,
+      required int page,
+      required int dataPerPage});
+  Future<List<ProductModel>> fetchProducts(
+      {required String sectionExternalId,
+      required int page,
+      required int dataPerPage});
+  Future<List<ProductModel>> fetchProductsByCategory(
+      {required String categoryExternalId,
+      required int page,
+      required int dataPerPage});
+  Future<List<ProductModel>> fetchFilteredProducts(
+      {required Map<String, dynamic> requestBody,
+      required int page,
+      required int dataPerPage});
 }
 
-class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource{
-  ExploreRemoteDatasourceImpl({required this.httpServiceRequester,});
+class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
+  ExploreRemoteDatasourceImpl({
+    required this.firestore,
+  });
 
-  final HttpServiceRequester httpServiceRequester;
+  final FirebaseFirestore firestore;
 
   @override
-  Future<List> fetchSections({required Map<String, dynamic> queryParams}) async{
-    final response = await httpServiceRequester.getRequest(
-      endpoint: ApiRoutes.exploreSection,
-      queryParam: queryParams,
-    );
-    var body = response.data;
-    if(body['success'] != null && !body['success']){
-      throw ServerException(message: body['message']?? '');
-    }
-
-    return body['data'];
+  Future<List> fetchSections(
+      {required int page, required int dataPerPage}) async {
+    final sections = RemoteConfigService.getRemoteData.configs['sections'];
+    return (sections as List)
+        .where((section) => section['live'] == true)
+        .skip((page - 1) * dataPerPage)
+        .take(dataPerPage)
+        .toList();
   }
 
   @override
-  Future<List<CategoryModel>> fetchCategories({required String sectionExternalId, required Map<String, dynamic> queryParams}) async{
-    final response = await httpServiceRequester.getRequest(
-      endpoint: ApiRoutes.seeAllSection(sectionExternalId),
-      queryParam: queryParams,
-    );
-    var body = response.data;
-    if(body['success'] != null && !body['success']){
-      throw ServerException(message: body['message']?? '');
-    }
+  Future<List<CategoryModel>> fetchCategories(
+      {required String sectionExternalId,
+      required int page,
+      required int dataPerPage}) async {
+    final response = await firestore
+        .collection(kCategoriesCollection)
+        .where('sectionExternalId', isEqualTo: sectionExternalId)
+        .where('isActive', isEqualTo: true)
+        .get();
 
-    return CategoryList.fromJson(body['data']['data']).list;
+    return response.docs
+        .map((doc) => CategoryModel.fromJson(doc.data()))
+        .toList();
   }
 
   @override
-  Future<List<ProductModel>> fetchProducts({required String sectionExternalId, required Map<String, dynamic> queryParams}) async{
-    final response = await httpServiceRequester.getRequest(
-      endpoint: ApiRoutes.seeAllSection(sectionExternalId),
-      queryParam: queryParams,
-    );
-    var body = response.data;
-    if(body['success'] != null && !body['success']){
-      throw ServerException(message: body['message']?? '');
-    }
+  Future<List<ProductModel>> fetchProducts(
+      {required String sectionExternalId,
+      required int page,
+      required int dataPerPage}) async {
+    final response = await firestore
+        .collection(kProductsCollection)
+        .where('sectionExternalId', isEqualTo: sectionExternalId)
+        .get();
 
-    return ProductList.fromJson(body['data']['data']).list;
+    return response.docs
+        .map((doc) => ProductModel.fromJson(doc.data()))
+        .toList();
   }
 
   @override
-  Future<List<ProductModel>> fetchProductsByCategory({required String categoryExternalId, required Map<String, dynamic> queryParams}) async{
-    final response = await httpServiceRequester.getRequest(
-        endpoint: ApiRoutes.getProductsByCategory(categoryExternalId),
-        queryParam: queryParams
-    );
-    var body = response.data;
-    if(body['success'] != null && !body['success']){
-      throw ServerException(message: body['message']?? '');
-    }
+  Future<List<ProductModel>> fetchProductsByCategory(
+      {required String categoryExternalId,
+      required int page,
+      required int dataPerPage}) async {
+    final response = await firestore
+        .collection(kProductsCollection)
+        .where('categoryExternalId', isEqualTo: categoryExternalId)
+        .get();
 
-    return ProductList.fromJson(body['data']).list;
+    return response.docs
+        .map((doc) => ProductModel.fromJson(doc.data()))
+        .toList();
   }
 
   @override
-  Future<List<ProductModel>> fetchFilteredProducts({required Map<String, dynamic> requestBody, required Map<String, dynamic> queryParams}) async{
-    final response = await httpServiceRequester.postRequest(
-        endpoint: ApiRoutes.filter,
-        queryParam: queryParams,
-        requestBody: requestBody
-    );
+  Future<List<ProductModel>> fetchFilteredProducts(
+      {required Map<String, dynamic> requestBody,
+      required int page,
+      required int dataPerPage}) async {
+    final response = await firestore
+        .collection(kProductsCollection)
+        .where('categoryExternalId',
+            isEqualTo: requestBody['categoryExternalId'])
+        .get();
 
-    var body = response.data;
-    if(body['success'] == false){
-      throw ServerException(message: body['message']?? '');
-    }
-
-    return ProductList.fromJson(body['data']).list;
+    return response.docs
+        .map((doc) => ProductModel.fromJson(doc.data()))
+        .toList();
   }
 }

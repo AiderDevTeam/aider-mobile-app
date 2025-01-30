@@ -19,7 +19,6 @@ class ExplorePageProvider extends BaseProvider {
   List _sections = [];
   int _sectionCurrentPageNumber = 1;
   bool _hasNoSectionData = false;
-  List<CategoryModel> _categories = [];
   List<ProductModel> _products = [];
   List<ProductModel> _categoryProducts = [];
 
@@ -45,8 +44,8 @@ class ExplorePageProvider extends BaseProvider {
     }
     setLoading(true, component: 'sections');
 
-    final result =
-        await _exploreRepository.fetchSections(queryParams: queryParams);
+    final result = await _exploreRepository.fetchSections(
+        page: queryParams['page'], dataPerPage: kSectionPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -64,6 +63,8 @@ class ExplorePageProvider extends BaseProvider {
       );
     });
   }
+
+  List<CategoryModel> _categories = [];
 
   UnmodifiableListView<CategoryModel> get getCategories =>
       UnmodifiableListView(_categories);
@@ -93,7 +94,9 @@ class ExplorePageProvider extends BaseProvider {
     setLoading(true, component: 'categories');
 
     final result = await _exploreRepository.fetchCategories(
-        sectionExternalId: sectionExternalId, queryParams: queryParams);
+        sectionExternalId: sectionExternalId,
+        page: queryParams['page'],
+        dataPerPage: kDataPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -144,7 +147,9 @@ class ExplorePageProvider extends BaseProvider {
     setLoading(true, component: 'products');
 
     final result = await _exploreRepository.fetchProducts(
-        sectionExternalId: sectionExternalId, queryParams: queryParams);
+        sectionExternalId: sectionExternalId,
+        page: queryParams['page'],
+        dataPerPage: kProductPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -208,7 +213,9 @@ class ExplorePageProvider extends BaseProvider {
     setLoading(true, component: loadingComponent);
 
     final result = await _exploreRepository.fetchProductsByCategory(
-        categoryExternalId: categoryExternalId, queryParams: queryParams);
+        categoryExternalId: categoryExternalId,
+        page: queryParams['page'],
+        dataPerPage: kProductPerPage);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -232,7 +239,7 @@ class ExplorePageProvider extends BaseProvider {
       {required String type,
       required Map<String, dynamic> requestBody,
       String? loadingComponent,
-      required Map<String, dynamic> queryParam}) async {
+      required int page}) async {
     if (type == 'fetchProductsByCategory') {
       setComponentErrorType = null;
       // clearCategoryProducts();
@@ -242,7 +249,7 @@ class ExplorePageProvider extends BaseProvider {
         AppDialogUtil.loadingDialog(context);
       }
       final result = await _exploreRepository.fetchFilteredProducts(
-          requestBody: requestBody, queryParams: queryParam);
+          requestBody: requestBody, page: page, dataPerPage: kProductPerPage);
       if (context.mounted) {
         AppNavigator.pop(context);
       }
@@ -265,7 +272,7 @@ class ExplorePageProvider extends BaseProvider {
       });
     } else {
       setComponentErrorType = null;
-      if (queryParam['page'] == 1) {
+      if (page == 1) {
         _productCurrentPageNumber = 1;
         clearProducts();
         _productHasNoData = false;
@@ -275,7 +282,7 @@ class ExplorePageProvider extends BaseProvider {
         AppDialogUtil.loadingDialog(context);
       }
       final result = await _exploreRepository.fetchFilteredProducts(
-          requestBody: requestBody, queryParams: queryParam);
+          requestBody: requestBody, page: page, dataPerPage: kProductPerPage);
       if (context.mounted) {
         AppNavigator.pop(context);
       }

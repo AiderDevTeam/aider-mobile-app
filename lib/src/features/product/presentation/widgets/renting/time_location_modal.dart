@@ -19,7 +19,7 @@ import '../../../../../shared_widgets/common/h_space.dart';
 import '../../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../../shared_widgets/modals/location_modal.dart';
 import '../../../domain/models/product/product_model.dart';
-import '../../view_models/product_view_model.dart';
+import '../../providers/product_provider.dart';
 
 class RentingTimeAndLocationModalContent extends StatefulWidget {
   const RentingTimeAndLocationModalContent({
@@ -32,10 +32,12 @@ class RentingTimeAndLocationModalContent extends StatefulWidget {
   final ProductModel product;
 
   @override
-  State<RentingTimeAndLocationModalContent> createState() => _RentingTimeAndLocationModalContentState();
+  State<RentingTimeAndLocationModalContent> createState() =>
+      _RentingTimeAndLocationModalContentState();
 }
 
-class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocationModalContent> {
+class _RentingTimeAndLocationModalContentState
+    extends State<RentingTimeAndLocationModalContent> {
   final formKey = GlobalKey<FormState>();
   final _quantity = ValueNotifier<int>(1);
   final locationController = TextEditingController();
@@ -45,12 +47,11 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
   String hour = "1";
   String minute = "00";
 
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(!mounted) return;
-      final productProvider = context.read<ProductViewModel>();
+      if (!mounted) return;
+      final productProvider = context.read<ProductProvider>();
       _quantity.value = productProvider.getQuantity;
     });
     super.initState();
@@ -67,11 +68,13 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
   Widget build(BuildContext context) {
     final product = widget.product;
 
-
     return Scaffold(
       body: ListView(
         children: [
-          const Text('Item Quantity').semiBold().fontSize(14.0).color(kPrimaryBlack),
+          const Text('Item Quantity')
+              .semiBold()
+              .fontSize(14.0)
+              .color(kPrimaryBlack),
           const VSpace(height: 8.0),
           AppCard(
             padding: EdgeInsets.symmetric(
@@ -93,10 +96,10 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                     size: AppThemeUtil.radius(20.0),
                     color: kGrey600,
                   ),
-                ).onPressed((){
-                  if(_quantity.value == 1) return;
+                ).onPressed(() {
+                  if (_quantity.value == 1) return;
                   _quantity.value -= 1;
-                  context.read<ProductViewModel>().setQuantity = _quantity.value;
+                  context.read<ProductProvider>().setQuantity = _quantity.value;
                 }),
                 ValueListenableBuilder<int>(
                     valueListenable: _quantity,
@@ -104,10 +107,12 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                       return AppCard(
                         alignment: Alignment.center,
                         padding: EdgeInsets.all(AppThemeUtil.radius(8.0)),
-                        child: Text(quantity.toString()).medium().fontSize(14).color(kGrey1200),
+                        child: Text(quantity.toString())
+                            .medium()
+                            .fontSize(14)
+                            .color(kGrey1200),
                       );
-                    }
-                ),
+                    }),
                 AppCard(
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(AppThemeUtil.radius(8.0)),
@@ -116,16 +121,19 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                     size: AppThemeUtil.radius(20.0),
                     color: kGrey1200,
                   ),
-                ).onPressed((){
-                  if(_quantity.value >= (product.quantity?? 0)) return;
+                ).onPressed(() {
+                  if (_quantity.value >= (product.quantity ?? 0)) return;
                   _quantity.value += 1;
-                  context.read<ProductViewModel>().setQuantity = _quantity.value;
+                  context.read<ProductProvider>().setQuantity = _quantity.value;
                 }),
               ],
             ),
           ),
           const VSpace(height: 24),
-          const Text('Location of exchange').semiBold().fontSize(14.0).color(kPrimaryBlack),
+          const Text('Location of exchange')
+              .semiBold()
+              .fontSize(14.0)
+              .color(kPrimaryBlack),
           const VSpace(height: 8.0),
           Form(
             key: formKey,
@@ -137,25 +145,27 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                   controller: locationController,
                   hintText: 'Search location',
                   readOnly: true,
-                  validator: (value){
-                    if(value!.isEmpty) return 'Select exchange location';
+                  validator: (value) {
+                    if (value!.isEmpty) return 'Select exchange location';
                     return null;
                   },
-                  onTap: () async{
-                    final result = await AppDialogUtil.showScrollableBottomSheet(
+                  onTap: () async {
+                    final result =
+                        await AppDialogUtil.showScrollableBottomSheet(
                       context: context,
                       builder: (context) => const LocationModal(),
                     );
-                    if(result != null){
-                      locationController.text = result['originName']?? '';
-                      if(!context.mounted) return;
+                    if (result != null) {
+                      locationController.text = result['originName'] ?? '';
+                      if (!context.mounted) return;
                       location.value = result;
-                      context.read<ProductViewModel>().setPlaceId = result['placeId']?? '';
+                      context.read<ProductProvider>().setPlaceId =
+                          result['placeId'] ?? '';
 
-                      context.read<ProductViewModel>().setLocation = {
+                      context.read<ProductProvider>().setLocation = {
                         "originName": result['originName'],
-                        "country":"nigeria",
-                        "countryCode":"ng",
+                        "country": "nigeria",
+                        "countryCode": "ng",
                         "city": result['city'],
                       };
                     }
@@ -180,32 +190,42 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.info, color: kBlue800,),
+                        const Icon(
+                          Icons.info,
+                          color: kBlue800,
+                        ),
                         const HSpace(width: 10),
-                        const Text("Location where you would like to receive the item").regular().fontSize(14).color(kGrey800).flexible(),
+                        const Text(
+                                "Location where you would like to receive the item")
+                            .regular()
+                            .fontSize(14)
+                            .color(kGrey800)
+                            .flexible(),
                       ],
-                    )
-                ),
+                    )),
                 const VSpace(height: 24),
-                const Text('Time of exchange').semiBold().fontSize(14.0).color(kPrimaryBlack),
+                const Text('Time of exchange')
+                    .semiBold()
+                    .fontSize(14.0)
+                    .color(kPrimaryBlack),
                 const VSpace(height: 8.0),
-
                 AppInputField(
                   controller: timeController,
                   hintText: 'Select time',
                   readOnly: true,
-                  validator: (value){
-                    if(value!.isEmpty) return 'Select time of exchange';
+                  validator: (value) {
+                    if (value!.isEmpty) return 'Select time of exchange';
                     return null;
                   },
-                  onTap: (){
+                  onTap: () {
                     _selectTime(context);
                   },
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 4),
                         decoration: BoxDecoration(
                           color: period == 'am' ? kGrey1200 : kGrey50,
                           borderRadius: BorderRadius.only(
@@ -215,22 +235,34 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                         ),
                         child: const Text(
                           'AM',
-                        ).regular().fontSize(10).letterSpacing(-0.11).color(kGrey500).alignText(TextAlign.center),
+                        )
+                            .regular()
+                            .fontSize(10)
+                            .letterSpacing(-0.11)
+                            .color(kGrey500)
+                            .alignText(TextAlign.center),
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: AppThemeUtil.width(6),
                           vertical: AppThemeUtil.height(4),
                         ),
-                        decoration: BoxDecoration(color: period == 'pm' ? kGrey1200 : kGrey50,
+                        decoration: BoxDecoration(
+                          color: period == 'pm' ? kGrey1200 : kGrey50,
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(AppThemeUtil.radius(4)),
-                            bottomRight: Radius.circular(AppThemeUtil.radius(4)),
+                            bottomRight:
+                                Radius.circular(AppThemeUtil.radius(4)),
                           ),
                         ),
                         child: const Text(
                           'PM',
-                        ).regular().fontSize(10).letterSpacing(-0.11).color(kGrey500).alignText(TextAlign.center),
+                        )
+                            .regular()
+                            .fontSize(10)
+                            .letterSpacing(-0.11)
+                            .color(kGrey500)
+                            .alignText(TextAlign.center),
                       ),
                     ],
                   ).paddingOnly(right: 16),
@@ -248,25 +280,29 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info, color: kBlue800,),
+                        const Icon(
+                          Icons.info,
+                          color: kBlue800,
+                        ),
                         const HSpace(width: 10),
-                        const Text("Enter the best time you’d be available").regular().fontSize(14).color(kGrey800).flexible(),
+                        const Text("Enter the best time you’d be available")
+                            .regular()
+                            .fontSize(14)
+                            .color(kGrey800)
+                            .flexible(),
                       ],
-                    )
-                ),
+                    )),
               ],
             ),
           ),
-
         ],
       ).paddingSymmetric(horizontal: kWidthPadding),
-
       bottomNavigationBar: AppBottomNavWrapper(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             AppPrimaryButton(
-              onPressed: (){
+              onPressed: () {
                 widget.pageController.animateToPage(
                   0,
                   duration: const Duration(milliseconds: 400),
@@ -283,12 +319,12 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
             ).flexible(),
             const HSpace(width: 12.0),
             AppPrimaryButton(
-              onPressed: () async{
-                if(_quantity.value <= 0){
+              onPressed: () async {
+                if (_quantity.value <= 0) {
                   AppDialogUtil.showWarningAlert(context, 'Select quantity');
                   return;
                 }
-                if(formKey.currentState!.validate()){
+                if (formKey.currentState!.validate()) {
                   widget.pageController.animateToPage(
                     2,
                     duration: const Duration(milliseconds: 400),
@@ -313,12 +349,15 @@ class _RentingTimeAndLocationModalContentState extends State<RentingTimeAndLocat
       initialTime: TimeOfDay.now(),
       initialEntryMode: TimePickerEntryMode.input,
     );
-    if (picked != null){
+    if (picked != null) {
       setState(() {
         period = picked.period == DayPeriod.am ? 'am' : 'pm';
-        timeController.text = '${HelperUtil.addZeroToSingleInteger(picked.hourOfPeriod == 0 ? 12 : picked.hourOfPeriod)}:${HelperUtil.addZeroToSingleInteger(picked.minute)}';
+        timeController.text =
+            '${HelperUtil.addZeroToSingleInteger(picked.hourOfPeriod == 0 ? 12 : picked.hourOfPeriod)}:${HelperUtil.addZeroToSingleInteger(picked.minute)}';
       });
-      if(context.mounted) context.read<ProductViewModel>().setTimeOfExchange = "${timeController.text}$period";
+      if (context.mounted)
+        context.read<ProductProvider>().setTimeOfExchange =
+            "${timeController.text}$period";
     }
   }
 }

@@ -31,7 +31,7 @@ import 'firebase_options.dart';
 import 'src/features/explore/presentation/providers/explore_view_provider.dart';
 import 'src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'src/features/transaction/presentation/providers/transaction_provider.dart';
-import 'src/features/product/presentation/view_models/product_view_model.dart';
+import 'src/features/product/presentation/providers/product_provider.dart';
 
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(() async {
@@ -53,8 +53,8 @@ Future<void> main() async {
                 create: (context) => WalletProvider()),
             ChangeNotifierProvider<LocationProvider>(
                 create: (context) => LocationProvider()),
-            ChangeNotifierProvider<ProductViewModel>(
-                create: (context) => ProductViewModel()),
+            ChangeNotifierProvider<ProductProvider>(
+                create: (context) => ProductProvider()),
             ChangeNotifierProvider<ExploreViewProvider>(
                 create: (context) => ExploreViewProvider()),
             ChangeNotifierProvider<BottomNavViewModel>(

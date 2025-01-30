@@ -11,8 +11,9 @@ import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/core/utils/input_formatter_util.dart';
+import 'package:aider_mobile_app/src/features/product/domain/models/product_photo/product_photo_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/product_price/price_structure_model.dart';
-import 'package:aider_mobile_app/src/features/product/presentation/view_models/product_view_model.dart';
+import 'package:aider_mobile_app/src/features/product/presentation/providers/product_provider.dart';
 import 'package:aider_mobile_app/src/features/product/presentation/widgets/product_image_placeholder.dart';
 import 'package:aider_mobile_app/src/features/product/presentation/widgets/renting/rental_price_modal.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
@@ -35,6 +36,7 @@ import '../../../../../core/utils/permission_util.dart';
 import '../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../shared_widgets/common/v_space.dart';
 import '../../domain/models/category/sub_category_item_model.dart';
+import '../../domain/models/product_price/product_price_model.dart';
 import '../widgets/product_category_modal.dart';
 
 class ListProductScreen extends StatefulWidget {
@@ -48,7 +50,8 @@ class _ListProductScreenState extends State<ListProductScreen> {
   final formKey = GlobalKey<FormState>();
   final itemNameController = TextEditingController();
   final categoryController = TextEditingController();
-  final autoValidateMode = ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
+  final autoValidateMode =
+      ValueNotifier<AutovalidateMode>(AutovalidateMode.disabled);
   final images = ValueNotifier<List<Map<String, dynamic>>>([]);
   final priceControllers = ValueNotifier<List<TextEditingController>>([]);
   final priceFocusNodes = ValueNotifier<List<FocusNode>>([]);
@@ -58,7 +61,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<ProductViewModel>().retrievePriceStructure();
+      await context.read<ProductProvider>().retrievePriceStructure();
     });
     super.initState();
   }
@@ -90,32 +93,41 @@ class _ListProductScreenState extends State<ListProductScreen> {
                 AppDialogUtil.showWarningAlert(context, 'Select rental price');
                 return;
               }
-              List<String> prices = [];
+              List<ProductPriceModel> prices = [];
               for (int i = 0; i < priceControllers.value.length; i++) {
                 prices.add(
-                  jsonEncode({
-                    'price': priceControllers.value[i].text.replaceAll(",", ""),
-                    'priceStructureId': priceStructure.value[i].id,
-                  }),
+                  ProductPriceModel(
+                    price: num.parse(
+                        priceControllers.value[i].text.replaceAll(",", "")),
+                    startDay: priceStructure.value[i].startDay,
+                    endDay: priceStructure.value[i].endDay,
+                  ),
                 );
               }
               if (prices.length < 3) {
                 AppDialogUtil.popUpModal(
                   context,
                   modalContent: const ErrorModalContent(
-                    errorMessage: "Provide prices for all ranges (Daily, 7+ Days, 30+ Days)",
+                    errorMessage:
+                        "Provide prices for all ranges (Daily, 7+ Days, 30+ Days)",
                   ),
                 );
                 return;
               }
 
-              context.read<ProductViewModel>().setProductRequestBody = {
-                'name': itemNameController.text,
-                'subCategoryItemId': subCategoryItem?.id,
-                'prices[]': prices,
-                'photos[]': images.value.map((obj) => obj['file']).toList(),
-              };
-              AppNavigator.pushNamed(context, AppRoute.productDescriptionScreen);
+              final productProvider = context.read<ProductProvider>();
+
+              productProvider.setProductRequestBody =
+                  productProvider.getProductRequestBody.copyWith(
+                name: itemNameController.text,
+                subCategoryItemId: subCategoryItem?.externalId,
+                prices: prices,
+                photos: images.value
+                    .map((obj) => ProductPhotoModel(photoUrl: obj['file']))
+                    .toList(),
+              );
+              AppNavigator.pushNamed(
+                  context, AppRoute.productDescriptionScreen);
             }
           },
           text: 'Proceed',
@@ -152,46 +164,63 @@ class _ListProductScreenState extends State<ListProductScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 ProductImagePlaceholder(
-                                  file: imageValues.firstWhere((obj) => obj['id'] == 1, orElse: () => <String, dynamic>{})['file'],
+                                  file: imageValues.firstWhere(
+                                      (obj) => obj['id'] == 1,
+                                      orElse: () =>
+                                          <String, dynamic>{})['file'],
                                   onTap: () async {
                                     await showDialog<File?>(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text("Select Image Source"),
+                                        title:
+                                            const Text("Select Image Source"),
                                         surfaceTintColor: kPrimaryWhite,
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             ListTile(
                                               leading: const Icon(Icons.camera),
-                                              title: const Text('Take a picture'),
+                                              title:
+                                                  const Text('Take a picture'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getCameraPermissions()) {
-                                                  final croppedFile = await MediaFileUtil.getPickedSourceImage(cameraFront: true);
+                                                if (await PermissionUtil
+                                                    .getCameraPermissions()) {
+                                                  final croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedSourceImage(
+                                                              cameraFront:
+                                                                  true);
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 1,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 1,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
                                             ),
                                             ListTile(
-                                              leading: const Icon(Icons.photo_library),
-                                              title: const Text('Choose from gallery'),
+                                              leading: const Icon(
+                                                  Icons.photo_library),
+                                              title: const Text(
+                                                  'Choose from gallery'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getStoragePermission()) {
-                                                  String? croppedFile = await MediaFileUtil.getPickedImage();
+                                                if (await PermissionUtil
+                                                    .getStoragePermission()) {
+                                                  String? croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedImage();
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 1,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 1,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
@@ -202,51 +231,69 @@ class _ListProductScreenState extends State<ListProductScreen> {
                                     );
                                   },
                                   onDelete: () {
-                                    images.value = List.from(imageValues)..removeWhere((obj) => obj['id'] == 1);
+                                    images.value = List.from(imageValues)
+                                      ..removeWhere((obj) => obj['id'] == 1);
                                   },
                                 ).flexible(flex: 5),
                                 const HSpace(width: 12.0),
                                 ProductImagePlaceholder(
-                                  file: imageValues.firstWhere((obj) => obj['id'] == 2, orElse: () => <String, dynamic>{})['file'],
+                                  file: imageValues.firstWhere(
+                                      (obj) => obj['id'] == 2,
+                                      orElse: () =>
+                                          <String, dynamic>{})['file'],
                                   onTap: () async {
                                     await showDialog<File?>(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text("Select Image Source"),
+                                        title:
+                                            const Text("Select Image Source"),
                                         surfaceTintColor: kPrimaryWhite,
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             ListTile(
                                               leading: const Icon(Icons.camera),
-                                              title: const Text('Take a picture'),
+                                              title:
+                                                  const Text('Take a picture'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getCameraPermissions()) {
-                                                  final croppedFile = await MediaFileUtil.getPickedSourceImage(cameraFront: true);
+                                                if (await PermissionUtil
+                                                    .getCameraPermissions()) {
+                                                  final croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedSourceImage(
+                                                              cameraFront:
+                                                                  true);
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 2,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 2,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
                                             ),
                                             ListTile(
-                                              leading: const Icon(Icons.photo_library),
-                                              title: const Text('Choose from gallery'),
+                                              leading: const Icon(
+                                                  Icons.photo_library),
+                                              title: const Text(
+                                                  'Choose from gallery'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getStoragePermission()) {
-                                                  String? croppedFile = await MediaFileUtil.getPickedImage();
+                                                if (await PermissionUtil
+                                                    .getStoragePermission()) {
+                                                  String? croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedImage();
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 2,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 2,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
@@ -257,7 +304,8 @@ class _ListProductScreenState extends State<ListProductScreen> {
                                     );
                                   },
                                   onDelete: () {
-                                    images.value = List.from(imageValues)..removeWhere((obj) => obj['id'] == 2);
+                                    images.value = List.from(imageValues)
+                                      ..removeWhere((obj) => obj['id'] == 2);
                                   },
                                 ).flexible(flex: 5),
                               ],
@@ -271,46 +319,63 @@ class _ListProductScreenState extends State<ListProductScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 ProductImagePlaceholder(
-                                  file: imageValues.firstWhere((obj) => obj['id'] == 3, orElse: () => <String, dynamic>{})['file'],
+                                  file: imageValues.firstWhere(
+                                      (obj) => obj['id'] == 3,
+                                      orElse: () =>
+                                          <String, dynamic>{})['file'],
                                   onTap: () async {
                                     await showDialog<File?>(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text("Select Image Source"),
+                                        title:
+                                            const Text("Select Image Source"),
                                         surfaceTintColor: kPrimaryWhite,
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             ListTile(
                                               leading: const Icon(Icons.camera),
-                                              title: const Text('Take a picture'),
+                                              title:
+                                                  const Text('Take a picture'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getCameraPermissions()) {
-                                                  final croppedFile = await MediaFileUtil.getPickedSourceImage(cameraFront: true);
+                                                if (await PermissionUtil
+                                                    .getCameraPermissions()) {
+                                                  final croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedSourceImage(
+                                                              cameraFront:
+                                                                  true);
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 3,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 3,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
                                             ),
                                             ListTile(
-                                              leading: const Icon(Icons.photo_library),
-                                              title: const Text('Choose from gallery'),
+                                              leading: const Icon(
+                                                  Icons.photo_library),
+                                              title: const Text(
+                                                  'Choose from gallery'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getStoragePermission()) {
-                                                  String? croppedFile = await MediaFileUtil.getPickedImage();
+                                                if (await PermissionUtil
+                                                    .getStoragePermission()) {
+                                                  String? croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedImage();
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 3,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 3,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
@@ -321,51 +386,69 @@ class _ListProductScreenState extends State<ListProductScreen> {
                                     );
                                   },
                                   onDelete: () {
-                                    images.value = List.from(imageValues)..removeWhere((obj) => obj['id'] == 3);
+                                    images.value = List.from(imageValues)
+                                      ..removeWhere((obj) => obj['id'] == 3);
                                   },
                                 ).flexible(flex: 5),
                                 const HSpace(width: 12.0),
                                 ProductImagePlaceholder(
-                                  file: imageValues.firstWhere((obj) => obj['id'] == 4, orElse: () => <String, dynamic>{})['file'],
+                                  file: imageValues.firstWhere(
+                                      (obj) => obj['id'] == 4,
+                                      orElse: () =>
+                                          <String, dynamic>{})['file'],
                                   onTap: () async {
                                     await showDialog<File?>(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text("Select Image Source"),
+                                        title:
+                                            const Text("Select Image Source"),
                                         surfaceTintColor: kPrimaryWhite,
                                         content: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             ListTile(
                                               leading: const Icon(Icons.camera),
-                                              title: const Text('Take a picture'),
+                                              title:
+                                                  const Text('Take a picture'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getCameraPermissions()) {
-                                                  final croppedFile = await MediaFileUtil.getPickedSourceImage(cameraFront: true);
+                                                if (await PermissionUtil
+                                                    .getCameraPermissions()) {
+                                                  final croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedSourceImage(
+                                                              cameraFront:
+                                                                  true);
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 4,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 4,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
                                             ),
                                             ListTile(
-                                              leading: const Icon(Icons.photo_library),
-                                              title: const Text('Choose from gallery'),
+                                              leading: const Icon(
+                                                  Icons.photo_library),
+                                              title: const Text(
+                                                  'Choose from gallery'),
                                               onTap: () async {
                                                 Navigator.of(context).pop();
-                                                if (await PermissionUtil.getStoragePermission()) {
-                                                  String? croppedFile = await MediaFileUtil.getPickedImage();
+                                                if (await PermissionUtil
+                                                    .getStoragePermission()) {
+                                                  String? croppedFile =
+                                                      await MediaFileUtil
+                                                          .getPickedImage();
                                                   if (croppedFile != null) {
-                                                    images.value = List.from(imageValues)
-                                                      ..add({
-                                                        'id': 4,
-                                                        'file': croppedFile,
-                                                      });
+                                                    images.value =
+                                                        List.from(imageValues)
+                                                          ..add({
+                                                            'id': 4,
+                                                            'file': croppedFile,
+                                                          });
                                                   }
                                                 }
                                               },
@@ -376,7 +459,8 @@ class _ListProductScreenState extends State<ListProductScreen> {
                                     );
                                   },
                                   onDelete: () {
-                                    images.value = List.from(imageValues)..removeWhere((obj) => obj['id'] == 4);
+                                    images.value = List.from(imageValues)
+                                      ..removeWhere((obj) => obj['id'] == 4);
                                   },
                                 ).flexible(flex: 5),
                               ],
@@ -405,13 +489,17 @@ class _ListProductScreenState extends State<ListProductScreen> {
                           return null;
                         },
                         onTap: () async {
-                          context.read<ProductViewModel>().emitPopularCategories();
-                          final result = await AppDialogUtil.showScrollableBottomSheet(
+                          context
+                              .read<ProductProvider>()
+                              .fetchPopularSubCategoryItems(context);
+                          final result =
+                              await AppDialogUtil.showScrollableBottomSheet(
                             context: context,
                             builder: (context) => const ProductCategoryModal(),
                           );
                           if (result != null) {
-                            categoryController.text = (result as SubCategoryItemModel).name ?? '';
+                            categoryController.text =
+                                (result as SubCategoryItemModel).name ?? '';
                             subCategoryItem = result;
                           }
                         },
@@ -428,18 +516,21 @@ class _ListProductScreenState extends State<ListProductScreen> {
                           builder: (context, priceControllerValues, child) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: List.generate(priceControllerValues.length, (index) {
+                              children: List.generate(
+                                  priceControllerValues.length, (index) {
                                 final controller = priceControllerValues[index];
                                 final focusNode = priceFocusNodes.value[index];
                                 final price = priceStructure.value[index];
                                 return Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     AppInputField(
                                       controller: controller,
                                       hintText: 'Enter price per day',
                                       validator: (value) {
-                                        if (value!.isEmpty) return 'Enter price per day';
+                                        if (value!.isEmpty)
+                                          return 'Enter price per day';
                                         return null;
                                       },
                                       focusNode: focusNode,
@@ -467,19 +558,26 @@ class _ListProductScreenState extends State<ListProductScreen> {
                                               .alignCenterRight(),
                                         ],
                                       ),
-                                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                              decimal: true, signed: false),
                                       inputFormatters: [
                                         // FilteringTextInputFormatter.allow(RegExp(r"^\d+\.?\d{0,2}")),
-                                        FilteringTextInputFormatter.allow(RegExp(r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
-                                        InputFormatterUtil.thousandsSeparatorInputSeparator,
+                                        FilteringTextInputFormatter.allow(RegExp(
+                                            r"^\d{1,3}(,\d{3})*\.?\d{0,2}")),
+                                        InputFormatterUtil
+                                            .thousandsSeparatorInputSeparator,
                                       ],
                                     ).flexible(flex: 9),
                                     Container(
-                                      margin: EdgeInsets.only(bottom: AppThemeUtil.height(24.0)),
-                                      padding: EdgeInsets.all(AppThemeUtil.radius(16.0)),
+                                      margin: EdgeInsets.only(
+                                          bottom: AppThemeUtil.height(24.0)),
+                                      padding: EdgeInsets.all(
+                                          AppThemeUtil.radius(16.0)),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: kGrey200),
-                                        borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                                        borderRadius: BorderRadius.circular(
+                                            AppThemeUtil.radius(12.0)),
                                       ),
                                       child: ZSvgIcon(
                                         'minus.svg',
@@ -487,9 +585,15 @@ class _ListProductScreenState extends State<ListProductScreen> {
                                         color: kGrey1200,
                                       ),
                                     ).onPressed(() {
-                                      priceControllers.value = List.from(priceControllerValues)..removeAt(index);
-                                      priceStructure.value = List.from(priceStructure.value)..removeAt(index);
-                                      priceFocusNodes.value = List.from(priceFocusNodes.value)..removeAt(index);
+                                      priceControllers.value =
+                                          List.from(priceControllerValues)
+                                            ..removeAt(index);
+                                      priceStructure.value =
+                                          List.from(priceStructure.value)
+                                            ..removeAt(index);
+                                      priceFocusNodes.value =
+                                          List.from(priceFocusNodes.value)
+                                            ..removeAt(index);
                                     }).flexible(flex: 2),
                                   ],
                                 ).paddingOnly(bottom: 10);
@@ -503,12 +607,16 @@ class _ListProductScreenState extends State<ListProductScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: kGrey50,
-                          borderRadius: BorderRadius.circular(AppThemeUtil.radius(30.0)),
+                          borderRadius:
+                              BorderRadius.circular(AppThemeUtil.radius(30.0)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('Add price').semiBold().fontSize(14.0).color(kGrey1200),
+                            const Text('Add price')
+                                .semiBold()
+                                .fontSize(14.0)
+                                .color(kGrey1200),
                             const HSpace(width: 8.0),
                             Icon(
                               Icons.add,
@@ -520,16 +628,24 @@ class _ListProductScreenState extends State<ListProductScreen> {
                       ).onPressed(() async {
                         if (priceControllers.value.length == 3) return;
 
-                        context.read<ProductViewModel>().emitPriceStructure();
-
-                        final result = await AppDialogUtil.showScrollableBottomSheet(
+                        final result =
+                            await AppDialogUtil.showScrollableBottomSheet(
                           context: context,
-                          builder: (context) => RentalPriceModal(prices: priceStructure.value.map((e) => e.id ?? 0).toList()..remove(0)),
+                          builder: (context) => RentalPriceModal(
+                              prices: priceStructure.value
+                                  .map((e) => e.id ?? 0)
+                                  .toList()
+                                ..remove(0)),
                         );
                         if (result != null) {
-                          priceControllers.value = List.from(priceControllers.value)..add(TextEditingController());
-                          priceStructure.value = List.from(priceStructure.value)..add(result as PriceStructureModel);
-                          priceFocusNodes.value = List.from(priceFocusNodes.value)..add(FocusNode());
+                          priceControllers.value =
+                              List.from(priceControllers.value)
+                                ..add(TextEditingController());
+                          priceStructure.value = List.from(priceStructure.value)
+                            ..add(result as PriceStructureModel);
+                          priceFocusNodes.value =
+                              List.from(priceFocusNodes.value)
+                                ..add(FocusNode());
                         }
                       }),
                       const VSpace(height: 32.0),

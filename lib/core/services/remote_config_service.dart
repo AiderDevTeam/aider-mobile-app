@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -31,7 +32,6 @@ class RemoteConfigService {
         'googleMapKey': Environment.getGoogleMapKey,
         'socketKey': Environment.getSocketKey,
         'payStackPublicKey': Environment.getPayStackPublicKey,
-        'payStackSecretKey': Environment.getPayStackSecretKey,
         'cloudinaryCloudName': Environment.getCloudinaryCloudName,
         'cloudinaryUploadPreset': Environment.getCloudinaryUploadPreset,
       });
@@ -52,7 +52,9 @@ class RemoteConfigService {
             _firebaseRemoteConfig.getString('cloudinaryCloudName'),
         'cloudinaryUploadPreset':
             _firebaseRemoteConfig.getString('cloudinaryUploadPreset'),
+        'devConfigs': _firebaseRemoteConfig.getValue('devConfigs').asString(),
       });
+
       print('LIVE_BASE_URL 2: ${_firebaseRemoteConfig.getString('baseUrl')}');
     } catch (e) {
       _configDataModel = RemoteConfigModel(
@@ -65,6 +67,7 @@ class RemoteConfigService {
         payStackSecretKey: Environment.getPayStackSecretKey,
         cloudinaryCloudName: Environment.getCloudinaryCloudName,
         cloudinaryUploadPreset: Environment.getCloudinaryUploadPreset,
+        configs: {},
       );
       log(e.toString());
     }
@@ -83,6 +86,7 @@ class RemoteConfigModel {
   final String payStackSecretKey;
   final String cloudinaryCloudName;
   final String cloudinaryUploadPreset;
+  final Map<String, dynamic> configs;
 
   RemoteConfigModel({
     required this.baseUrl,
@@ -94,6 +98,7 @@ class RemoteConfigModel {
     required this.payStackSecretKey,
     required this.cloudinaryCloudName,
     required this.cloudinaryUploadPreset,
+    required this.configs,
   });
 
   factory RemoteConfigModel.fromJson(Map<String, dynamic> json) {
@@ -107,6 +112,7 @@ class RemoteConfigModel {
       payStackSecretKey: json['payStackSecretKey'] ?? '',
       cloudinaryCloudName: json['cloudinaryCloudName'] ?? '',
       cloudinaryUploadPreset: json['cloudinaryUploadPreset'] ?? '',
+      configs: jsonDecode(json['devConfigs']) ?? {},
     );
   }
 
@@ -121,6 +127,7 @@ class RemoteConfigModel {
       'payStackSecretKey': payStackSecretKey,
       'cloudinaryCloudName': cloudinaryCloudName,
       'cloudinaryUploadPreset': cloudinaryUploadPreset,
+      'devConfigs': configs,
     };
   }
 }

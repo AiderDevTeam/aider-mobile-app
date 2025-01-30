@@ -34,25 +34,19 @@ class _SeeAllRentalListeningScreenState
   Future<void> fetchProducts([int page = 1]) async {
     if (!mounted) return;
     await context.read<ExploreViewProvider>().fetchProducts(
-      context,
-      sectionExternalId: widget.param['externalId'],
-      queryParams: {
-        'page': page,
-        'dataPerPage': kProductPerPage,
-      },
-    );
+          context,
+          sectionExternalId: widget.param['externalId'],
+          page: page,
+        );
   }
 
   Future<void> fetchProductsByCategory([int page = 1]) async {
     if (!mounted) return;
     await context.read<ExploreViewProvider>().fetchProductsByCategory(
-      context,
-      categoryExternalId: widget.param['externalId'],
-      queryParams: {
-        'page': page,
-        'dataPerPage': kProductPerPage,
-      },
-    );
+          context,
+          categoryExternalId: widget.param['externalId'],
+          page: page,
+        );
   }
 
   @override

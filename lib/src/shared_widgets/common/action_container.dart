@@ -1,4 +1,3 @@
-
 import 'package:aider_mobile_app/core/constants/colors.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/gesture_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
@@ -10,19 +9,18 @@ import 'package:provider/provider.dart';
 import '../../../core/routing/app_navigator.dart';
 import '../../../core/routing/app_route.dart';
 import '../../../core/utils/app_dialog_util.dart';
-import '../../features/product/presentation/view_models/product_view_model.dart';
+import '../../features/product/presentation/providers/product_provider.dart';
 import '../../features/search/presentation/view_model/search_view_model.dart';
 import '../../features/search/presentation/widgets/modals/filter_modal.dart';
 import 'h_space.dart';
 
 class ProfileActions extends StatelessWidget {
-  const ProfileActions({
-    super.key,
-    this.showSearchIcon = true,
-    this.showFilterIcon = true,
-    required this.filterType,
-    required this.categoryExternalId
-  });
+  const ProfileActions(
+      {super.key,
+      this.showSearchIcon = true,
+      this.showFilterIcon = true,
+      required this.filterType,
+      required this.categoryExternalId});
 
   final bool showSearchIcon;
   final bool showFilterIcon;
@@ -47,7 +45,7 @@ class ProfileActions extends StatelessWidget {
               size: AppThemeUtil.radius(24.0),
               color: kPrimaryBlack,
             ),
-          ).onPressed((){
+          ).onPressed(() {
             AppNavigator.pushNamed(context, AppRoute.search);
           }),
         const HSpace(width: 12.0),
@@ -65,15 +63,13 @@ class ProfileActions extends StatelessWidget {
               size: AppThemeUtil.radius(24.0),
               color: kPrimaryBlack,
             ),
-          ).onPressed((){
-            context.read<ProductViewModel>().emitPopularCategories();
+          ).onPressed(() {
+            // context.read<ProductProvider>().emitPopularCategories();
             context.read<SearchViewModel>().emitPopularLocations();
             AppDialogUtil.showScrollableBottomSheet(
               context: context,
               builder: (context) => FilterModal(
-                type: filterType,
-                categoryExternalId: categoryExternalId
-              ),
+                  type: filterType, categoryExternalId: categoryExternalId),
             );
           }),
       ],

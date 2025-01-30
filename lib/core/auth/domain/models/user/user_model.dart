@@ -28,6 +28,7 @@ class UserModel with _$UserModel {
     final bool? idVerified,
     final String? joinedAt,
     final String? profilePhotoUrl,
+    final int? itemsListed,
     final List<AddressModel>? addresses,
     final StatisticModel? statistics,
     final List<WalletModel>? wallets,
