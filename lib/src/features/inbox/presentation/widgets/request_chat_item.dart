@@ -29,26 +29,28 @@ class RequestChatItem extends StatelessWidget {
   const RequestChatItem({
     super.key,
     required this.message,
+    required this.booking,
     required this.senderName,
   });
 
   final MessageModel message;
+  final BookingModel booking;
   final String senderName;
 
   @override
   Widget build(BuildContext context) {
     final user = context.read<UserProvider>().getUser;
-    final bookModel = BookingModel.fromJson(message.senderMessage ?? {});
-    final isSender = message.senderExternalId == user.externalId;
-    final isBookingPaid = bookModel.collectionStatus == kSuccessStatus;
+    final isSender = message.senderUid == user.uid;
+    final isBookingPaid =
+        booking.collectionStatus == BookingProgressStatus.success;
     final isBookingAccepted =
-        bookModel.bookingAcceptanceStatus == kBookingAcceptedStatus;
+        booking.bookingAcceptanceStatus == BookingProgressStatus.accepted;
     final isBookingCanceled =
-        bookModel.bookingAcceptanceStatus == kBookingCanceledStatus;
+        booking.bookingAcceptanceStatus == BookingProgressStatus.cancelled;
     final isBookingRejected =
-        bookModel.bookingAcceptanceStatus == kBookingCanceledStatus;
+        booking.bookingAcceptanceStatus == BookingProgressStatus.rejected;
     final isBookingPending =
-        bookModel.bookingAcceptanceStatus == kPendingStatus;
+        booking.bookingAcceptanceStatus == BookingProgressStatus.pending;
 
     return AppCard(
       padding: EdgeInsets.symmetric(
@@ -76,7 +78,7 @@ class RequestChatItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
               image: DecorationImage(
                 image: CachedNetworkImageUtil.cacheNetworkImageProvider(
-                    bookModel.bookedProduct?.product?.firstPhoto ?? ''),
+                    booking.bookedProduct?.product?.firstPhoto ?? ''),
                 fit: BoxFit.cover,
               ),
             ),
@@ -91,7 +93,7 @@ class RequestChatItem extends StatelessWidget {
                   bottomRight: Radius.circular(AppThemeUtil.radius(12)),
                 ),
               ),
-              child: Text(bookModel.bookedProduct?.product?.name ?? '')
+              child: Text(booking.bookedProduct?.product?.name ?? '')
                   .bold()
                   .fontSize(14.0)
                   .color(kGrey1200)
@@ -116,7 +118,7 @@ class RequestChatItem extends StatelessWidget {
                         .medium()
                         .fontSize(14.0)
                         .color(kGrey800),
-                    Text((bookModel.bookedProduct?.quantity ?? 0).toString())
+                    Text((booking.bookedProduct?.quantity ?? 0).toString())
                         .semiBold()
                         .fontSize(14.0)
                         .color(kGrey1200),
@@ -126,11 +128,11 @@ class RequestChatItem extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(bookModel.bookedProduct?.getDuration ?? '')
+                    Text(booking.bookedProduct?.getDuration ?? '')
                         .medium()
                         .fontSize(14.0)
                         .color(kGrey800),
-                    Text('${bookModel.bookedProduct?.getStartDate} → ${bookModel.bookedProduct?.getEndDate}')
+                    Text('${booking.bookedProduct?.getStartDate} → ${booking.bookedProduct?.getEndDate}')
                         .semiBold()
                         .fontSize(14.0)
                         .color(kGrey1200)
@@ -145,7 +147,7 @@ class RequestChatItem extends StatelessWidget {
                         .medium()
                         .fontSize(14.0)
                         .color(kGrey800),
-                    Text('₦${bookModel.getTotalCost}')
+                    Text('₦${booking.getTotalCost}')
                         .semiBold()
                         .fontSize(14.0)
                         .color(kGrey1200)
@@ -187,7 +189,7 @@ class RequestChatItem extends StatelessWidget {
               AppDialogUtil.showScrollableBottomSheet(
                 context: context,
                 builder: (modalContext) => RentalDetailModalContent(
-                  booking: bookModel,
+                  booking: booking,
                   isSender: isSender,
                   isBookingPaid: isBookingPaid,
                   messageExternalId: message.externalId,
@@ -201,16 +203,16 @@ class RequestChatItem extends StatelessWidget {
             color: kPrimaryWhite,
           ),
           const VSpace(height: 8.0),
-          if (bookModel.collectionStatus == kSuccessStatus &&
-                  bookModel.userDropOffStatus != kSuccessStatus ||
-              bookModel.vendorDropOffStatus != kSuccessStatus &&
+          if (booking.collectionStatus == BookingProgressStatus.success &&
+                  booking.userDropOffStatus != BookingProgressStatus.success ||
+              booking.vendorDropOffStatus != BookingProgressStatus.success &&
                   !isBookingCanceled &&
                   isBookingPaid) ...[
             (isSender)
                 ? AppIconTextButton(
                     onPressed: () {
                       UrlLauncherUtil().callPhone(
-                          '${bookModel.vendor?.callingCode ?? ''}${bookModel.vendor?.phone ?? ''}');
+                          '${booking.vendor?.callingCode ?? ''}${booking.vendor?.phone ?? ''}');
                     },
                     icon: ZSvgIcon(
                       'phone-call-01.svg',
@@ -223,7 +225,7 @@ class RequestChatItem extends StatelessWidget {
                 : AppIconTextButton(
                     onPressed: () {
                       UrlLauncherUtil().callPhone(
-                          '${bookModel.user?.callingCode ?? ''}${bookModel.user?.phone ?? ''}');
+                          '${booking.user?.callingCode ?? ''}${booking.user?.phone ?? ''}');
                     },
                     icon: ZSvgIcon(
                       'phone-call-01.svg',
@@ -235,8 +237,11 @@ class RequestChatItem extends StatelessWidget {
                   )
           ],
           if (isSender &&
-              [kNotStartedStatus, kAbandonedStatus, kFailedStatus]
-                  .contains(bookModel.collectionStatus)) ...[
+              [
+                BookingProgressStatus.notStarted,
+                BookingProgressStatus.abandoned,
+                BookingProgressStatus.failed
+              ].contains(booking.collectionStatus)) ...[
             if (isBookingAccepted) ...[
               BaseView<TransactionProvider>(
                   builder: (context, transactionConsumer, child) {
@@ -251,22 +256,15 @@ class RequestChatItem extends StatelessWidget {
                         final result = await context
                             .read<TransactionProvider>()
                             .initiateTransaction(
-                          context,
-                          requestBody: {
-                            "paymentType": "booking",
-                            "paymentTypeExternalId": bookModel.externalId,
-                            "amount": bookModel.collectionAmount,
-                            "type": "collection"
-                          },
-                        );
+                              context,
+                              bookingUid: booking.uid!,
+                            );
 
                         if (result != null) {
                           if (!context.mounted) return;
                           await PaymentService().openPayStackForm(
                             context,
-                            customerEmail: user.email ?? '',
-                            amount: double.parse(result.amount ?? '0'),
-                            reference: result.stan ?? '',
+                            paymentUrl: result,
                           );
                           return;
                         }
@@ -302,14 +300,10 @@ class RequestChatItem extends StatelessWidget {
                     onPressed: () async {
                       await context
                           .read<InboxViewModel>()
-                          .approveBookingRequest(
-                        context,
-                        messageExternalId: message.externalId,
-                        bookingExternalId: bookModel.externalId ?? '',
-                        requestBody: {
-                          "status": "accepted",
-                        },
-                      );
+                          .approveBookingRequest(context,
+                              messageExternalId: message.externalId,
+                              booking: booking,
+                              status: BookingProgressStatus.accepted);
 
                       // if(!context.mounted) return;
                       // context.read<InboxViewModel>().setAcceptingRequestLoading = false;
@@ -330,7 +324,7 @@ class RequestChatItem extends StatelessWidget {
             //     await context.read<InboxViewModel>().approveBookingRequest(
             //       context,
             //       messageExternalId: widget.message.externalId,
-            //       bookingExternalId: bookModel.externalId?? '',
+            //       bookingExternalId: booking.externalId?? '',
             //       requestBody: {
             //         "status": "accepted",
             //       },

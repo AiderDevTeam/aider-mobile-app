@@ -69,7 +69,7 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
         child: AppPrimaryButton(
           onPressed: () {
             final user = context.read<UserProvider>().getUser;
-            if (user.externalId == widget.product.user!.externalId) {
+            if (user.uid == widget.product.user!.uid) {
               AppDialogUtil.showWarningAlert(
                   context, "Oops! You can't rent your own item");
               return;
@@ -237,7 +237,7 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                     children: [
                       Row(
                         children: [
-                          (!widget.product.user!.hasProfilePhoto)
+                          (widget.product.user!.hasProfilePhoto == false)
                               ? CircleAvatar(
                                   backgroundColor: Colors.transparent,
                                   maxRadius: AppThemeUtil.radius(26),

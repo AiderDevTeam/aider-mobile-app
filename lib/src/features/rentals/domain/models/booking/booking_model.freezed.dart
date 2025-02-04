@@ -21,24 +21,37 @@ BookingModel _$BookingModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$BookingModel {
   int? get id => throw _privateConstructorUsedError;
+  String? get uid => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
-  String? get status => throw _privateConstructorUsedError;
+  BookingStatus? get status => throw _privateConstructorUsedError;
   num? get collectionAmount => throw _privateConstructorUsedError;
-  String? get collectionStatus => throw _privateConstructorUsedError;
+  BookingProgressStatus? get collectionStatus =>
+      throw _privateConstructorUsedError;
   num? get disbursementAmount => throw _privateConstructorUsedError;
-  String? get disbursementStatus => throw _privateConstructorUsedError;
-  String? get reversalStatus => throw _privateConstructorUsedError;
-  String? get bookingAcceptanceStatus => throw _privateConstructorUsedError;
-  String? get vendorPickupStatus => throw _privateConstructorUsedError;
-  String? get userPickupStatus => throw _privateConstructorUsedError;
-  String? get vendorDropOffStatus => throw _privateConstructorUsedError;
-  String? get userDropOffStatus => throw _privateConstructorUsedError;
+  BookingProgressStatus? get disbursementStatus =>
+      throw _privateConstructorUsedError;
+  BookingProgressStatus? get reversalStatus =>
+      throw _privateConstructorUsedError;
+  BookingProgressStatus? get bookingAcceptanceStatus =>
+      throw _privateConstructorUsedError;
+  BookingProgressStatus? get vendorPickupStatus =>
+      throw _privateConstructorUsedError;
+  BookingProgressStatus? get userPickupStatus =>
+      throw _privateConstructorUsedError;
+  BookingProgressStatus? get vendorDropOffStatus =>
+      throw _privateConstructorUsedError;
+  BookingProgressStatus? get userDropOffStatus =>
+      throw _privateConstructorUsedError;
   String? get bookingNumber => throw _privateConstructorUsedError;
+  String? get productUid => throw _privateConstructorUsedError;
+  String? get userUid => throw _privateConstructorUsedError;
+  String? get vendorUid => throw _privateConstructorUsedError;
   BookedProductModel? get bookedProduct => throw _privateConstructorUsedError;
   bool get userHasReported => throw _privateConstructorUsedError;
   bool get vendorHasReported => throw _privateConstructorUsedError;
   UserModel? get vendor => throw _privateConstructorUsedError;
   UserModel? get user => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
 
   /// Serializes this BookingModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -58,24 +71,29 @@ abstract class $BookingModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
+      String? uid,
       String? externalId,
-      String? status,
+      BookingStatus? status,
       num? collectionAmount,
-      String? collectionStatus,
+      BookingProgressStatus? collectionStatus,
       num? disbursementAmount,
-      String? disbursementStatus,
-      String? reversalStatus,
-      String? bookingAcceptanceStatus,
-      String? vendorPickupStatus,
-      String? userPickupStatus,
-      String? vendorDropOffStatus,
-      String? userDropOffStatus,
+      BookingProgressStatus? disbursementStatus,
+      BookingProgressStatus? reversalStatus,
+      BookingProgressStatus? bookingAcceptanceStatus,
+      BookingProgressStatus? vendorPickupStatus,
+      BookingProgressStatus? userPickupStatus,
+      BookingProgressStatus? vendorDropOffStatus,
+      BookingProgressStatus? userDropOffStatus,
       String? bookingNumber,
+      String? productUid,
+      String? userUid,
+      String? vendorUid,
       BookedProductModel? bookedProduct,
       bool userHasReported,
       bool vendorHasReported,
       UserModel? vendor,
-      UserModel? user});
+      UserModel? user,
+      DateTime? createdAt});
 
   $BookedProductModelCopyWith<$Res>? get bookedProduct;
   $UserModelCopyWith<$Res>? get vendor;
@@ -98,6 +116,7 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? status = freezed,
     Object? collectionAmount = freezed,
@@ -111,17 +130,25 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
     Object? vendorDropOffStatus = freezed,
     Object? userDropOffStatus = freezed,
     Object? bookingNumber = freezed,
+    Object? productUid = freezed,
+    Object? userUid = freezed,
+    Object? vendorUid = freezed,
     Object? bookedProduct = freezed,
     Object? userHasReported = null,
     Object? vendorHasReported = null,
     Object? vendor = freezed,
     Object? user = freezed,
+    Object? createdAt = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -129,7 +156,7 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingStatus?,
       collectionAmount: freezed == collectionAmount
           ? _value.collectionAmount
           : collectionAmount // ignore: cast_nullable_to_non_nullable
@@ -137,7 +164,7 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
       collectionStatus: freezed == collectionStatus
           ? _value.collectionStatus
           : collectionStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       disbursementAmount: freezed == disbursementAmount
           ? _value.disbursementAmount
           : disbursementAmount // ignore: cast_nullable_to_non_nullable
@@ -145,34 +172,46 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
       disbursementStatus: freezed == disbursementStatus
           ? _value.disbursementStatus
           : disbursementStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       reversalStatus: freezed == reversalStatus
           ? _value.reversalStatus
           : reversalStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       bookingAcceptanceStatus: freezed == bookingAcceptanceStatus
           ? _value.bookingAcceptanceStatus
           : bookingAcceptanceStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       vendorPickupStatus: freezed == vendorPickupStatus
           ? _value.vendorPickupStatus
           : vendorPickupStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       userPickupStatus: freezed == userPickupStatus
           ? _value.userPickupStatus
           : userPickupStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       vendorDropOffStatus: freezed == vendorDropOffStatus
           ? _value.vendorDropOffStatus
           : vendorDropOffStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       userDropOffStatus: freezed == userDropOffStatus
           ? _value.userDropOffStatus
           : userDropOffStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       bookingNumber: freezed == bookingNumber
           ? _value.bookingNumber
           : bookingNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      productUid: freezed == productUid
+          ? _value.productUid
+          : productUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userUid: freezed == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      vendorUid: freezed == vendorUid
+          ? _value.vendorUid
+          : vendorUid // ignore: cast_nullable_to_non_nullable
               as String?,
       bookedProduct: freezed == bookedProduct
           ? _value.bookedProduct
@@ -194,6 +233,10 @@ class _$BookingModelCopyWithImpl<$Res, $Val extends BookingModel>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserModel?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 
@@ -250,24 +293,29 @@ abstract class _$$BookingModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
+      String? uid,
       String? externalId,
-      String? status,
+      BookingStatus? status,
       num? collectionAmount,
-      String? collectionStatus,
+      BookingProgressStatus? collectionStatus,
       num? disbursementAmount,
-      String? disbursementStatus,
-      String? reversalStatus,
-      String? bookingAcceptanceStatus,
-      String? vendorPickupStatus,
-      String? userPickupStatus,
-      String? vendorDropOffStatus,
-      String? userDropOffStatus,
+      BookingProgressStatus? disbursementStatus,
+      BookingProgressStatus? reversalStatus,
+      BookingProgressStatus? bookingAcceptanceStatus,
+      BookingProgressStatus? vendorPickupStatus,
+      BookingProgressStatus? userPickupStatus,
+      BookingProgressStatus? vendorDropOffStatus,
+      BookingProgressStatus? userDropOffStatus,
       String? bookingNumber,
+      String? productUid,
+      String? userUid,
+      String? vendorUid,
       BookedProductModel? bookedProduct,
       bool userHasReported,
       bool vendorHasReported,
       UserModel? vendor,
-      UserModel? user});
+      UserModel? user,
+      DateTime? createdAt});
 
   @override
   $BookedProductModelCopyWith<$Res>? get bookedProduct;
@@ -291,6 +339,7 @@ class __$$BookingModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
+    Object? uid = freezed,
     Object? externalId = freezed,
     Object? status = freezed,
     Object? collectionAmount = freezed,
@@ -304,17 +353,25 @@ class __$$BookingModelImplCopyWithImpl<$Res>
     Object? vendorDropOffStatus = freezed,
     Object? userDropOffStatus = freezed,
     Object? bookingNumber = freezed,
+    Object? productUid = freezed,
+    Object? userUid = freezed,
+    Object? vendorUid = freezed,
     Object? bookedProduct = freezed,
     Object? userHasReported = null,
     Object? vendorHasReported = null,
     Object? vendor = freezed,
     Object? user = freezed,
+    Object? createdAt = freezed,
   }) {
     return _then(_$BookingModelImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       externalId: freezed == externalId
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
@@ -322,7 +379,7 @@ class __$$BookingModelImplCopyWithImpl<$Res>
       status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingStatus?,
       collectionAmount: freezed == collectionAmount
           ? _value.collectionAmount
           : collectionAmount // ignore: cast_nullable_to_non_nullable
@@ -330,7 +387,7 @@ class __$$BookingModelImplCopyWithImpl<$Res>
       collectionStatus: freezed == collectionStatus
           ? _value.collectionStatus
           : collectionStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       disbursementAmount: freezed == disbursementAmount
           ? _value.disbursementAmount
           : disbursementAmount // ignore: cast_nullable_to_non_nullable
@@ -338,34 +395,46 @@ class __$$BookingModelImplCopyWithImpl<$Res>
       disbursementStatus: freezed == disbursementStatus
           ? _value.disbursementStatus
           : disbursementStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       reversalStatus: freezed == reversalStatus
           ? _value.reversalStatus
           : reversalStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       bookingAcceptanceStatus: freezed == bookingAcceptanceStatus
           ? _value.bookingAcceptanceStatus
           : bookingAcceptanceStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       vendorPickupStatus: freezed == vendorPickupStatus
           ? _value.vendorPickupStatus
           : vendorPickupStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       userPickupStatus: freezed == userPickupStatus
           ? _value.userPickupStatus
           : userPickupStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       vendorDropOffStatus: freezed == vendorDropOffStatus
           ? _value.vendorDropOffStatus
           : vendorDropOffStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       userDropOffStatus: freezed == userDropOffStatus
           ? _value.userDropOffStatus
           : userDropOffStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BookingProgressStatus?,
       bookingNumber: freezed == bookingNumber
           ? _value.bookingNumber
           : bookingNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      productUid: freezed == productUid
+          ? _value.productUid
+          : productUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      userUid: freezed == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      vendorUid: freezed == vendorUid
+          ? _value.vendorUid
+          : vendorUid // ignore: cast_nullable_to_non_nullable
               as String?,
       bookedProduct: freezed == bookedProduct
           ? _value.bookedProduct
@@ -387,6 +456,10 @@ class __$$BookingModelImplCopyWithImpl<$Res>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserModel?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -396,6 +469,7 @@ class __$$BookingModelImplCopyWithImpl<$Res>
 class _$BookingModelImpl extends _BookingModel {
   const _$BookingModelImpl(
       {this.id,
+      this.uid,
       this.externalId,
       this.status,
       this.collectionAmount,
@@ -409,11 +483,15 @@ class _$BookingModelImpl extends _BookingModel {
       this.vendorDropOffStatus,
       this.userDropOffStatus,
       this.bookingNumber,
+      this.productUid,
+      this.userUid,
+      this.vendorUid,
       this.bookedProduct,
       this.userHasReported = false,
       this.vendorHasReported = false,
       this.vendor,
-      this.user})
+      this.user,
+      this.createdAt})
       : super._();
 
   factory _$BookingModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -422,31 +500,39 @@ class _$BookingModelImpl extends _BookingModel {
   @override
   final int? id;
   @override
+  final String? uid;
+  @override
   final String? externalId;
   @override
-  final String? status;
+  final BookingStatus? status;
   @override
   final num? collectionAmount;
   @override
-  final String? collectionStatus;
+  final BookingProgressStatus? collectionStatus;
   @override
   final num? disbursementAmount;
   @override
-  final String? disbursementStatus;
+  final BookingProgressStatus? disbursementStatus;
   @override
-  final String? reversalStatus;
+  final BookingProgressStatus? reversalStatus;
   @override
-  final String? bookingAcceptanceStatus;
+  final BookingProgressStatus? bookingAcceptanceStatus;
   @override
-  final String? vendorPickupStatus;
+  final BookingProgressStatus? vendorPickupStatus;
   @override
-  final String? userPickupStatus;
+  final BookingProgressStatus? userPickupStatus;
   @override
-  final String? vendorDropOffStatus;
+  final BookingProgressStatus? vendorDropOffStatus;
   @override
-  final String? userDropOffStatus;
+  final BookingProgressStatus? userDropOffStatus;
   @override
   final String? bookingNumber;
+  @override
+  final String? productUid;
+  @override
+  final String? userUid;
+  @override
+  final String? vendorUid;
   @override
   final BookedProductModel? bookedProduct;
   @override
@@ -459,10 +545,12 @@ class _$BookingModelImpl extends _BookingModel {
   final UserModel? vendor;
   @override
   final UserModel? user;
+  @override
+  final DateTime? createdAt;
 
   @override
   String toString() {
-    return 'BookingModel(id: $id, externalId: $externalId, status: $status, collectionAmount: $collectionAmount, collectionStatus: $collectionStatus, disbursementAmount: $disbursementAmount, disbursementStatus: $disbursementStatus, reversalStatus: $reversalStatus, bookingAcceptanceStatus: $bookingAcceptanceStatus, vendorPickupStatus: $vendorPickupStatus, userPickupStatus: $userPickupStatus, vendorDropOffStatus: $vendorDropOffStatus, userDropOffStatus: $userDropOffStatus, bookingNumber: $bookingNumber, bookedProduct: $bookedProduct, userHasReported: $userHasReported, vendorHasReported: $vendorHasReported, vendor: $vendor, user: $user)';
+    return 'BookingModel(id: $id, uid: $uid, externalId: $externalId, status: $status, collectionAmount: $collectionAmount, collectionStatus: $collectionStatus, disbursementAmount: $disbursementAmount, disbursementStatus: $disbursementStatus, reversalStatus: $reversalStatus, bookingAcceptanceStatus: $bookingAcceptanceStatus, vendorPickupStatus: $vendorPickupStatus, userPickupStatus: $userPickupStatus, vendorDropOffStatus: $vendorDropOffStatus, userDropOffStatus: $userDropOffStatus, bookingNumber: $bookingNumber, productUid: $productUid, userUid: $userUid, vendorUid: $vendorUid, bookedProduct: $bookedProduct, userHasReported: $userHasReported, vendorHasReported: $vendorHasReported, vendor: $vendor, user: $user, createdAt: $createdAt)';
   }
 
   @override
@@ -471,6 +559,7 @@ class _$BookingModelImpl extends _BookingModel {
         (other.runtimeType == runtimeType &&
             other is _$BookingModelImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.status, status) || other.status == status) &&
@@ -497,6 +586,11 @@ class _$BookingModelImpl extends _BookingModel {
                 other.userDropOffStatus == userDropOffStatus) &&
             (identical(other.bookingNumber, bookingNumber) ||
                 other.bookingNumber == bookingNumber) &&
+            (identical(other.productUid, productUid) ||
+                other.productUid == productUid) &&
+            (identical(other.userUid, userUid) || other.userUid == userUid) &&
+            (identical(other.vendorUid, vendorUid) ||
+                other.vendorUid == vendorUid) &&
             (identical(other.bookedProduct, bookedProduct) ||
                 other.bookedProduct == bookedProduct) &&
             (identical(other.userHasReported, userHasReported) ||
@@ -504,7 +598,9 @@ class _$BookingModelImpl extends _BookingModel {
             (identical(other.vendorHasReported, vendorHasReported) ||
                 other.vendorHasReported == vendorHasReported) &&
             (identical(other.vendor, vendor) || other.vendor == vendor) &&
-            (identical(other.user, user) || other.user == user));
+            (identical(other.user, user) || other.user == user) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -512,6 +608,7 @@ class _$BookingModelImpl extends _BookingModel {
   int get hashCode => Object.hashAll([
         runtimeType,
         id,
+        uid,
         externalId,
         status,
         collectionAmount,
@@ -525,11 +622,15 @@ class _$BookingModelImpl extends _BookingModel {
         vendorDropOffStatus,
         userDropOffStatus,
         bookingNumber,
+        productUid,
+        userUid,
+        vendorUid,
         bookedProduct,
         userHasReported,
         vendorHasReported,
         vendor,
-        user
+        user,
+        createdAt
       ]);
 
   /// Create a copy of BookingModel
@@ -551,24 +652,29 @@ class _$BookingModelImpl extends _BookingModel {
 abstract class _BookingModel extends BookingModel {
   const factory _BookingModel(
       {final int? id,
+      final String? uid,
       final String? externalId,
-      final String? status,
+      final BookingStatus? status,
       final num? collectionAmount,
-      final String? collectionStatus,
+      final BookingProgressStatus? collectionStatus,
       final num? disbursementAmount,
-      final String? disbursementStatus,
-      final String? reversalStatus,
-      final String? bookingAcceptanceStatus,
-      final String? vendorPickupStatus,
-      final String? userPickupStatus,
-      final String? vendorDropOffStatus,
-      final String? userDropOffStatus,
+      final BookingProgressStatus? disbursementStatus,
+      final BookingProgressStatus? reversalStatus,
+      final BookingProgressStatus? bookingAcceptanceStatus,
+      final BookingProgressStatus? vendorPickupStatus,
+      final BookingProgressStatus? userPickupStatus,
+      final BookingProgressStatus? vendorDropOffStatus,
+      final BookingProgressStatus? userDropOffStatus,
       final String? bookingNumber,
+      final String? productUid,
+      final String? userUid,
+      final String? vendorUid,
       final BookedProductModel? bookedProduct,
       final bool userHasReported,
       final bool vendorHasReported,
       final UserModel? vendor,
-      final UserModel? user}) = _$BookingModelImpl;
+      final UserModel? user,
+      final DateTime? createdAt}) = _$BookingModelImpl;
   const _BookingModel._() : super._();
 
   factory _BookingModel.fromJson(Map<String, dynamic> json) =
@@ -577,31 +683,39 @@ abstract class _BookingModel extends BookingModel {
   @override
   int? get id;
   @override
+  String? get uid;
+  @override
   String? get externalId;
   @override
-  String? get status;
+  BookingStatus? get status;
   @override
   num? get collectionAmount;
   @override
-  String? get collectionStatus;
+  BookingProgressStatus? get collectionStatus;
   @override
   num? get disbursementAmount;
   @override
-  String? get disbursementStatus;
+  BookingProgressStatus? get disbursementStatus;
   @override
-  String? get reversalStatus;
+  BookingProgressStatus? get reversalStatus;
   @override
-  String? get bookingAcceptanceStatus;
+  BookingProgressStatus? get bookingAcceptanceStatus;
   @override
-  String? get vendorPickupStatus;
+  BookingProgressStatus? get vendorPickupStatus;
   @override
-  String? get userPickupStatus;
+  BookingProgressStatus? get userPickupStatus;
   @override
-  String? get vendorDropOffStatus;
+  BookingProgressStatus? get vendorDropOffStatus;
   @override
-  String? get userDropOffStatus;
+  BookingProgressStatus? get userDropOffStatus;
   @override
   String? get bookingNumber;
+  @override
+  String? get productUid;
+  @override
+  String? get userUid;
+  @override
+  String? get vendorUid;
   @override
   BookedProductModel? get bookedProduct;
   @override
@@ -612,6 +726,8 @@ abstract class _BookingModel extends BookingModel {
   UserModel? get vendor;
   @override
   UserModel? get user;
+  @override
+  DateTime? get createdAt;
 
   /// Create a copy of BookingModel
   /// with the given fields replaced by the non-null parameter values.

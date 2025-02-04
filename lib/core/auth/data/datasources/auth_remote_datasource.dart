@@ -1,6 +1,8 @@
 import 'package:aider_mobile_app/core/errors/errors.dart';
+import 'package:aider_mobile_app/core/services/http_service_requester.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../services/remote_config_service.dart';
 import '../../domain/models/login/login_model.dart';
 
 abstract class AuthRemoteDatasource {
@@ -8,11 +10,15 @@ abstract class AuthRemoteDatasource {
   Future<LoginModel> login({required String email, required String password});
   Future<void> logout();
   Future<void> deleteAccount();
-  Future<void> verifyOTP({required String email, required String otp});
+  Future<void> verifyOTP(
+      {required String email,
+      required String otp,
+      bool isResetPassword = false});
   Future<void> forgotPassword({required String email});
   Future<void> changePassword(
       {required String oldPassword, required String newPassword});
-  Future<void> resetPassword({required String email, required String password});
+  Future<void> resetPassword(
+      {required String email, required String otp, required String password});
   Future<bool> isLoggedIn();
   Future<void> sendOTP({required String email});
 }
@@ -20,9 +26,11 @@ abstract class AuthRemoteDatasource {
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   const AuthRemoteDatasourceImpl({
     required this.firebaseAuth,
+    required this.httpServiceRequester,
   });
 
   final FirebaseAuth firebaseAuth;
+  final HttpServiceRequester httpServiceRequester;
 
   @override
   Future<void> deleteAccount() async {
@@ -62,8 +70,20 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<void> resetPassword({
     required String email,
     required String password,
+    required String otp,
   }) async {
-    return firebaseAuth.currentUser?.updatePassword(password);
+    final baseUrl = RemoteConfigService.getRemoteData.configs['env']
+        ['authBaseUrl'] as String;
+
+    final response = await httpServiceRequester.postRequest(
+      endpoint: '$baseUrl/reset-password',
+      requestBody: {'email': email, 'otp': otp, 'password': password},
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+    throw const ServerException(message: 'Failed to reset password');
   }
 
   @override
@@ -88,11 +108,24 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<void> verifyOTP({
     required String email,
     required String otp,
+    bool isResetPassword = false,
   }) async {
-    final result = await firebaseAuth.verifyPasswordResetCode(otp);
-    if (result != email) {
-      throw const ServerException(message: 'Invalid OTP code');
+    final baseUrl = RemoteConfigService.getRemoteData.configs['env']
+        ['authBaseUrl'] as String;
+
+    final response = await httpServiceRequester.postRequest(
+      endpoint: '$baseUrl/verify-otp',
+      requestBody: {
+        'email': email,
+        'otp': otp,
+        'isResetPassword': isResetPassword,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return;
     }
+    throw const ServerException(message: 'Failed to verify OTP');
   }
 
   @override
@@ -101,9 +134,19 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<void> sendOTP({required String email}) {
-    // TODO: implement sendOTP
-    throw UnimplementedError();
+  Future<void> sendOTP({required String email}) async {
+    final baseUrl = RemoteConfigService.getRemoteData.configs['env']
+        ['authBaseUrl'] as String;
+
+    final response = await httpServiceRequester.postRequest(
+      endpoint: '$baseUrl/send-otp',
+      requestBody: {'email': email},
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    }
+    throw const ServerException(message: 'Failed to send OTP');
   }
 
   @override

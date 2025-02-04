@@ -98,6 +98,9 @@ class UserProvider extends BaseProvider {
     }, (right) {
       _user = right;
       notifyListeners();
+
+      AppNavigator.pushNamedAndRemoveUntil(
+          context, AppRoute.homeScreen, (p0) => false);
     });
   }
 
@@ -157,11 +160,10 @@ class UserProvider extends BaseProvider {
   }
 
   Future<void> addProfilePhoto(BuildContext context,
-      {required Map<String, dynamic> requestBody}) async {
+      {required String imageUrl}) async {
     AppDialogUtil.loadingDialog(context);
 
-    final result = await _userRepository.addProfileImage(
-        imageUrl: requestBody['profilePhoto']);
+    final result = await _userRepository.addProfileImage(imageUrl: imageUrl);
 
     if (context.mounted) {
       AppNavigator.pop(context);
@@ -177,6 +179,8 @@ class UserProvider extends BaseProvider {
         );
       });
     }, (right) {
+      setUser = _user.copyWith(profilePhotoUrl: right);
+      notifyListeners();
       AppDialogUtil.popUpModal(
         context,
         modalContent: SuccessModalContent(
@@ -389,9 +393,15 @@ class UserProvider extends BaseProvider {
     });
   }
 
-  Future<void> _retrieveUser() async {
+  Future<void> retrieveUser() async {
+    ZLoggerService.logOnInfo('Fetching user detail');
     final result = await _userRepository.fetchUserDetail();
-    result.fold((l) => null, (user) => _user = user);
+    result.fold((l) {
+      ZLoggerService.logOnError('Failed to fetch user detail');
+    }, (user) {
+      ZLoggerService.logOnInfo('User detail fetched: $user');
+      setUser = user;
+    });
   }
 
   // Future<void> _persistUser() async {
@@ -400,6 +410,6 @@ class UserProvider extends BaseProvider {
   // }
 
   initState() async {
-    await _retrieveUser();
+    await retrieveUser();
   }
 }

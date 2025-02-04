@@ -7,7 +7,7 @@ import '../../../../shared_widgets/common/aider_empty_state.dart';
 import '../../../../shared_widgets/common/app_load_more.dart';
 import '../../../../shared_widgets/common/error_response_message.dart';
 import '../../../../shared_widgets/common/zloading.dart';
-import '../view_model/rental_view_model.dart';
+import '../providers/rental_provider.dart';
 import '../widgets/my_items_card.dart';
 
 class MyItemsTabScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class MyItemsTabScreen extends StatefulWidget {
 
 class _MyItemsTabScreenState extends State<MyItemsTabScreen> {
   Future<void> fetchMyItems([String? nextPage]) async {
-    await context.read<RentalViewModel>().fetchMyItems(context,
+    await context.read<RentalProvider>().fetchMyItems(context,
         nextPage: nextPage,
         queryParams: {'pageSize': kProductPerPage, 'type': 'vendor'});
   }
@@ -35,7 +35,7 @@ class _MyItemsTabScreenState extends State<MyItemsTabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseView<RentalViewModel>(
+    return BaseView<RentalProvider>(
       builder: (context, rentalConsumer, child) {
         if (rentalConsumer.isComponentLoading('fetchMyItems') &&
             rentalConsumer.getMyItemsProducts.isEmpty) {
@@ -80,7 +80,7 @@ class _MyItemsTabScreenState extends State<MyItemsTabScreen> {
                 itemCount: rentalConsumer.getMyItemsProducts.length,
                 itemBuilder: (context, index) {
                   return MyItemCard(
-                    rentalProduct: rentalConsumer.getMyItemsProducts[index],
+                    booking: rentalConsumer.getMyItemsProducts[index],
                     isVendor: true,
                   );
                 },

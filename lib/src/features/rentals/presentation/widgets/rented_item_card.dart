@@ -8,7 +8,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
-import 'package:aider_mobile_app/src/features/rentals/presentation/view_model/rental_view_model.dart';
+import 'package:aider_mobile_app/src/features/rentals/presentation/providers/rental_provider.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/widgets/rate_review_modal.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/widgets/report_modal.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
@@ -30,13 +30,13 @@ import 'days_remaining_card.dart';
 
 class RentedItemCard extends StatefulWidget {
   const RentedItemCard({
-    super.key, required
-    this.rentalProduct,
+    super.key,
+    required this.booking,
     this.isVendor = false,
     this.isBookingPaid = false,
     this.messageExternalId,
   });
-  final BookingModel rentalProduct;
+  final BookingModel booking;
   final bool isVendor;
   final bool isBookingPaid;
   final String? messageExternalId;
@@ -48,7 +48,7 @@ class RentedItemCard extends StatefulWidget {
 class _RentedItemCardState extends State<RentedItemCard> {
   @override
   Widget build(BuildContext context) {
-    final rentalProduct = widget.rentalProduct.bookedProduct;
+    final rentalProduct = widget.booking.bookedProduct;
     return AppCard(
       width: double.infinity,
       padding: EdgeInsets.all(
@@ -70,7 +70,8 @@ class _RentedItemCardState extends State<RentedItemCard> {
                     imageUrl: rentalProduct?.product?.firstPhoto ?? '',
                     height: AppThemeUtil.height(90.0),
                     width: AppThemeUtil.height(90.0),
-                    borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+                    borderRadius:
+                        BorderRadius.circular(AppThemeUtil.radius(12.0)),
                   )
                 : SizedBox(
                     height: AppThemeUtil.height(90.0),
@@ -89,7 +90,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                     'Total Cost',
                   ).semiBold().fontSize(12).color(kGrey700),
                   rightWidget: Text(
-                    '$kCurrency ${(widget.rentalProduct.collectionAmount).toString().toCurrencyFormat}',
+                    '$kCurrency ${(widget.booking.collectionAmount).toString().toCurrencyFormat}',
                   ).bold().fontSize(14).color(kPrimaryBlack),
                 )
               ],
@@ -123,7 +124,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
               ).semiBold().fontSize(14).color(kGrey800),
               const VSpace(height: 8),
               Text(
-                '${widget.rentalProduct.bookingNumber}',
+                '${widget.booking.bookingNumber}',
               ).bold().fontSize(14).color(kGrey1200),
               const VSpace(height: 16),
               const Text(
@@ -145,7 +146,10 @@ class _RentedItemCardState extends State<RentedItemCard> {
           ),
         ),
         const VSpace(height: 10),
-        if (widget.rentalProduct.vendorPickupStatus == kPending && widget.rentalProduct.userPickupStatus != kPending) ...[
+        if (widget.booking.vendorPickupStatus ==
+                BookingProgressStatus.notStarted &&
+            widget.booking.userPickupStatus !=
+                BookingProgressStatus.notStarted) ...[
           const AppPrimaryButton(
             text: "Waiting for vendor to confirm",
             minWidth: double.infinity,
@@ -154,7 +158,9 @@ class _RentedItemCardState extends State<RentedItemCard> {
             onPressed: null,
           ),
         ],
-        if (widget.rentalProduct.userPickupStatus == kPending && widget.isBookingPaid) ...[
+        if (widget.booking.userPickupStatus ==
+                BookingProgressStatus.notStarted &&
+            widget.isBookingPaid) ...[
           AppPrimaryButton(
             text: "Proceed to Confirm Pickup",
             minWidth: double.infinity,
@@ -167,28 +173,27 @@ class _RentedItemCardState extends State<RentedItemCard> {
                   title: 'Are you sure you’ve picked up\nthe right item?',
                   onYesPressed: () async {
                     AppNavigator.of(context);
-                    await context.read<RentalViewModel>().confirmPickUp(
-                      context,
-                      type: 'user',
-                      bookingExternalId: widget.rentalProduct.externalId ?? '',
-                      scaffoldKey: GlobalKey<ScaffoldState>(),
-                      requestBody: {"status": "success", "type": "user"},
-                    );
+                    await context.read<RentalProvider>().confirmPickUp(
+                          context,
+                          type: 'user',
+                          bookingUid: widget.booking.uid ?? '',
+                          scaffoldKey: GlobalKey<ScaffoldState>(),
+                        );
                   },
                 ),
               );
             },
           )
         ],
-        if (widget.rentalProduct.userPickupStatus == kPending &&
-            widget.rentalProduct.vendorPickupStatus == kPending &&
-            (
-              widget.rentalProduct.bookingAcceptanceStatus != kBookingCanceledStatus 
-            &&
-             widget.rentalProduct.bookingAcceptanceStatus != kBookingRejectedStatus
-            )
-            ) ...[
-              const VSpace(height: 10),
+        if (widget.booking.userPickupStatus ==
+                BookingProgressStatus.notStarted &&
+            widget.booking.vendorPickupStatus ==
+                BookingProgressStatus.notStarted &&
+            (widget.booking.bookingAcceptanceStatus !=
+                    BookingProgressStatus.cancelled &&
+                widget.booking.bookingAcceptanceStatus !=
+                    BookingProgressStatus.rejected)) ...[
+          const VSpace(height: 10),
           AppPrimaryButton(
             text: 'Cancel request',
             onPressed: () async {
@@ -202,13 +207,10 @@ class _RentedItemCardState extends State<RentedItemCard> {
                   buttonReversed: true,
                   onYesPressed: () {
                     context.read<InboxViewModel>().approveBookingRequest(
-                      context,
-                      messageExternalId: widget.messageExternalId,
-                      bookingExternalId: widget.rentalProduct.externalId ?? '',
-                      requestBody: {
-                        "status": "canceled",
-                      },
-                    );
+                        context,
+                        messageExternalId: widget.messageExternalId,
+                        booking: widget.booking,
+                        status: BookingProgressStatus.cancelled);
                     // AppNavigator.pop(context);
                   },
                 ),
@@ -222,12 +224,14 @@ class _RentedItemCardState extends State<RentedItemCard> {
             color: kPrimaryWhite,
           ),
         ],
-        if (widget.rentalProduct.vendorPickupStatus == kSuccessStatus &&
-            widget.rentalProduct.userPickupStatus == kSuccessStatus &&
+        if (widget.booking.vendorPickupStatus ==
+                BookingProgressStatus.success &&
+            widget.booking.userPickupStatus == BookingProgressStatus.success &&
             rentalProduct?.isOverdue == false &&
             rentalProduct?.returnedEarly == false) ...[
           DaysRemainingCard(
-            overDue: '${rentalProduct?.daysSpan} days remaining',
+            overDue:
+                '${DateTime.parse(rentalProduct?.endDate ?? '').difference(DateTime.now()).inDays} days remaining',
             cardColor: const Color(0xFFFEF4E6),
             textColor: const Color(0xFFF79009),
           ),
@@ -239,11 +243,13 @@ class _RentedItemCardState extends State<RentedItemCard> {
               AppDialogUtil.showScrollableBottomSheet(
                 context: context,
                 builder: (context) => ConfirmPickupModal(
-                  title: 'Are you sure you want to return\nthis item ${rentalProduct?.daysSpan ?? ''} days early, there will be no\nrefunds',
+                  title:
+                      'Are you sure you want to return\nthis item ${rentalProduct?.daysSpan ?? ''} days early, there will be no\nrefunds',
                   onYesPressed: () async {
-                    await context.read<RentalViewModel>().earlyReturn(
+                    await context.read<RentalProvider>().earlyReturn(
                           context,
-                          bookedProductExternalId: rentalProduct?.externalId ?? '',
+                          bookingUid: widget.booking.uid ?? '',
+                          bookedProduct: rentalProduct!,
                         );
                   },
                 ),
@@ -251,10 +257,11 @@ class _RentedItemCardState extends State<RentedItemCard> {
             },
           ).toCenter(),
         ],
-        if (widget.rentalProduct.vendorPickupStatus == kSuccessStatus &&
-            widget.rentalProduct.userPickupStatus == kSuccessStatus &&
+        if (widget.booking.vendorPickupStatus ==
+                BookingProgressStatus.success &&
+            widget.booking.userPickupStatus == BookingProgressStatus.success &&
             rentalProduct?.isOverdue == true &&
-            widget.rentalProduct.userDropOffStatus != kSuccessStatus &&
+            widget.booking.userDropOffStatus != BookingProgressStatus.success &&
             rentalProduct?.returnedEarly == false) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -272,7 +279,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                     context: context,
                     builder: (context) {
                       return ReportModal(
-                        booking: widget.rentalProduct,
+                        booking: widget.booking,
                         isVendor: widget.isVendor,
                       );
                     },
@@ -288,15 +295,15 @@ class _RentedItemCardState extends State<RentedItemCard> {
                   AppDialogUtil.showScrollableBottomSheet(
                     context: context,
                     builder: (context) => ConfirmPickupModal(
-                      title: 'Please ensure the item being returned\nis the right one that was rented',
+                      title:
+                          'Please ensure the item being returned\nis the right one that was rented',
                       onYesPressed: () async {
-                        await context.read<RentalViewModel>().confirmDropOff(
-                          context,
-                          scaffoldKey: GlobalKey<ScaffoldState>(),
-                          type: 'user',
-                          bookingExternalId: widget.rentalProduct.externalId ?? '',
-                          requestBody: {"status": "success", "type": "user"},
-                        );
+                        await context.read<RentalProvider>().confirmDropOff(
+                              context,
+                              scaffoldKey: GlobalKey<ScaffoldState>(),
+                              type: 'user',
+                              bookingUid: widget.booking.uid ?? '',
+                            );
                       },
                     ),
                   );
@@ -308,16 +315,18 @@ class _RentedItemCardState extends State<RentedItemCard> {
           (rentalProduct?.daysSpan == 0)
               ? const SizedBox.shrink()
               : Text(
-                  rentalProduct?.daysSpan == 1 ? 'You’re ${rentalProduct?.daysSpan} day overdue' : 'You’re ${rentalProduct?.daysSpan} days overdue',
+                  'You’re ${DateTime.now().difference(DateTime.parse(rentalProduct?.endDate ?? '')).inDays} days overdue',
                 ).semiBold().fontSize(14).color(kError700).toCenter(),
           // Text('You’re ${rentalProduct?.daysSpan} days overdue',
           // ).semiBold().fontSize(14).color(kError700).toCenter()
         ],
-        if (widget.rentalProduct.vendorPickupStatus == kSuccessStatus &&
-            widget.rentalProduct.userPickupStatus == kSuccessStatus &&
+        if (widget.booking.vendorPickupStatus ==
+                BookingProgressStatus.success &&
+            widget.booking.userPickupStatus == BookingProgressStatus.success &&
             rentalProduct?.returnedEarly == true &&
             rentalProduct?.isOverdue == false &&
-            widget.rentalProduct.userDropOffStatus != kSuccessStatus) ...[
+            widget.booking.userDropOffStatus !=
+                BookingProgressStatus.success) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -332,7 +341,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                     context: context,
                     builder: (context) {
                       return ReportModal(
-                        booking: widget.rentalProduct,
+                        booking: widget.booking,
                         isVendor: false,
                       );
                     },
@@ -349,15 +358,15 @@ class _RentedItemCardState extends State<RentedItemCard> {
                     useSafeArea: true,
                     context: context,
                     builder: (context) => ConfirmPickupModal(
-                      title: 'Please ensure the item being returned\nis the right one that was rented',
+                      title:
+                          'Please ensure the item being returned\nis the right one that was rented',
                       onYesPressed: () async {
-                        await context.read<RentalViewModel>().confirmDropOff(
-                          context,
-                          scaffoldKey: GlobalKey<ScaffoldState>(),
-                          type: 'user',
-                          bookingExternalId: widget.rentalProduct.externalId ?? '',
-                          requestBody: {"status": "success", "type": "user"},
-                        );
+                        await context.read<RentalProvider>().confirmDropOff(
+                              context,
+                              scaffoldKey: GlobalKey<ScaffoldState>(),
+                              type: 'user',
+                              bookingUid: widget.booking.uid ?? '',
+                            );
                       },
                     ),
                   );
@@ -366,7 +375,8 @@ class _RentedItemCardState extends State<RentedItemCard> {
             ],
           ),
         ],
-        if (widget.rentalProduct.userDropOffStatus == kSuccessStatus) ...[
+        if (widget.booking.userDropOffStatus ==
+            BookingProgressStatus.success) ...[
           if (rentalProduct?.isReviewed == true) ...[
             AppCard(
               width: double.infinity,
@@ -385,7 +395,8 @@ class _RentedItemCardState extends State<RentedItemCard> {
                     children: [
                       Wrap(
                         runSpacing: 12.0,
-                        children: List.generate(rentalProduct?.review?.rating ?? 0, (index) {
+                        children: List.generate(
+                            rentalProduct?.review?.rating ?? 0, (index) {
                           return ZSvgIcon(
                             'star.svg',
                             color: kWarning700,
@@ -395,7 +406,11 @@ class _RentedItemCardState extends State<RentedItemCard> {
                       ),
                       Text(
                         rentalProduct?.review?.date ?? '',
-                      ).regular().fontSize(12).color(kGrey700).alignText(TextAlign.right),
+                      )
+                          .regular()
+                          .fontSize(12)
+                          .color(kGrey700)
+                          .alignText(TextAlign.right),
                     ],
                   ),
                   const VSpace(height: 12),
@@ -422,13 +437,19 @@ class _RentedItemCardState extends State<RentedItemCard> {
                       context: context,
                       builder: (context) => RateAndReviewModal(
                         type: "product",
-                        bookingProductExternalId: rentalProduct?.externalId ?? '',
+                        bookingProductExternalId:
+                            rentalProduct?.externalId ?? '',
                       ),
                     );
                   },
                 )
         ],
-        if (widget.rentalProduct.userHasReported) Center(child: const Text("You reported this vendor").semiBold().fontSize(14).color(kGrey800))
+        if (widget.booking.userHasReported)
+          Center(
+              child: const Text("You reported this vendor")
+                  .semiBold()
+                  .fontSize(14)
+                  .color(kGrey800))
       ]),
     ).paddingOnly(bottom: kWidthPadding);
   }

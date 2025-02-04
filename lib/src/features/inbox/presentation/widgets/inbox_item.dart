@@ -17,64 +17,90 @@ class InboxItem extends StatelessWidget {
   const InboxItem({
     super.key,
     this.sent = false,
-    required this.chat,
+    required this.booking,
   });
 
   final bool sent;
-  final ChatModel chat;
+  final BookingModel booking;
 
   @override
   Widget build(BuildContext context) {
-    final firstMessage = chat.messages.first;
-    final bookModel = firstMessage.type == kChatBookingType? BookingModel.fromJson(firstMessage.senderMessage?? {}) : const BookingModel();
-
     return AppCard(
       padding: EdgeInsets.all(AppThemeUtil.radius(12.0)),
-      backgroundColor: sent? kGrey50 : kGrey100,
+      backgroundColor: sent ? kGrey50 : kGrey100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              (bookModel.bookedProduct?.product?.hasPhotos == true) ?
-              NetworkImageView(
-                imageUrl: bookModel.bookedProduct?.product?.firstPhoto?? '',
-                height: AppThemeUtil.radius(64),
-                width: AppThemeUtil.radius(64),
-                radius: 4,
-              )
-                  :
-              Container(
-                width: AppThemeUtil.radius(64.0),
-                height: AppThemeUtil.radius(64.0),
-                decoration: BoxDecoration(
-                  color: kError600,
-                  borderRadius: BorderRadius.circular(AppThemeUtil.radius(4.0)),
-                ),
-              ),
+              (booking.bookedProduct?.product?.hasPhotos == true)
+                  ? NetworkImageView(
+                      imageUrl:
+                          booking.bookedProduct?.product?.firstPhoto ?? '',
+                      height: AppThemeUtil.radius(64),
+                      width: AppThemeUtil.radius(64),
+                      radius: 4,
+                    )
+                  : Container(
+                      width: AppThemeUtil.radius(64.0),
+                      height: AppThemeUtil.radius(64.0),
+                      decoration: BoxDecoration(
+                        color: kError600,
+                        borderRadius:
+                            BorderRadius.circular(AppThemeUtil.radius(4.0)),
+                      ),
+                    ),
               const HSpace(width: 12.0),
-              if(!sent) Text(bookModel.bookedProduct?.product?.name?? '').bold().fontSize(14).color(kGrey1200).textMaxLines(2).overflowText(TextOverflow.ellipsis).flexible(),
-              if(sent) Text(bookModel.bookedProduct?.product?.name?? '').medium().fontSize(14).color(kGrey600).textMaxLines(2).overflowText(TextOverflow.ellipsis).flexible(),
+              if (!sent)
+                Text(booking.bookedProduct?.product?.name ?? '')
+                    .bold()
+                    .fontSize(14)
+                    .color(kGrey1200)
+                    .textMaxLines(2)
+                    .overflowText(TextOverflow.ellipsis)
+                    .flexible(),
+              if (sent)
+                Text(booking.bookedProduct?.product?.name ?? '')
+                    .medium()
+                    .fontSize(14)
+                    .color(kGrey600)
+                    .textMaxLines(2)
+                    .overflowText(TextOverflow.ellipsis)
+                    .flexible(),
             ],
           ),
           const VSpace(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if(!sent) Text('${DateTime.parse(chat.createdAt?? '').timeFormat('')} • ${DateTime.parse(chat.createdAt?? '').format('dd MMM, y')}').semiBold().fontSize(12).color(kGrey1200).flexible(),
-              if(sent) Text('${DateTime.parse(chat.createdAt?? '').timeFormat('')} • ${DateTime.parse(chat.createdAt?? '').format('dd MMM, y')}').regular().fontSize(12).color(kGrey400).flexible(),
-              (sent? chat.vendor?.hasProfilePhoto == true : chat.user?.hasProfilePhoto == true) ?
-              NetworkImageView(
-                imageUrl: sent? (chat.vendor?.profilePhotoUrl?? '') : (chat.user?.profilePhotoUrl?? ''),
-                height: AppThemeUtil.radius(24),
-                width: AppThemeUtil.radius(24),
-                radius: 100,
-              )
-              :
-              CircleAvatar(
-                maxRadius: AppThemeUtil.radius(12),
-                backgroundImage: const AssetImage('$kImagePath/profile_placeholder.png'),
-              ),
+              if (!sent)
+                Text('${DateTime.tryParse(booking.createdAt?.toString() ?? '')?.timeFormat('')} • ${DateTime.tryParse(booking.createdAt?.toString() ?? '')?.format('dd MMM, y') ?? ''}')
+                    .semiBold()
+                    .fontSize(12)
+                    .color(kGrey1200)
+                    .flexible(),
+              if (sent)
+                Text('${DateTime.tryParse(booking.createdAt?.toString() ?? '')?.timeFormat('') ?? ''} • ${DateTime.tryParse(booking.createdAt?.toString() ?? '')?.format('dd MMM, y') ?? ''}')
+                    .regular()
+                    .fontSize(12)
+                    .color(kGrey400)
+                    .flexible(),
+              (sent
+                      ? booking.vendor?.hasProfilePhoto == true
+                      : booking.user?.hasProfilePhoto == true)
+                  ? NetworkImageView(
+                      imageUrl: sent
+                          ? (booking.vendor?.profilePhotoUrl ?? '')
+                          : (booking.user?.profilePhotoUrl ?? ''),
+                      height: AppThemeUtil.radius(24),
+                      width: AppThemeUtil.radius(24),
+                      radius: 100,
+                    )
+                  : CircleAvatar(
+                      maxRadius: AppThemeUtil.radius(12),
+                      backgroundImage: const AssetImage(
+                          '$kImagePath/profile_placeholder.png'),
+                    ),
             ],
           )
         ],

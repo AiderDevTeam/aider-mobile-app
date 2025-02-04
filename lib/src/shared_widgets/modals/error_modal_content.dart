@@ -29,7 +29,7 @@ class ErrorModalContent extends StatelessWidget {
     return PopupModalBody(
       title: Column(
         children: [
-          if(showIcon) ...[
+          if (showIcon) ...[
             const VSpace(height: 32),
             Container(
               width: AppThemeUtil.radius(56.0),
@@ -46,11 +46,15 @@ class ErrorModalContent extends StatelessWidget {
               ),
             ),
           ],
-          if(errorTitle.isNotEmpty) ...[
+          if (errorTitle.isNotEmpty) ...[
             const VSpace(height: 16.0),
             Text(
               errorTitle,
-            ).extraBold().fontSize(20.0).color(kPrimaryBlack).alignText(TextAlign.center),
+            )
+                .extraBold()
+                .fontSize(20.0)
+                .color(kPrimaryBlack)
+                .alignText(TextAlign.center),
           ]
         ],
       ),
@@ -59,15 +63,21 @@ class ErrorModalContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AppPrimaryButton(
-              onPressed: onButtonPressed?? (){
-                AppNavigator.pop(context);
-              },
+              onPressed: onButtonPressed ??
+                  () {
+                    AppNavigator.pop(context);
+                  },
               text: 'Okay',
             ),
           ],
         )
       ],
-      child: Text(errorMessage).regular().fontSize(16.0).color(kPrimaryBlack).alignText(TextAlign.center).paddingOnly(bottom: 16.0),
+      child: Text(errorMessage)
+          .regular()
+          .fontSize(16.0)
+          .color(kPrimaryBlack)
+          .alignText(TextAlign.center)
+          .paddingOnly(bottom: 16.0),
     );
   }
 }

@@ -34,7 +34,6 @@ mixin _$UserModel {
   String? get birthday => throw _privateConstructorUsedError;
   String? get idVerificationStatus => throw _privateConstructorUsedError;
   bool? get idVerified => throw _privateConstructorUsedError;
-  String? get joinedAt => throw _privateConstructorUsedError;
   String? get profilePhotoUrl => throw _privateConstructorUsedError;
   int? get itemsListed => throw _privateConstructorUsedError;
   List<AddressModel>? get addresses => throw _privateConstructorUsedError;
@@ -81,7 +80,6 @@ abstract class $UserModelCopyWith<$Res> {
       String? birthday,
       String? idVerificationStatus,
       bool? idVerified,
-      String? joinedAt,
       String? profilePhotoUrl,
       int? itemsListed,
       List<AddressModel>? addresses,
@@ -129,7 +127,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? birthday = freezed,
     Object? idVerificationStatus = freezed,
     Object? idVerified = freezed,
-    Object? joinedAt = freezed,
     Object? profilePhotoUrl = freezed,
     Object? itemsListed = freezed,
     Object? addresses = freezed,
@@ -202,10 +199,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.idVerified
           : idVerified // ignore: cast_nullable_to_non_nullable
               as bool?,
-      joinedAt: freezed == joinedAt
-          ? _value.joinedAt
-          : joinedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
       profilePhotoUrl: freezed == profilePhotoUrl
           ? _value.profilePhotoUrl
           : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
@@ -303,7 +296,6 @@ abstract class _$$UserModelImplCopyWith<$Res>
       String? birthday,
       String? idVerificationStatus,
       bool? idVerified,
-      String? joinedAt,
       String? profilePhotoUrl,
       int? itemsListed,
       List<AddressModel>? addresses,
@@ -350,7 +342,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? birthday = freezed,
     Object? idVerificationStatus = freezed,
     Object? idVerified = freezed,
-    Object? joinedAt = freezed,
     Object? profilePhotoUrl = freezed,
     Object? itemsListed = freezed,
     Object? addresses = freezed,
@@ -423,10 +414,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value.idVerified
           : idVerified // ignore: cast_nullable_to_non_nullable
               as bool?,
-      joinedAt: freezed == joinedAt
-          ? _value.joinedAt
-          : joinedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
       profilePhotoUrl: freezed == profilePhotoUrl
           ? _value.profilePhotoUrl
           : profilePhotoUrl // ignore: cast_nullable_to_non_nullable
@@ -505,7 +492,6 @@ class _$UserModelImpl extends _UserModel {
       this.birthday,
       this.idVerificationStatus,
       this.idVerified,
-      this.joinedAt,
       this.profilePhotoUrl,
       this.itemsListed,
       final List<AddressModel>? addresses,
@@ -556,8 +542,6 @@ class _$UserModelImpl extends _UserModel {
   final String? idVerificationStatus;
   @override
   final bool? idVerified;
-  @override
-  final String? joinedAt;
   @override
   final String? profilePhotoUrl;
   @override
@@ -614,7 +598,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, uid: $uid, externalId: $externalId, firstName: $firstName, lastName: $lastName, displayName: $displayName, gender: $gender, email: $email, password: $password, callingCode: $callingCode, phone: $phone, birthday: $birthday, idVerificationStatus: $idVerificationStatus, idVerified: $idVerified, joinedAt: $joinedAt, profilePhotoUrl: $profilePhotoUrl, itemsListed: $itemsListed, addresses: $addresses, statistics: $statistics, wallets: $wallets, userIdentifications: $userIdentifications, canReceiveSMS: $canReceiveSMS, canReceiveEmailUpdates: $canReceiveEmailUpdates, canReceivePushNotifications: $canReceivePushNotifications, hasDefaultWallet: $hasDefaultWallet, pushNotificationToken: $pushNotificationToken, userTypeId: $userTypeId, termsAndConditions: $termsAndConditions, deviceOs: $deviceOs)';
+    return 'UserModel(id: $id, uid: $uid, externalId: $externalId, firstName: $firstName, lastName: $lastName, displayName: $displayName, gender: $gender, email: $email, password: $password, callingCode: $callingCode, phone: $phone, birthday: $birthday, idVerificationStatus: $idVerificationStatus, idVerified: $idVerified, profilePhotoUrl: $profilePhotoUrl, itemsListed: $itemsListed, addresses: $addresses, statistics: $statistics, wallets: $wallets, userIdentifications: $userIdentifications, canReceiveSMS: $canReceiveSMS, canReceiveEmailUpdates: $canReceiveEmailUpdates, canReceivePushNotifications: $canReceivePushNotifications, hasDefaultWallet: $hasDefaultWallet, pushNotificationToken: $pushNotificationToken, userTypeId: $userTypeId, termsAndConditions: $termsAndConditions, deviceOs: $deviceOs)';
   }
 
   @override
@@ -645,8 +629,6 @@ class _$UserModelImpl extends _UserModel {
                 other.idVerificationStatus == idVerificationStatus) &&
             (identical(other.idVerified, idVerified) ||
                 other.idVerified == idVerified) &&
-            (identical(other.joinedAt, joinedAt) ||
-                other.joinedAt == joinedAt) &&
             (identical(other.profilePhotoUrl, profilePhotoUrl) ||
                 other.profilePhotoUrl == profilePhotoUrl) &&
             (identical(other.itemsListed, itemsListed) ||
@@ -696,7 +678,6 @@ class _$UserModelImpl extends _UserModel {
         birthday,
         idVerificationStatus,
         idVerified,
-        joinedAt,
         profilePhotoUrl,
         itemsListed,
         const DeepCollectionEquality().hash(_addresses),
@@ -745,7 +726,6 @@ abstract class _UserModel extends UserModel {
       final String? birthday,
       final String? idVerificationStatus,
       final bool? idVerified,
-      final String? joinedAt,
       final String? profilePhotoUrl,
       final int? itemsListed,
       final List<AddressModel>? addresses,
@@ -793,8 +773,6 @@ abstract class _UserModel extends UserModel {
   String? get idVerificationStatus;
   @override
   bool? get idVerified;
-  @override
-  String? get joinedAt;
   @override
   String? get profilePhotoUrl;
   @override

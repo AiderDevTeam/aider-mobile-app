@@ -14,6 +14,7 @@ import '../../../../../core/constants/common.dart';
 import '../../../../../core/providers/wallet_provider.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../core/providers/base_view.dart';
+// ignore: unused_import
 import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/buttons/app_primary_button.dart';

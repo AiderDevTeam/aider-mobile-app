@@ -28,8 +28,6 @@ mixin _$BookedProductModel {
   String? get startDate => throw _privateConstructorUsedError;
   String? get endDate => throw _privateConstructorUsedError;
   int? get duration => throw _privateConstructorUsedError;
-  int? get daysSpan => throw _privateConstructorUsedError;
-  bool? get isOverdue => throw _privateConstructorUsedError;
   bool? get returnedEarly => throw _privateConstructorUsedError;
   ProductModel? get product => throw _privateConstructorUsedError;
   bool? get isReviewed => throw _privateConstructorUsedError;
@@ -63,8 +61,6 @@ abstract class $BookedProductModelCopyWith<$Res> {
       String? startDate,
       String? endDate,
       int? duration,
-      int? daysSpan,
-      bool? isOverdue,
       bool? returnedEarly,
       ProductModel? product,
       bool? isReviewed,
@@ -101,8 +97,6 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? duration = freezed,
-    Object? daysSpan = freezed,
-    Object? isOverdue = freezed,
     Object? returnedEarly = freezed,
     Object? product = freezed,
     Object? isReviewed = freezed,
@@ -143,14 +137,6 @@ class _$BookedProductModelCopyWithImpl<$Res, $Val extends BookedProductModel>
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
               as int?,
-      daysSpan: freezed == daysSpan
-          ? _value.daysSpan
-          : daysSpan // ignore: cast_nullable_to_non_nullable
-              as int?,
-      isOverdue: freezed == isOverdue
-          ? _value.isOverdue
-          : isOverdue // ignore: cast_nullable_to_non_nullable
-              as bool?,
       returnedEarly: freezed == returnedEarly
           ? _value.returnedEarly
           : returnedEarly // ignore: cast_nullable_to_non_nullable
@@ -253,8 +239,6 @@ abstract class _$$BookedProductModelImplCopyWith<$Res>
       String? startDate,
       String? endDate,
       int? duration,
-      int? daysSpan,
-      bool? isOverdue,
       bool? returnedEarly,
       ProductModel? product,
       bool? isReviewed,
@@ -293,8 +277,6 @@ class __$$BookedProductModelImplCopyWithImpl<$Res>
     Object? startDate = freezed,
     Object? endDate = freezed,
     Object? duration = freezed,
-    Object? daysSpan = freezed,
-    Object? isOverdue = freezed,
     Object? returnedEarly = freezed,
     Object? product = freezed,
     Object? isReviewed = freezed,
@@ -335,14 +317,6 @@ class __$$BookedProductModelImplCopyWithImpl<$Res>
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
               as int?,
-      daysSpan: freezed == daysSpan
-          ? _value.daysSpan
-          : daysSpan // ignore: cast_nullable_to_non_nullable
-              as int?,
-      isOverdue: freezed == isOverdue
-          ? _value.isOverdue
-          : isOverdue // ignore: cast_nullable_to_non_nullable
-              as bool?,
       returnedEarly: freezed == returnedEarly
           ? _value.returnedEarly
           : returnedEarly // ignore: cast_nullable_to_non_nullable
@@ -383,8 +357,6 @@ class _$BookedProductModelImpl extends _BookedProductModel {
       this.startDate,
       this.endDate,
       this.duration,
-      this.daysSpan,
-      this.isOverdue,
       this.returnedEarly,
       this.product,
       this.isReviewed,
@@ -413,10 +385,6 @@ class _$BookedProductModelImpl extends _BookedProductModel {
   @override
   final int? duration;
   @override
-  final int? daysSpan;
-  @override
-  final bool? isOverdue;
-  @override
   final bool? returnedEarly;
   @override
   final ProductModel? product;
@@ -431,7 +399,7 @@ class _$BookedProductModelImpl extends _BookedProductModel {
 
   @override
   String toString() {
-    return 'BookedProductModel(id: $id, externalId: $externalId, amount: $amount, quantity: $quantity, value: $value, startDate: $startDate, endDate: $endDate, duration: $duration, daysSpan: $daysSpan, isOverdue: $isOverdue, returnedEarly: $returnedEarly, product: $product, isReviewed: $isReviewed, review: $review, renterReview: $renterReview, exchangeSchedule: $exchangeSchedule)';
+    return 'BookedProductModel(id: $id, externalId: $externalId, amount: $amount, quantity: $quantity, value: $value, startDate: $startDate, endDate: $endDate, duration: $duration, returnedEarly: $returnedEarly, product: $product, isReviewed: $isReviewed, review: $review, renterReview: $renterReview, exchangeSchedule: $exchangeSchedule)';
   }
 
   @override
@@ -451,10 +419,6 @@ class _$BookedProductModelImpl extends _BookedProductModel {
             (identical(other.endDate, endDate) || other.endDate == endDate) &&
             (identical(other.duration, duration) ||
                 other.duration == duration) &&
-            (identical(other.daysSpan, daysSpan) ||
-                other.daysSpan == daysSpan) &&
-            (identical(other.isOverdue, isOverdue) ||
-                other.isOverdue == isOverdue) &&
             (identical(other.returnedEarly, returnedEarly) ||
                 other.returnedEarly == returnedEarly) &&
             (identical(other.product, product) || other.product == product) &&
@@ -479,8 +443,6 @@ class _$BookedProductModelImpl extends _BookedProductModel {
       startDate,
       endDate,
       duration,
-      daysSpan,
-      isOverdue,
       returnedEarly,
       product,
       isReviewed,
@@ -515,8 +477,6 @@ abstract class _BookedProductModel extends BookedProductModel {
           final String? startDate,
           final String? endDate,
           final int? duration,
-          final int? daysSpan,
-          final bool? isOverdue,
           final bool? returnedEarly,
           final ProductModel? product,
           final bool? isReviewed,
@@ -545,10 +505,6 @@ abstract class _BookedProductModel extends BookedProductModel {
   String? get endDate;
   @override
   int? get duration;
-  @override
-  int? get daysSpan;
-  @override
-  bool? get isOverdue;
   @override
   bool? get returnedEarly;
   @override

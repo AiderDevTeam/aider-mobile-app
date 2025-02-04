@@ -5,14 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../services/cloudinary_service.dart';
+import '../../../services/logger_service.dart';
 
 abstract class UserRemoteDatasourceV2 {
   Future<UserModel> updateUser({required UserModel user});
   Future<UserModel> fetchUserDetail();
   Stream<UserModel> fetchUserDetailStream();
+  Future<UserModel> fetchUserDetailByUID({required String uid});
   Future<bool> verifyDisplayName({required String displayName});
   Future<bool> verifyEmail({required String email});
-  Future<void> addProfileImage({required String imageUrl});
+  Future<String> addProfileImage({required String imageUrl});
   Future<List<UserTypeModel>> fetchUserType();
 }
 
@@ -32,18 +34,26 @@ class UserRemoteDatasourceV2Impl extends UserRemoteDatasourceV2 {
   late final CollectionReference usersCollection;
   late final CollectionReference userTypesCollection;
   @override
-  Future<void> addProfileImage({required String imageUrl}) async {
+  Future<String> addProfileImage({required String imageUrl}) async {
     final profileImageUrl = await cloudinaryService.uploadImage(imageUrl, null);
+
+    if (profileImageUrl == null) {
+      throw const ServerException(message: 'Failed to upload image');
+    }
 
     final user = auth.currentUser;
 
-    return usersCollection.doc(user!.uid).update({
-      'profileImageUrl': profileImageUrl,
+    await usersCollection.doc(user!.uid).update({
+      'profilePhotoUrl': profileImageUrl,
     });
+
+    return profileImageUrl;
   }
 
   @override
   Future<UserModel> fetchUserDetail() async {
+    final token = await auth.currentUser!.getIdToken();
+    ZLoggerService.logOnInfo("Fetch User Detail By UID: ${token}");
     final user = auth.currentUser;
     final result = await usersCollection.doc(user!.uid).get();
 
@@ -61,6 +71,10 @@ class UserRemoteDatasourceV2Impl extends UserRemoteDatasourceV2 {
     final userJson = user.toJson();
     userJson
         .addAll({'addresses': user.addresses?.map((e) => e.toJson()).toList()});
+    userJson.remove('password');
+    userJson.addAll({'joinedAt': FieldValue.serverTimestamp()});
+    userJson.addAll({'updatedAt': FieldValue.serverTimestamp()});
+    userJson.addAll({'itemsListed': 0});
     await usersCollection.doc(currentUser!.uid).set(userJson);
     return user;
   }
@@ -92,5 +106,14 @@ class UserRemoteDatasourceV2Impl extends UserRemoteDatasourceV2 {
     final user = auth.currentUser;
     return usersCollection.doc(user!.uid).snapshots().map(
         (event) => UserModel.fromJson(event.data() as Map<String, dynamic>));
+  }
+
+  @override
+  Future<UserModel> fetchUserDetailByUID({required String uid}) async {
+    final result = await usersCollection.doc(uid).get();
+    if (result.exists) {
+      return UserModel.fromJson(result.data() as Map<String, dynamic>);
+    }
+    throw const ServerException(message: 'User not found');
   }
 }

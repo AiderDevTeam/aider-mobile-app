@@ -26,12 +26,7 @@ class _SentTabScreenState extends State<SentTabScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      context.read<InboxViewModel>().emitRenderConversations(
-            context.read<UserProvider>().getUser.externalId ?? '',
-          );
-
-      if (!mounted) return;
-      context.read<InboxViewModel>().fetchRenterConversations();
+      context.read<InboxViewModel>().fetchRenterBookingRequests();
     });
     super.initState();
   }
@@ -40,11 +35,11 @@ class _SentTabScreenState extends State<SentTabScreen> {
   Widget build(BuildContext context) {
     return BaseView<InboxViewModel>(builder: (context, inboxConsumer, child) {
       if (inboxConsumer.isComponentLoading('sentInbox') &&
-          inboxConsumer.getSentChats.isEmpty) {
+          inboxConsumer.getSentBookings.isEmpty) {
         return const InboxLoadingEffect();
       }
 
-      if (inboxConsumer.getSentChats.isEmpty) {
+      if (inboxConsumer.getSentBookings.isEmpty) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -61,16 +56,16 @@ class _SentTabScreenState extends State<SentTabScreen> {
       }
 
       return ListView.builder(
-        itemCount: inboxConsumer.getSentChats.length,
+        itemCount: inboxConsumer.getSentBookings.length,
         itemBuilder: (context, index) {
-          final chat = inboxConsumer.getSentChats[index];
+          final booking = inboxConsumer.getSentBookings[index];
           return InboxItem(
-            chat: chat,
+            booking: booking,
             sent: true,
           ).onPressed(() {
             AppNavigator.pushNamed(context, AppRoute.chatScreen, arguments: {
               'sent': true,
-              'chat': chat,
+              'booking': booking,
             });
           }).paddingOnly(bottom: 16.0);
         },

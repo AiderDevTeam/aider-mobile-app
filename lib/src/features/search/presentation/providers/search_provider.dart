@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:aider_mobile_app/core/domain/models/address/address_model.dart';
 import 'package:aider_mobile_app/core/services/logger_service.dart';
-import 'package:aider_mobile_app/core/services/socket_service.dart';
 import '../../../../../core/domain/models/pagination/pagination_model.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/services/git_it_service_locator.dart';
@@ -10,17 +9,18 @@ import '../../../../../core/providers/base_provider.dart';
 import '../../../product/domain/models/history/product_history_model.dart';
 import '../../../product/domain/models/product/product_model.dart';
 import '../../data/repositories/search_repository.dart';
+import '../../domain/models/search/search_model.dart';
 
-class SearchViewModel extends BaseProvider {
+class SearchProvider extends BaseProvider {
   final _searchRepository = sl.get<SearchRepository>();
 
   List<AddressModel> _address = [];
-  // SearchModel? _searchResult;
+  SearchModel? _searchResult;
   bool _searchCallbackResponse = false;
   String _previousSearchText = '';
   ProductHistoryModel _products = const ProductHistoryModel();
 
-  // SearchModel? get getSearchResult => _searchResult;
+  SearchModel? get getSearchResult => _searchResult;
   bool get getSearchCallbackResponse => _searchCallbackResponse;
   String get getPreviousSearchText => _previousSearchText;
 
@@ -45,7 +45,7 @@ class SearchViewModel extends BaseProvider {
       setSearchCallbackResponse(true);
       setLoading(false, component: 'searchAll');
     }, (right) {
-      // _searchResult = right;
+      _searchResult = right;
       setSearchCallbackResponse(true);
       setLoading(false, component: 'searchAll');
     });

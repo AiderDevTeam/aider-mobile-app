@@ -24,8 +24,7 @@ class NudgeChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (message.senderExternalId ==
-        context.read<UserProvider>().getUser.externalId) {
+    if (message.senderUid == context.read<UserProvider>().getUser.uid) {
       return AppCard(
         padding: EdgeInsets.all(AppThemeUtil.height(12.0)),
         decoration: BoxDecoration(
@@ -36,7 +35,7 @@ class NudgeChatItem extends StatelessWidget {
           children: [
             RichText(
               text: TextSpan(
-                text: message.senderMessage.toString(),
+                text: message.message.toString(),
                 style: kMediumFontStyle.copyWith(
                   fontSize: AppThemeUtil.radius(14),
                   color: kGrey1200,
@@ -97,7 +96,7 @@ class NudgeChatItem extends StatelessWidget {
               color: kGrey50,
               borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
             ),
-            child: Text(message.receiverMessage.toString())
+            child: Text(message.message.toString())
                 .regular()
                 .fontSize(14.0)
                 .color(kGrey1200),

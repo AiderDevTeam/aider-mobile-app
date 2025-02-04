@@ -17,6 +17,8 @@ import '../../../../../../core/utils/app_theme_util.dart';
 import '../../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../../shared_widgets/common/app_bottom_nav_wrapper.dart';
 import '../../../../../shared_widgets/common/h_space.dart';
+import '../../../../rentals/domain/models/booked_product/booked_product_model.dart';
+import '../../../../rentals/domain/models/booking/booking_model.dart';
 import '../../../domain/models/product/product_model.dart';
 import '../../providers/product_provider.dart';
 
@@ -275,18 +277,19 @@ class _RentingSummaryModalContentState
                   return;
                 }
 
-                await productProvider.requestForItem(
-                    context, product.externalId ?? '',
-                    requestBody: {
-                      "quantity": productProvider.getQuantity,
-                      "startDate":
-                          (productProvider.getDates['startDate'] as DateTime)
-                              .format('y-MM-dd'),
-                      "endDate":
-                          (productProvider.getDates['endDate'] as DateTime)
-                              .format('y-MM-dd'),
-                      "exchangeSchedule": {}
-                    });
+                final booking = BookingModel(
+                  bookedProduct: BookedProductModel(
+                    quantity: productProvider.getQuantity,
+                    startDate:
+                        (productProvider.getDates['startDate'] as DateTime)
+                            .format('y-MM-dd'),
+                    endDate: (productProvider.getDates['endDate'] as DateTime)
+                        .format('y-MM-dd'),
+                  ),
+                );
+
+                await productProvider.requestForItem(context, widget.product,
+                    booking: booking);
               },
               text: 'Submit request',
               fontSize: 14.0,

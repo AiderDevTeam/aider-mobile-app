@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/common.dart';
-import '../../../../../core/providers/wallet_provider.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';

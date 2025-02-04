@@ -2,7 +2,7 @@ import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/booking_model.dart';
-import 'package:aider_mobile_app/src/features/rentals/presentation/view_model/rental_view_model.dart';
+import 'package:aider_mobile_app/src/features/rentals/presentation/providers/rental_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/draggable_bottom_sheet.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
@@ -54,14 +54,14 @@ class _ReportModalState extends State<ReportModal> {
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     if (widget.isVendor) {
-                      context.read<RentalViewModel>().reportBooking(
+                      context.read<RentalProvider>().reportBooking(
                             context: context,
                             externalId: widget.booking.vendor!.externalId!,
                             bookingId: widget.booking.id!,
                             andReason: _reasonController.text,
                           );
                     } else {
-                      context.read<RentalViewModel>().reportBooking(
+                      context.read<RentalProvider>().reportBooking(
                             context: context,
                             externalId: widget.booking.user!.externalId!,
                             bookingId: widget.booking.id!,

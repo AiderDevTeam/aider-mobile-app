@@ -3,7 +3,6 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/providers/auth_provider.dart';
-import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,11 +17,11 @@ import '../../../../../shared_widgets/forms/otp_fields.dart';
 import '../../../../../shared_widgets/modals/error_modal_content.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
-  final String? otpCode;
+  final bool isResetPassword;
 
   const OtpVerificationScreen({
     super.key,
-    this.otpCode,
+    this.isResetPassword = false,
   });
 
   @override
@@ -34,29 +33,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   int timerIncrement = 300;
   int endTime = 0;
   bool isResendBtnEnabled = false;
-  String otpCode = '';
-
-  Future<void> verifyOTP(String otp) async {
-    if (otp == otpCode) {
-      if (!mounted) return;
-      final otpData = context.read<AuthProvider>().getOTPData;
-      if (otpData['action'] == kSignupAction) {
-        signup();
-        return;
-      }
-      if (otpData['action'] == kResetPassAction) {
-        resetPassword();
-        return;
-      }
-    } else {
-      AppDialogUtil.popUpModal(
-        context,
-        modalContent: const ErrorModalContent(
-          errorMessage: 'Otp code is incorrect',
-        ),
-      );
-    }
-  }
+  bool isResetPassword = false;
 
   void onEnd() {
     if (!mounted) return;
@@ -66,7 +43,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   @override
   void initState() {
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * initialSeconds;
-    otpCode = widget.otpCode ?? '';
+    isResetPassword = widget.isResetPassword;
     super.initState();
   }
 
@@ -123,7 +100,23 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 OtpFields(
                   onCompleted: (code) async {
                     if (code.length == 4) {
-                      await verifyOTP(code);
+                      final authProvider = context.read<AuthProvider>();
+                      if (widget.isResetPassword) {
+                        authProvider.setOTPData({
+                          'action': kResetPassAction,
+                          "email": authProvider.getOTPData['email'],
+                          "otp": code,
+                        });
+                      } else {
+                        authProvider.setOTPData({
+                          'action': kSignupAction,
+                          "email": authProvider.getOTPData['email'],
+                          "otp": code,
+                        });
+                      }
+
+                      await authProvider.verifyOTP(context, code,
+                          isResetPassword: widget.isResetPassword);
                     }
                   },
                 ),
@@ -152,7 +145,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             endTime = DateTime.now().millisecondsSinceEpoch +
                                 1000 * initialSeconds;
                             isResendBtnEnabled = false;
-                            otpCode = authProvider.getOTPData['otp'];
                           });
                         }
                       : null,

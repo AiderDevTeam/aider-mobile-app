@@ -32,10 +32,10 @@ class TextChatItem extends StatelessWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: message.senderExternalId ==
-                      context.read<UserProvider>().getUser.externalId
-                  ? message.senderMessage.toString()
-                  : message.receiverMessage.toString(),
+              text:
+                  message.senderUid == context.read<UserProvider>().getUser.uid
+                      ? message.message.toString()
+                      : message.message.toString(),
               style: kBoldFontStyle.copyWith(
                 fontSize: AppThemeUtil.radius(14),
                 color: kGrey1200,

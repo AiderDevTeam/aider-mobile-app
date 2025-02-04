@@ -1,6 +1,7 @@
 import 'package:aider_mobile_app/core/auth/domain/models/statistics/statistic_model.dart';
 import 'package:aider_mobile_app/src/features/kyc/domain/verification_model/verification_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../domain/models/address/address_model.dart';
 import '../wallet/wallet_model.dart';
@@ -26,7 +27,6 @@ class UserModel with _$UserModel {
     final String? birthday,
     final String? idVerificationStatus,
     final bool? idVerified,
-    final String? joinedAt,
     final String? profilePhotoUrl,
     final int? itemsListed,
     final List<AddressModel>? addresses,
@@ -46,6 +46,16 @@ class UserModel with _$UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
+  Map<String, dynamic> customToJson() {
+    final userJson = toJson();
+    userJson['addresses'] = addresses?.map((e) => e.toJson()).toList();
+    userJson['userIdentifications'] =
+        userIdentifications?.map((e) => e.toJson()).toList();
+    userJson['statistics'] = statistics?.toJson();
+    userJson['wallets'] = wallets?.map((e) => e.toJson()).toList();
+    return userJson;
+  }
+
   AddressModel? get address => addresses?.first;
 
   VerificationModel? get userIdentification => userIdentifications?.first;
@@ -61,4 +71,17 @@ class UserModel with _$UserModel {
   bool get hasProfilePhoto => (profilePhotoUrl ?? '').isNotEmpty;
 
   bool get userHasWallet => hasDefaultWallet ?? false;
+
+  static String? _timestampToString(dynamic timestamp) {
+    if (timestamp == null) return null;
+    if (timestamp is Timestamp) {
+      return timestamp.toDate().toIso8601String();
+    }
+    return timestamp as String?;
+  }
+
+  static dynamic _stringToTimestamp(String? date) {
+    if (date == null) return null;
+    return Timestamp.fromDate(DateTime.parse(date));
+  }
 }

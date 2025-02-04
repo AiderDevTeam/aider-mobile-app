@@ -12,16 +12,17 @@ import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
+import '../../../rentals/domain/models/booking/booking_model.dart';
 import '../../domain/models/chat/chat_model.dart';
 
 class NudgeModalContent extends StatelessWidget {
   const NudgeModalContent({
     super.key,
-    required this.chat,
+    required this.booking,
     this.onYesPressed,
   });
 
-  final ChatModel chat;
+  final BookingModel booking;
   final void Function()? onYesPressed;
 
   @override
@@ -61,39 +62,43 @@ class NudgeModalContent extends StatelessWidget {
           modalHeaderContent: Row(
             children: [
               Text(
-                'Nudge 👋 ${chat.vendor?.greetingName?? ''}',
-              ).semiBold().fontSize(16).color(kGrey1200).alignText(TextAlign.center).flexible(),
+                'Nudge 👋 ${booking.vendor?.greetingName ?? ''}',
+              )
+                  .semiBold()
+                  .fontSize(16)
+                  .color(kGrey1200)
+                  .alignText(TextAlign.center)
+                  .flexible(),
             ],
           ).paddingOnly(left: kWidthPadding, right: kWidthPadding, bottom: 10),
           content: Column(
             children: [
               RichText(
                 text: TextSpan(
-                  text: 'Send the message below to nudge ',
-                  style: kRegularFontStyle.copyWith(
-                    fontSize: AppThemeUtil.fontSize(14.0),
-                    color: kGrey800,
-                    height: AppThemeUtil.getLineHeight(20, 14),
-                  ),
-                  children: [
-                    TextSpan(
-                      text: chat.vendor?.greetingName?? '',
-                      style: kBoldFontStyle.copyWith(
-                        fontSize: AppThemeUtil.fontSize(14.0),
-                        color: kGrey1200,
-                        height: AppThemeUtil.getLineHeight(20, 14),
-                      ),
+                    text: 'Send the message below to nudge ',
+                    style: kRegularFontStyle.copyWith(
+                      fontSize: AppThemeUtil.fontSize(14.0),
+                      color: kGrey800,
+                      height: AppThemeUtil.getLineHeight(20, 14),
                     ),
-                    TextSpan(
-                      text: ' to react to your request.',
-                      style: kRegularFontStyle.copyWith(
-                        fontSize: AppThemeUtil.fontSize(14.0),
-                        color: kGrey800,
-                        height: AppThemeUtil.getLineHeight(20, 14),
+                    children: [
+                      TextSpan(
+                        text: booking.vendor?.greetingName ?? '',
+                        style: kBoldFontStyle.copyWith(
+                          fontSize: AppThemeUtil.fontSize(14.0),
+                          color: kGrey1200,
+                          height: AppThemeUtil.getLineHeight(20, 14),
+                        ),
                       ),
-                    ),
-                  ]
-                ),
+                      TextSpan(
+                        text: ' to react to your request.',
+                        style: kRegularFontStyle.copyWith(
+                          fontSize: AppThemeUtil.fontSize(14.0),
+                          color: kGrey800,
+                          height: AppThemeUtil.getLineHeight(20, 14),
+                        ),
+                      ),
+                    ]),
               ),
               const VSpace(height: 20.0),
               Container(
@@ -102,10 +107,17 @@ class NudgeModalContent extends StatelessWidget {
                   color: kGrey50,
                   borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
                 ),
-                child: const Text('Hey! can you please look at my request and respond accordingly thanks.').regular().fontSize(14.0).color(kGrey1200),
+                child: const Text(
+                        'Hey! can you please look at my request and respond accordingly thanks.')
+                    .regular()
+                    .fontSize(14.0)
+                    .color(kGrey1200),
               ),
             ],
-          ).paddingSymmetric(horizontal: kWidthPadding, vertical: 20,),
+          ).paddingSymmetric(
+            horizontal: kWidthPadding,
+            vertical: 20,
+          ),
         );
       },
     );

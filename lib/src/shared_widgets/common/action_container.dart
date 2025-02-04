@@ -9,8 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../core/routing/app_navigator.dart';
 import '../../../core/routing/app_route.dart';
 import '../../../core/utils/app_dialog_util.dart';
-import '../../features/product/presentation/providers/product_provider.dart';
-import '../../features/search/presentation/view_model/search_view_model.dart';
+import '../../features/search/presentation/providers/search_provider.dart';
 import '../../features/search/presentation/widgets/modals/filter_modal.dart';
 import 'h_space.dart';
 
@@ -65,7 +64,7 @@ class ProfileActions extends StatelessWidget {
             ),
           ).onPressed(() {
             // context.read<ProductProvider>().emitPopularCategories();
-            context.read<SearchViewModel>().emitPopularLocations();
+            context.read<SearchProvider>().emitPopularLocations();
             AppDialogUtil.showScrollableBottomSheet(
               context: context,
               builder: (context) => FilterModal(

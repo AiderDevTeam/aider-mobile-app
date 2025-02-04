@@ -7,7 +7,6 @@ import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart
 import 'package:aider_mobile_app/core/extensions/widgets/gesture_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
-import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/app_bottom_nav_wrapper.dart';
@@ -48,8 +47,12 @@ class _BvnSelfieScreenState extends State<BvnSelfieScreen> {
           onPressed: uploadedImagePath.isEmpty
               ? null
               : () async {
-                  await context.read<KycViewModel>().initializeVerification(context,
-                      requestBody: {...context.read<KycViewModel>().getCapturedNiNInfo, "selfie": uploadedImagePath});
+                  await context
+                      .read<KycViewModel>()
+                      .initializeVerification(context, requestBody: {
+                    ...context.read<KycViewModel>().getCapturedNiNInfo,
+                    "selfie": uploadedImagePath
+                  });
                 },
         ),
       ),
@@ -71,7 +74,10 @@ class _BvnSelfieScreenState extends State<BvnSelfieScreen> {
                   padding: EdgeInsets.zero,
                   barRadius: const Radius.circular(100),
                 ).flexible(),
-                Text(uploadedImagePath.isEmpty ? '1/2' : '2/2').extraBold().fontSize(20).color(kPrimaryBlack),
+                Text(uploadedImagePath.isEmpty ? '1/2' : '2/2')
+                    .extraBold()
+                    .fontSize(20)
+                    .color(kPrimaryBlack),
               ],
             ),
             const VSpace(height: 29),
@@ -121,7 +127,8 @@ class _BvnSelfieScreenState extends State<BvnSelfieScreen> {
                 ),
               ).onPressed(() async {
                 if (await PermissionUtil.getCameraPermissions()) {
-                  final croppedFile = await MediaFileUtil.getPickedSourceImage(cameraFront: true);
+                  final croppedFile = await MediaFileUtil.getPickedSourceImage(
+                      cameraFront: true);
                   if (croppedFile != null) {
                     setState(() => uploadedImagePath = croppedFile);
                   }
@@ -138,7 +145,11 @@ class _BvnSelfieScreenState extends State<BvnSelfieScreen> {
                           AppThemeUtil.radius(20.0),
                         ),
                         border: Border.all(color: kGrey200),
-                        image: uploadedImagePath.isEmpty ? null : DecorationImage(image: FileImage(File(uploadedImagePath)), fit: BoxFit.cover)),
+                        image: uploadedImagePath.isEmpty
+                            ? null
+                            : DecorationImage(
+                                image: FileImage(File(uploadedImagePath)),
+                                fit: BoxFit.cover)),
                   ),
                   const VSpace(height: 16),
                   Row(
@@ -157,7 +168,9 @@ class _BvnSelfieScreenState extends State<BvnSelfieScreen> {
                     ],
                   ).toCenter().onPressed(() async {
                     if (await PermissionUtil.getCameraPermissions()) {
-                      final croppedFile = await MediaFileUtil.getPickedSourceImage(cameraFront: true);
+                      final croppedFile =
+                          await MediaFileUtil.getPickedSourceImage(
+                              cameraFront: true);
                       if (croppedFile != null) {
                         setState(() => uploadedImagePath = croppedFile);
                       }

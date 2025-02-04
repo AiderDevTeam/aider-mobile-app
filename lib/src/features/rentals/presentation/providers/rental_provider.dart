@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:collection';
 
+import 'package:aider_mobile_app/src/features/rentals/domain/models/booked_product/booked_product_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/booking_model.dart';
 import 'package:aider_mobile_app/src/shared_widgets/modals/success_modal_content.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,7 @@ import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../domain/models/booked_history_model.dart';
 import '../../data/repositories/rental_repository.dart';
 
-class RentalViewModel extends BaseProvider {
+class RentalProvider extends BaseProvider {
   final _rentalRepository = sl.get<RentalRepository>();
   BookedProductHistoryModel _rentedProductHistory =
       const BookedProductHistoryModel();
@@ -33,7 +35,7 @@ class RentalViewModel extends BaseProvider {
     setLoading(true, component: loadingComponent);
 
     final result = await _rentalRepository.fetchRentedItems(
-        queryParam: queryParams, nextPage: nextPage);
+        queryParam: queryParams, nextPage: nextPage, isCompleted: true);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -75,7 +77,7 @@ class RentalViewModel extends BaseProvider {
     setLoading(true, component: loadingComponent);
 
     final result = await _rentalRepository.fetchMyItems(
-        queryParam: queryParams, nextPage: nextPage);
+        queryParam: queryParams, nextPage: nextPage, isCompleted: true);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -108,14 +110,13 @@ class RentalViewModel extends BaseProvider {
   Future<void> confirmPickUp(
     BuildContext context, {
     String type = 'user',
-    required String bookingExternalId,
-    required Map<String, dynamic> requestBody,
+    required String bookingUid,
     required GlobalKey<ScaffoldState> scaffoldKey,
   }) async {
     AppDialogUtil.loadingDialog(context);
 
     final result = await _rentalRepository.confirmPickUp(
-        bookingExternalId: bookingExternalId, requestBody: requestBody);
+        bookingUid: bookingUid, type: type);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -132,23 +133,10 @@ class RentalViewModel extends BaseProvider {
     }, (right) {
       if (type == 'user') {
         final index = _rentedProductHistory.data
-            .indexWhere((obj) => obj.externalId == bookingExternalId);
+            .indexWhere((obj) => obj.uid == bookingUid);
         if (index >= 0) {
           final userBooking = _rentedProductHistory.data[index].copyWith(
-            id: right.id,
-            externalId: right.externalId,
-            status: right.status,
-            collectionAmount: right.collectionAmount,
-            collectionStatus: right.collectionStatus,
-            disbursementAmount: right.disbursementAmount,
-            disbursementStatus: right.disbursementStatus,
-            reversalStatus: right.reversalStatus,
-            bookingAcceptanceStatus: right.bookingAcceptanceStatus,
-            vendorPickupStatus: right.vendorPickupStatus,
-            userPickupStatus: right.userPickupStatus,
-            vendorDropOffStatus: right.vendorDropOffStatus,
-            userDropOffStatus: right.userDropOffStatus,
-            bookingNumber: right.bookingNumber,
+            userPickupStatus: BookingProgressStatus.success,
           );
 
           List<BookingModel> bookings = List.from(_rentedProductHistory.data);
@@ -162,23 +150,10 @@ class RentalViewModel extends BaseProvider {
         }
       } else {
         final index = _myItemsProductHistory.data
-            .indexWhere((obj) => obj.externalId == bookingExternalId);
+            .indexWhere((obj) => obj.uid == bookingUid);
         if (index >= 0) {
           final userBooking = _myItemsProductHistory.data[index].copyWith(
-            id: right.id,
-            externalId: right.externalId,
-            status: right.status,
-            collectionAmount: right.collectionAmount,
-            collectionStatus: right.collectionStatus,
-            disbursementAmount: right.disbursementAmount,
-            disbursementStatus: right.disbursementStatus,
-            reversalStatus: right.reversalStatus,
-            bookingAcceptanceStatus: right.bookingAcceptanceStatus,
-            vendorPickupStatus: right.vendorPickupStatus,
-            userPickupStatus: right.userPickupStatus,
-            vendorDropOffStatus: right.vendorDropOffStatus,
-            userDropOffStatus: right.userDropOffStatus,
-            bookingNumber: right.bookingNumber,
+            vendorPickupStatus: BookingProgressStatus.success,
           );
 
           List<BookingModel> bookings = List.from(_myItemsProductHistory.data);
@@ -198,14 +173,13 @@ class RentalViewModel extends BaseProvider {
   Future<void> confirmDropOff(
     BuildContext context, {
     String type = 'user',
-    required String bookingExternalId,
-    required Map<String, dynamic> requestBody,
+    required String bookingUid,
     required GlobalKey<ScaffoldState> scaffoldKey,
   }) async {
     AppDialogUtil.loadingDialog(context);
 
     final result = await _rentalRepository.confirmDropOff(
-        bookingExternalId: bookingExternalId, requestBody: requestBody);
+        bookingUid: bookingUid, type: type);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -222,23 +196,10 @@ class RentalViewModel extends BaseProvider {
     }, (right) {
       if (type == 'user') {
         final index = _rentedProductHistory.data
-            .indexWhere((obj) => obj.externalId == bookingExternalId);
+            .indexWhere((obj) => obj.uid == bookingUid);
         if (index >= 0) {
           final userBooking = _rentedProductHistory.data[index].copyWith(
-            id: right.id,
-            externalId: right.externalId,
-            status: right.status,
-            collectionAmount: right.collectionAmount,
-            collectionStatus: right.collectionStatus,
-            disbursementAmount: right.disbursementAmount,
-            disbursementStatus: right.disbursementStatus,
-            reversalStatus: right.reversalStatus,
-            bookingAcceptanceStatus: right.bookingAcceptanceStatus,
-            vendorPickupStatus: right.vendorPickupStatus,
-            userPickupStatus: right.userPickupStatus,
-            vendorDropOffStatus: right.vendorDropOffStatus,
-            userDropOffStatus: right.userDropOffStatus,
-            bookingNumber: right.bookingNumber,
+            userDropOffStatus: BookingProgressStatus.success,
           );
 
           List<BookingModel> bookings = List.from(_rentedProductHistory.data);
@@ -252,23 +213,10 @@ class RentalViewModel extends BaseProvider {
         }
       } else {
         final index = _myItemsProductHistory.data
-            .indexWhere((obj) => obj.externalId == bookingExternalId);
+            .indexWhere((obj) => obj.uid == bookingUid);
         if (index >= 0) {
           final userBooking = _myItemsProductHistory.data[index].copyWith(
-            id: right.id,
-            externalId: right.externalId,
-            status: right.status,
-            collectionAmount: right.collectionAmount,
-            collectionStatus: right.collectionStatus,
-            disbursementAmount: right.disbursementAmount,
-            disbursementStatus: right.disbursementStatus,
-            reversalStatus: right.reversalStatus,
-            bookingAcceptanceStatus: right.bookingAcceptanceStatus,
-            vendorPickupStatus: right.vendorPickupStatus,
-            userPickupStatus: right.userPickupStatus,
-            vendorDropOffStatus: right.vendorDropOffStatus,
-            userDropOffStatus: right.userDropOffStatus,
-            bookingNumber: right.bookingNumber,
+            vendorDropOffStatus: BookingProgressStatus.success,
           );
 
           List<BookingModel> bookings = List.from(_myItemsProductHistory.data);
@@ -403,11 +351,12 @@ class RentalViewModel extends BaseProvider {
   }
 
   Future<void> earlyReturn(BuildContext context,
-      {required String bookedProductExternalId}) async {
+      {required String bookingUid,
+      required BookedProductModel bookedProduct}) async {
     AppDialogUtil.loadingDialog(context);
 
     final result = await _rentalRepository.earlyReturn(
-        bookedProductExternalId: bookedProductExternalId);
+        bookingUid: bookingUid, bookedProduct: bookedProduct);
 
     if (context.mounted) {
       AppNavigator.pop(context);
@@ -430,26 +379,17 @@ class RentalViewModel extends BaseProvider {
         );
       });
     }, (right) {
-      final index = _rentedProductHistory.data.indexWhere(
-          (obj) => obj.bookedProduct?.externalId == bookedProductExternalId);
+      final index =
+          _rentedProductHistory.data.indexWhere((obj) => obj.uid == bookingUid);
       if (index >= 0) {
         final bookedProduct =
             _rentedProductHistory.data[index].bookedProduct?.copyWith(
-          id: right.bookedProduct?.id,
-          externalId: right.bookedProduct?.externalId,
-          amount: right.bookedProduct?.amount,
-          quantity: right.bookedProduct?.quantity,
-          value: right.bookedProduct?.value,
-          startDate: right.bookedProduct?.startDate,
-          endDate: right.bookedProduct?.endDate,
-          duration: right.bookedProduct?.duration,
-          daysSpan: right.bookedProduct?.daysSpan,
-          isOverdue: right.bookedProduct?.isOverdue,
-          returnedEarly: right.bookedProduct?.returnedEarly,
+          returnedEarly: true,
         );
 
         List<BookingModel> updatedData = List.from(_rentedProductHistory.data);
         updatedData[index] = _rentedProductHistory.data[index].copyWith(
+          userDropOffStatus: BookingProgressStatus.success,
           bookedProduct: bookedProduct,
         );
 
@@ -475,4 +415,35 @@ class RentalViewModel extends BaseProvider {
   // void _persistReviewHistory() async {
   //   final _ = await _rentalRepository.persistReviewHistory(_reviewModel);
   // }
+
+  BookingModel? _currentBooking;
+  StreamSubscription<BookingModel>? _bookingSubscription;
+
+  BookingModel? get currentBooking => _currentBooking;
+
+  void listenToBooking(BookingModel booking) {
+    // Cancel any existing subscription
+    _bookingSubscription?.cancel();
+
+    _bookingSubscription = _rentalRepository
+        .fetchBookingStream(booking.uid ?? '')
+        .listen((latestBooking) {
+      _currentBooking = latestBooking.copyWith(
+        user: booking.user,
+        vendor: booking.vendor,
+        bookedProduct: booking.bookedProduct,
+      );
+      notifyListeners();
+    });
+  }
+
+  void closeBookingListener() {
+    _bookingSubscription?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _bookingSubscription?.cancel();
+    super.dispose();
+  }
 }

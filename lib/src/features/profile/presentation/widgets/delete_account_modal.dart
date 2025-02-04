@@ -13,7 +13,6 @@ import '../../../../../core/constants/common.dart';
 import '../../../../../core/providers/auth_provider.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
-import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/app_bottom_nav_wrapper.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/buttons/app_primary_button.dart';

@@ -63,6 +63,12 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           onPressed: () async {
+            if (context
+                .read<UserProvider>()
+                .isComponentLoading('verifyEmail')) {
+              return;
+            }
+
             if (formKey.currentState!.validate()) {
               final authProvider = context.read<AuthProvider>();
 
@@ -70,6 +76,12 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 'action': kSignupAction,
                 "email": emailController.text,
               });
+
+              var requestBody = authProvider.getSignupRequestBody;
+              requestBody = requestBody.copyWith(
+                email: emailController.text,
+              );
+              authProvider.setSignupRequestBody = requestBody;
 
               await authProvider.signUpOTP(
                 context,

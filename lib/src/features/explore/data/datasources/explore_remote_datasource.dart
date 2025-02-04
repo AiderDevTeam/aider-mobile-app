@@ -31,16 +31,42 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
   });
 
   final FirebaseFirestore firestore;
+  late final productsCollection = firestore.collection(kProductsCollection);
 
   @override
   Future<List> fetchSections(
       {required int page, required int dataPerPage}) async {
     final sections = RemoteConfigService.getRemoteData.configs['sections'];
-    return (sections as List)
+    final liveSections = (sections as List)
         .where((section) => section['live'] == true)
         .skip((page - 1) * dataPerPage)
         .take(dataPerPage)
         .toList();
+
+    for (var section in liveSections) {
+      if (section['type'] == 'category') {
+        section['data'] = loadCategories();
+      }
+      if (section['type'] == 'product') {
+        section['data'] = await loadProducts();
+      }
+    }
+    return liveSections;
+  }
+
+  List loadCategories() {
+    final categories =
+        (RemoteConfigService.getRemoteData.configs['categories'] as List)
+            .take(10)
+            .toList();
+
+    return categories;
+  }
+
+  Future<List> loadProducts() async {
+    final products = await productsCollection.limit(10).get();
+
+    return products.docs.map((doc) => doc.data()).toList();
   }
 
   @override

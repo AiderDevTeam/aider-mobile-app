@@ -78,8 +78,10 @@ class WalletProvider extends BaseProvider {
     final result = await _walletRepository.getWallets();
     result.fold((failure) {}, (wallets) {
       _userWallets = wallets;
-      setWalletAsDefault =
-          wallets.firstWhere((wallet) => wallet.isDefault == true);
+      if (wallets.isNotEmpty) {
+        setWalletAsDefault =
+            wallets.firstWhere((wallet) => wallet.isDefault == true);
+      }
     });
 
     setLoading(false);

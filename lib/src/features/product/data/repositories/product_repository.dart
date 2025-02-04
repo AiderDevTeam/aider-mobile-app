@@ -2,8 +2,10 @@ import 'package:aider_mobile_app/core/errors/errors.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/category/category_model.dart';
 import 'package:dartz/dartz.dart';
 
+import '../../../../../core/auth/domain/models/user/user_model.dart';
 import '../../../../../core/services/crash_service.dart';
 import '../../../../../core/services/logger_service.dart';
+import '../../../rentals/domain/models/booking/booking_model.dart';
 import '../../domain/models/category/sub_category_item_model.dart';
 import '../../domain/models/history/product_history_model.dart';
 import '../../domain/models/product/product_model.dart';
@@ -15,23 +17,18 @@ abstract class ProductRepository {
   Future<Either<Failure, void>> listProduct(
       {required ProductModel requestBody});
   Future<Either<Failure, ProductHistoryModel>> fetchUserProducts(
-      {String? nextPage, int? pageSize});
-  Future<Either<Failure, bool>> requestForItem(String productExternalId,
-      {required Map<String, dynamic> requestBody});
+      {String? nextPage, int? pageSize, required UserModel user});
+  Future<Either<Failure, bool>> requestForItem(ProductModel product,
+      {required BookingModel booking});
   Future<Either<Failure, bool>> deleteProductPhoto(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String productUid, required Map<String, dynamic> requestBody});
   Future<Either<Failure, bool>> addProductPhoto(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
-  Future<Either<Failure, bool>> deleteProduct(
-      {required String productExternalId});
+      {required String productUid, required Map<String, dynamic> requestBody});
+  Future<Either<Failure, bool>> deleteProduct({required String productUid});
   Future<Either<Failure, ProductModel>> updateProduct(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String productUid, required Map<String, dynamic> requestBody});
   Future<Either<Failure, bool>> deleteProductPrice(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String productUid, required Map<String, dynamic> requestBody});
   Future<Either<Failure, ProductHistoryModel>> fetchVendorProducts(
       {String? vendorExternalId,
       String? nextPage,
@@ -101,10 +98,10 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, ProductHistoryModel>> fetchUserProducts(
-      {String? nextPage, int? pageSize}) async {
+      {required UserModel user, String? nextPage, int? pageSize}) async {
     try {
       final response = await productRemoteDatasource.fetchUserProducts(
-          nextPage: nextPage, pageSize: pageSize);
+          nextPage: nextPage, pageSize: pageSize, user: user);
       return Right(response);
     } catch (e, s) {
       ZLoggerService.logOnError('Error: ${e.toString()}: ${s.toString()}');
@@ -114,13 +111,14 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> requestForItem(String productExternalId,
-      {required Map<String, dynamic> requestBody}) async {
+  Future<Either<Failure, bool>> requestForItem(ProductModel product,
+      {required BookingModel booking}) async {
     try {
-      final response = await productRemoteDatasource
-          .requestForItem(productExternalId, requestBody: requestBody);
+      final response = await productRemoteDatasource.requestForItem(product,
+          booking: booking);
       return Right(response);
     } catch (e, s) {
+      ZLoggerService.logOnError('Error: ${e.toString()}: ${s.toString()}');
       CrashService.setCrashKey('product', 'request for product');
       return Left(FailureToMessage.returnLeftError(e, s));
     }
@@ -128,11 +126,11 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, bool>> deleteProductPhoto(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     try {
       final response = await productRemoteDatasource.deleteProductPhoto(
-          productExternalId: productExternalId, requestBody: requestBody);
+          productUid: productUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
       CrashService.setCrashKey('product', 'deleting product photo');
@@ -142,11 +140,11 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, bool>> addProductPhoto(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     try {
       final response = await productRemoteDatasource.addProductPhoto(
-          productExternalId: productExternalId, requestBody: requestBody);
+          productUid: productUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
       CrashService.setCrashKey('product', 'add product photo');
@@ -156,10 +154,10 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, bool>> deleteProduct(
-      {required String productExternalId}) async {
+      {required String productUid}) async {
     try {
       final response = await productRemoteDatasource.deleteProduct(
-        productExternalId: productExternalId,
+        productUid: productUid,
       );
       return Right(response);
     } catch (e, s) {
@@ -170,11 +168,11 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, ProductModel>> updateProduct(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     try {
       final response = await productRemoteDatasource.updateProduct(
-          productExternalId: productExternalId, requestBody: requestBody);
+          productUid: productUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
       CrashService.setCrashKey('product', 'update product');
@@ -184,11 +182,11 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, bool>> deleteProductPrice(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     try {
       final response = await productRemoteDatasource.deleteProductPrice(
-          productExternalId: productExternalId, requestBody: requestBody);
+          productUid: productUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
       CrashService.setCrashKey('product', 'delete product price');

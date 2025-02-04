@@ -23,6 +23,9 @@ mixin _$ReviewModel {
   int? get id => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   int? get rating => throw _privateConstructorUsedError;
+  String? get productUid => throw _privateConstructorUsedError;
+  String? get renterUid => throw _privateConstructorUsedError;
+  String? get vendorUid => throw _privateConstructorUsedError;
   String? get comment => throw _privateConstructorUsedError;
   String? get postedAt => throw _privateConstructorUsedError;
   String? get time => throw _privateConstructorUsedError;
@@ -49,6 +52,9 @@ abstract class $ReviewModelCopyWith<$Res> {
       {int? id,
       String? externalId,
       int? rating,
+      String? productUid,
+      String? renterUid,
+      String? vendorUid,
       String? comment,
       String? postedAt,
       String? time,
@@ -76,6 +82,9 @@ class _$ReviewModelCopyWithImpl<$Res, $Val extends ReviewModel>
     Object? id = freezed,
     Object? externalId = freezed,
     Object? rating = freezed,
+    Object? productUid = freezed,
+    Object? renterUid = freezed,
+    Object? vendorUid = freezed,
     Object? comment = freezed,
     Object? postedAt = freezed,
     Object? time = freezed,
@@ -95,6 +104,18 @@ class _$ReviewModelCopyWithImpl<$Res, $Val extends ReviewModel>
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as int?,
+      productUid: freezed == productUid
+          ? _value.productUid
+          : productUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      renterUid: freezed == renterUid
+          ? _value.renterUid
+          : renterUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      vendorUid: freezed == vendorUid
+          ? _value.vendorUid
+          : vendorUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       comment: freezed == comment
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
@@ -145,6 +166,9 @@ abstract class _$$ReviewModelImplCopyWith<$Res>
       {int? id,
       String? externalId,
       int? rating,
+      String? productUid,
+      String? renterUid,
+      String? vendorUid,
       String? comment,
       String? postedAt,
       String? time,
@@ -171,6 +195,9 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? externalId = freezed,
     Object? rating = freezed,
+    Object? productUid = freezed,
+    Object? renterUid = freezed,
+    Object? vendorUid = freezed,
     Object? comment = freezed,
     Object? postedAt = freezed,
     Object? time = freezed,
@@ -190,6 +217,18 @@ class __$$ReviewModelImplCopyWithImpl<$Res>
           ? _value.rating
           : rating // ignore: cast_nullable_to_non_nullable
               as int?,
+      productUid: freezed == productUid
+          ? _value.productUid
+          : productUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      renterUid: freezed == renterUid
+          ? _value.renterUid
+          : renterUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      vendorUid: freezed == vendorUid
+          ? _value.vendorUid
+          : vendorUid // ignore: cast_nullable_to_non_nullable
+              as String?,
       comment: freezed == comment
           ? _value.comment
           : comment // ignore: cast_nullable_to_non_nullable
@@ -221,6 +260,9 @@ class _$ReviewModelImpl implements _ReviewModel {
       {this.id,
       this.externalId,
       this.rating,
+      this.productUid,
+      this.renterUid,
+      this.vendorUid,
       this.comment,
       this.postedAt,
       this.time,
@@ -237,6 +279,12 @@ class _$ReviewModelImpl implements _ReviewModel {
   @override
   final int? rating;
   @override
+  final String? productUid;
+  @override
+  final String? renterUid;
+  @override
+  final String? vendorUid;
+  @override
   final String? comment;
   @override
   final String? postedAt;
@@ -249,7 +297,7 @@ class _$ReviewModelImpl implements _ReviewModel {
 
   @override
   String toString() {
-    return 'ReviewModel(id: $id, externalId: $externalId, rating: $rating, comment: $comment, postedAt: $postedAt, time: $time, date: $date, reviewer: $reviewer)';
+    return 'ReviewModel(id: $id, externalId: $externalId, rating: $rating, productUid: $productUid, renterUid: $renterUid, vendorUid: $vendorUid, comment: $comment, postedAt: $postedAt, time: $time, date: $date, reviewer: $reviewer)';
   }
 
   @override
@@ -261,6 +309,12 @@ class _$ReviewModelImpl implements _ReviewModel {
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.rating, rating) || other.rating == rating) &&
+            (identical(other.productUid, productUid) ||
+                other.productUid == productUid) &&
+            (identical(other.renterUid, renterUid) ||
+                other.renterUid == renterUid) &&
+            (identical(other.vendorUid, vendorUid) ||
+                other.vendorUid == vendorUid) &&
             (identical(other.comment, comment) || other.comment == comment) &&
             (identical(other.postedAt, postedAt) ||
                 other.postedAt == postedAt) &&
@@ -272,8 +326,19 @@ class _$ReviewModelImpl implements _ReviewModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, externalId, rating, comment,
-      postedAt, time, date, reviewer);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      externalId,
+      rating,
+      productUid,
+      renterUid,
+      vendorUid,
+      comment,
+      postedAt,
+      time,
+      date,
+      reviewer);
 
   /// Create a copy of ReviewModel
   /// with the given fields replaced by the non-null parameter values.
@@ -296,6 +361,9 @@ abstract class _ReviewModel implements ReviewModel {
       {final int? id,
       final String? externalId,
       final int? rating,
+      final String? productUid,
+      final String? renterUid,
+      final String? vendorUid,
       final String? comment,
       final String? postedAt,
       final String? time,
@@ -311,6 +379,12 @@ abstract class _ReviewModel implements ReviewModel {
   String? get externalId;
   @override
   int? get rating;
+  @override
+  String? get productUid;
+  @override
+  String? get renterUid;
+  @override
+  String? get vendorUid;
   @override
   String? get comment;
   @override

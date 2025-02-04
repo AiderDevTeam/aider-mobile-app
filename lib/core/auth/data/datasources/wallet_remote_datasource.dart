@@ -60,6 +60,10 @@ class WalletRemoteDatasourceImpl implements WalletRemoteDatasource {
     final user = firebaseAuth.currentUser;
     final result =
         await _walletCollection.where('userId', isEqualTo: user?.uid).get();
+
+    if (result.docs.isEmpty) {
+      return [];
+    }
     return result.docs
         .map((doc) => WalletModel.fromJson(doc.data() as Map<String, dynamic>))
         .toList();

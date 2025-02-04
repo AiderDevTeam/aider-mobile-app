@@ -20,13 +20,14 @@ MessageModel _$MessageModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MessageModel {
+  String? get uid => throw _privateConstructorUsedError;
   int? get id => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
-  int? get conversationId => throw _privateConstructorUsedError;
-  String? get senderExternalId => throw _privateConstructorUsedError;
+  String? get senderUid => throw _privateConstructorUsedError;
+  String? get receiverUid => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
-  dynamic get senderMessage => throw _privateConstructorUsedError;
-  dynamic get receiverMessage => throw _privateConstructorUsedError;
+  String? get bookingUid => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
   String? get sentAt => throw _privateConstructorUsedError;
   bool? get onGoing => throw _privateConstructorUsedError;
 
@@ -47,13 +48,14 @@ abstract class $MessageModelCopyWith<$Res> {
       _$MessageModelCopyWithImpl<$Res, MessageModel>;
   @useResult
   $Res call(
-      {int? id,
+      {String? uid,
+      int? id,
       String? externalId,
-      int? conversationId,
-      String? senderExternalId,
+      String? senderUid,
+      String? receiverUid,
       String? type,
-      dynamic senderMessage,
-      dynamic receiverMessage,
+      String? bookingUid,
+      String? message,
       String? sentAt,
       bool? onGoing});
 }
@@ -73,17 +75,22 @@ class _$MessageModelCopyWithImpl<$Res, $Val extends MessageModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
     Object? id = freezed,
     Object? externalId = freezed,
-    Object? conversationId = freezed,
-    Object? senderExternalId = freezed,
+    Object? senderUid = freezed,
+    Object? receiverUid = freezed,
     Object? type = freezed,
-    Object? senderMessage = freezed,
-    Object? receiverMessage = freezed,
+    Object? bookingUid = freezed,
+    Object? message = freezed,
     Object? sentAt = freezed,
     Object? onGoing = freezed,
   }) {
     return _then(_value.copyWith(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -92,26 +99,26 @@ class _$MessageModelCopyWithImpl<$Res, $Val extends MessageModel>
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
               as String?,
-      conversationId: freezed == conversationId
-          ? _value.conversationId
-          : conversationId // ignore: cast_nullable_to_non_nullable
-              as int?,
-      senderExternalId: freezed == senderExternalId
-          ? _value.senderExternalId
-          : senderExternalId // ignore: cast_nullable_to_non_nullable
+      senderUid: freezed == senderUid
+          ? _value.senderUid
+          : senderUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      receiverUid: freezed == receiverUid
+          ? _value.receiverUid
+          : receiverUid // ignore: cast_nullable_to_non_nullable
               as String?,
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String?,
-      senderMessage: freezed == senderMessage
-          ? _value.senderMessage
-          : senderMessage // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      receiverMessage: freezed == receiverMessage
-          ? _value.receiverMessage
-          : receiverMessage // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+      bookingUid: freezed == bookingUid
+          ? _value.bookingUid
+          : bookingUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
       sentAt: freezed == sentAt
           ? _value.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
@@ -133,13 +140,14 @@ abstract class _$$MessageModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {String? uid,
+      int? id,
       String? externalId,
-      int? conversationId,
-      String? senderExternalId,
+      String? senderUid,
+      String? receiverUid,
       String? type,
-      dynamic senderMessage,
-      dynamic receiverMessage,
+      String? bookingUid,
+      String? message,
       String? sentAt,
       bool? onGoing});
 }
@@ -157,17 +165,22 @@ class __$$MessageModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? uid = freezed,
     Object? id = freezed,
     Object? externalId = freezed,
-    Object? conversationId = freezed,
-    Object? senderExternalId = freezed,
+    Object? senderUid = freezed,
+    Object? receiverUid = freezed,
     Object? type = freezed,
-    Object? senderMessage = freezed,
-    Object? receiverMessage = freezed,
+    Object? bookingUid = freezed,
+    Object? message = freezed,
     Object? sentAt = freezed,
     Object? onGoing = freezed,
   }) {
     return _then(_$MessageModelImpl(
+      uid: freezed == uid
+          ? _value.uid
+          : uid // ignore: cast_nullable_to_non_nullable
+              as String?,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -176,26 +189,26 @@ class __$$MessageModelImplCopyWithImpl<$Res>
           ? _value.externalId
           : externalId // ignore: cast_nullable_to_non_nullable
               as String?,
-      conversationId: freezed == conversationId
-          ? _value.conversationId
-          : conversationId // ignore: cast_nullable_to_non_nullable
-              as int?,
-      senderExternalId: freezed == senderExternalId
-          ? _value.senderExternalId
-          : senderExternalId // ignore: cast_nullable_to_non_nullable
+      senderUid: freezed == senderUid
+          ? _value.senderUid
+          : senderUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      receiverUid: freezed == receiverUid
+          ? _value.receiverUid
+          : receiverUid // ignore: cast_nullable_to_non_nullable
               as String?,
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String?,
-      senderMessage: freezed == senderMessage
-          ? _value.senderMessage
-          : senderMessage // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      receiverMessage: freezed == receiverMessage
-          ? _value.receiverMessage
-          : receiverMessage // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+      bookingUid: freezed == bookingUid
+          ? _value.bookingUid
+          : bookingUid // ignore: cast_nullable_to_non_nullable
+              as String?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
       sentAt: freezed == sentAt
           ? _value.sentAt
           : sentAt // ignore: cast_nullable_to_non_nullable
@@ -212,13 +225,14 @@ class __$$MessageModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MessageModelImpl extends _MessageModel {
   const _$MessageModelImpl(
-      {this.id,
+      {this.uid,
+      this.id,
       this.externalId,
-      this.conversationId,
-      this.senderExternalId,
+      this.senderUid,
+      this.receiverUid,
       this.type,
-      this.senderMessage,
-      this.receiverMessage,
+      this.bookingUid,
+      this.message,
       this.sentAt,
       this.onGoing})
       : super._();
@@ -227,19 +241,21 @@ class _$MessageModelImpl extends _MessageModel {
       _$$MessageModelImplFromJson(json);
 
   @override
+  final String? uid;
+  @override
   final int? id;
   @override
   final String? externalId;
   @override
-  final int? conversationId;
+  final String? senderUid;
   @override
-  final String? senderExternalId;
+  final String? receiverUid;
   @override
   final String? type;
   @override
-  final dynamic senderMessage;
+  final String? bookingUid;
   @override
-  final dynamic receiverMessage;
+  final String? message;
   @override
   final String? sentAt;
   @override
@@ -247,7 +263,7 @@ class _$MessageModelImpl extends _MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel(id: $id, externalId: $externalId, conversationId: $conversationId, senderExternalId: $senderExternalId, type: $type, senderMessage: $senderMessage, receiverMessage: $receiverMessage, sentAt: $sentAt, onGoing: $onGoing)';
+    return 'MessageModel(uid: $uid, id: $id, externalId: $externalId, senderUid: $senderUid, receiverUid: $receiverUid, type: $type, bookingUid: $bookingUid, message: $message, sentAt: $sentAt, onGoing: $onGoing)';
   }
 
   @override
@@ -255,35 +271,26 @@ class _$MessageModelImpl extends _MessageModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$MessageModelImpl &&
+            (identical(other.uid, uid) || other.uid == uid) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
-            (identical(other.conversationId, conversationId) ||
-                other.conversationId == conversationId) &&
-            (identical(other.senderExternalId, senderExternalId) ||
-                other.senderExternalId == senderExternalId) &&
+            (identical(other.senderUid, senderUid) ||
+                other.senderUid == senderUid) &&
+            (identical(other.receiverUid, receiverUid) ||
+                other.receiverUid == receiverUid) &&
             (identical(other.type, type) || other.type == type) &&
-            const DeepCollectionEquality()
-                .equals(other.senderMessage, senderMessage) &&
-            const DeepCollectionEquality()
-                .equals(other.receiverMessage, receiverMessage) &&
+            (identical(other.bookingUid, bookingUid) ||
+                other.bookingUid == bookingUid) &&
+            (identical(other.message, message) || other.message == message) &&
             (identical(other.sentAt, sentAt) || other.sentAt == sentAt) &&
             (identical(other.onGoing, onGoing) || other.onGoing == onGoing));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      externalId,
-      conversationId,
-      senderExternalId,
-      type,
-      const DeepCollectionEquality().hash(senderMessage),
-      const DeepCollectionEquality().hash(receiverMessage),
-      sentAt,
-      onGoing);
+  int get hashCode => Object.hash(runtimeType, uid, id, externalId, senderUid,
+      receiverUid, type, bookingUid, message, sentAt, onGoing);
 
   /// Create a copy of MessageModel
   /// with the given fields replaced by the non-null parameter values.
@@ -303,13 +310,14 @@ class _$MessageModelImpl extends _MessageModel {
 
 abstract class _MessageModel extends MessageModel {
   const factory _MessageModel(
-      {final int? id,
+      {final String? uid,
+      final int? id,
       final String? externalId,
-      final int? conversationId,
-      final String? senderExternalId,
+      final String? senderUid,
+      final String? receiverUid,
       final String? type,
-      final dynamic senderMessage,
-      final dynamic receiverMessage,
+      final String? bookingUid,
+      final String? message,
       final String? sentAt,
       final bool? onGoing}) = _$MessageModelImpl;
   const _MessageModel._() : super._();
@@ -318,19 +326,21 @@ abstract class _MessageModel extends MessageModel {
       _$MessageModelImpl.fromJson;
 
   @override
+  String? get uid;
+  @override
   int? get id;
   @override
   String? get externalId;
   @override
-  int? get conversationId;
+  String? get senderUid;
   @override
-  String? get senderExternalId;
+  String? get receiverUid;
   @override
   String? get type;
   @override
-  dynamic get senderMessage;
+  String? get bookingUid;
   @override
-  dynamic get receiverMessage;
+  String? get message;
   @override
   String? get sentAt;
   @override

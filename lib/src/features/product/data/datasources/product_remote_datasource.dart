@@ -2,34 +2,34 @@ import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/errors/error.dart';
 import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/services/remote_config_service.dart';
+import 'package:aider_mobile_app/core/utils/helper_util.dart';
+import 'package:aider_mobile_app/src/features/inbox/domain/models/message/message_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/category/category_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/product/product_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/product_price/price_structure_model.dart';
+import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/booking_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../../core/constants/firestore_collections.dart';
 import '../../domain/models/category/sub_category_item_model.dart';
 import '../../domain/models/history/product_history_model.dart';
+import '../../../../../core/auth/domain/models/user/user_model.dart';
 
 abstract class ProductRemoteDatasource {
   Future<void> listProduct({required ProductModel requestBody});
   Future<ProductHistoryModel> fetchUserProducts(
-      {String? nextPage, int? pageSize});
-  Future<bool> requestForItem(String productExternalId,
-      {required Map<String, dynamic> requestBody});
+      {required UserModel user, String? nextPage, int? pageSize});
+  Future<bool> requestForItem(ProductModel product,
+      {required BookingModel booking});
   Future<bool> deleteProductPhoto(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String productUid, required Map<String, dynamic> requestBody});
   Future<bool> addProductPhoto(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
-  Future<bool> deleteProduct({required String productExternalId});
+      {required String productUid, required Map<String, dynamic> requestBody});
+  Future<bool> deleteProduct({required String productUid});
   Future<ProductModel> updateProduct(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String productUid, required Map<String, dynamic> requestBody});
   Future<bool> deleteProductPrice(
-      {required String productExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String productUid, required Map<String, dynamic> requestBody});
   Future<ProductHistoryModel> fetchVendorProducts(
       {String? vendorExternalId,
       String? nextPage,
@@ -53,6 +53,10 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   late final productCollection =
       firebaseFirestore.collection(kProductsCollection);
   late final userCollection = firebaseFirestore.collection(kUsersCollection);
+  late final bookingCollection =
+      firebaseFirestore.collection(kBookingsCollection);
+  late final messageCollection =
+      firebaseFirestore.collection(kMessagesCollection);
 
   @override
   Future<void> listProduct({required ProductModel requestBody}) async {
@@ -77,20 +81,16 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       data['photos'] = requestBody.photos?.map((e) => e.toJson()).toList();
       data['address'] = requestBody.address?.toJson();
 
-      final user = currentLoggedInUser.data() as Map<String, dynamic>;
-      user['itemsListed'] = (user['itemsListed'] ?? 0) + 1;
-
-      transaction.update(
-          userCollection.doc(firebaseAuth.currentUser!.uid), user);
+      transaction.update(userCollection.doc(firebaseAuth.currentUser!.uid),
+          {'itemsListed': FieldValue.increment(1)});
       transaction.set(docRef, data);
     });
   }
 
   @override
   Future<ProductHistoryModel> fetchUserProducts(
-      {String? nextPage, int? pageSize}) async {
-    Query query = productCollection.where('userId',
-        isEqualTo: firebaseAuth.currentUser!.uid);
+      {required UserModel user, String? nextPage, int? pageSize}) async {
+    Query query = productCollection.where('userId', isEqualTo: user.uid);
     // .orderBy('postedAt', descending: true);
 
     if (nextPage != null) {
@@ -100,9 +100,21 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
 
     final response = await query.limit(pageSize ?? kProductPerPage).get();
 
+    if (response.docs.isEmpty) {
+      return ProductHistoryModel.fromJson({
+        'data': null,
+        'meta': null,
+      });
+    }
+
     return ProductHistoryModel.fromJson({
-      'data':
-          response.docs.map((e) => (e.data() as Map<String, dynamic>)).toList(),
+      'data': response.docs.map((e) {
+        final data = (e.data() as Map<String, dynamic>);
+
+        final jsonUser = user.customToJson();
+        data['user'] = jsonUser;
+        return data;
+      }).toList(),
       'meta': {
         'nextPage': response.docs.last.id,
       },
@@ -110,24 +122,84 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   }
 
   @override
-  Future<bool> requestForItem(String productExternalId,
-      {required Map<String, dynamic> requestBody}) async {
-    // final response = await httpServiceRequester.postRequest(
-    //   endpoint: ApiRoutes.requestForItem(productExternalId),
-    //   requestBody: requestBody,
-    // );
+  Future<bool> requestForItem(ProductModel product,
+      {required BookingModel booking}) async {
+    await firebaseFirestore.runTransaction((transaction) async {
+      final startDate = DateTime.parse(booking.bookedProduct?.startDate ?? '');
+      final endDate = DateTime.parse(booking.bookedProduct?.endDate ?? '');
+      final duration = HelperUtil.calculateBookingDuration(startDate, endDate);
+      final price =
+          HelperUtil.calculateProductPrice(product, duration['duration']);
+      final serviceFee = num.tryParse(RemoteConfigService
+              .getRemoteData.configs['settings']['service_fee'] as String) ??
+          0.01;
 
-    // var body = response.data;
-    // if (body['success'] == false) {
-    //   throw ServerException(message: body['message'] ?? '');
-    // }
+      if (price == null) {
+        throw const ServerException(message: "price not found");
+      }
+
+      final bookingPrice = price.price! * booking.bookedProduct!.quantity!;
+      final collectionAmount = HelperUtil.collectionAmount(
+          bookingPrice, serviceFee, duration['duration']);
+
+      final docRef = bookingCollection.doc();
+
+      booking = booking.copyWith(
+        uid: docRef.id,
+        collectionAmount: collectionAmount,
+        disbursementAmount: bookingPrice,
+        bookingNumber: HelperUtil.generateBookingNumber(),
+        bookingAcceptanceStatus: BookingProgressStatus.pending,
+        status: BookingStatus.awaitingAcceptance,
+        collectionStatus: BookingProgressStatus.notStarted,
+        disbursementStatus: BookingProgressStatus.notStarted,
+        reversalStatus: BookingProgressStatus.notStarted,
+        vendorPickupStatus: BookingProgressStatus.notStarted,
+        userPickupStatus: BookingProgressStatus.notStarted,
+        vendorDropOffStatus: BookingProgressStatus.notStarted,
+        userDropOffStatus: BookingProgressStatus.notStarted,
+        productUid: product.uid,
+        userUid: firebaseAuth.currentUser!.uid,
+        vendorUid: product.userId!,
+        bookedProduct: booking.bookedProduct?.copyWith(
+          duration: duration['duration'],
+          returnedEarly: false,
+          isReviewed: false,
+        ),
+      );
+
+      final data = booking.customToJson();
+
+      //  create initial booking message
+      final messageDocRef = messageCollection.doc();
+      final message = MessageModel(
+        message: booking.bookingNumber!,
+        type: "booking",
+        externalId: messageDocRef.id,
+        sentAt: DateTime.now().toIso8601String(),
+        bookingUid: docRef.id,
+        senderUid: firebaseAuth.currentUser!.uid,
+        receiverUid: product.userId!,
+        onGoing: true,
+      );
+
+      data['createdAt'] = DateTime.now().toIso8601String();
+      data['updatedAt'] = DateTime.now().toIso8601String();
+
+      transaction.set(bookingCollection.doc(docRef.id), data);
+
+      transaction.update(productCollection.doc(product.uid),
+          {'quantity': FieldValue.increment(booking.bookedProduct!.quantity!)});
+
+      transaction.set(messageDocRef, message.toJson());
+    });
 
     return true;
   }
 
   @override
   Future<bool> deleteProductPhoto(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     // await httpServiceRequester.deleteRequest(
     //   endpoint: ApiRoutes.deleteProductPhoto(productExternalId),
@@ -139,7 +211,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
 
   @override
   Future<bool> addProductPhoto(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     // await httpServiceRequester.postFormDataRequest(
     //   endpoint: ApiRoutes.addProductPhoto(productExternalId),
@@ -150,7 +222,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   }
 
   @override
-  Future<bool> deleteProduct({required String productExternalId}) async {
+  Future<bool> deleteProduct({required String productUid}) async {
     // await httpServiceRequester.deleteRequest(
     //   endpoint: ApiRoutes.deleteProduct(productExternalId),
     // );
@@ -160,7 +232,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
 
   @override
   Future<ProductModel> updateProduct(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     // final response = await httpServiceRequester.putRequest(
     //   endpoint: ApiRoutes.updateProduct(productExternalId),
@@ -179,7 +251,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
 
   @override
   Future<bool> deleteProductPrice(
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     // await httpServiceRequester.deleteRequest(
     //   endpoint: ApiRoutes.deleteProductPrice(productExternalId),

@@ -68,10 +68,14 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                 deviceOs: HelperUtil.getOSPlatform,
               );
 
+              print(
+                  'authProvider.getSignupRequestLocation: ${authProvider.getSignupRequestLocation}');
+
               authProvider.setSignupRequestBody = requestBody;
               await authProvider.signup(
                 context,
                 user: requestBody,
+                location: authProvider.getSignupRequestLocation,
               );
             } else {
               AppDialogUtil.showWarningAlert(
@@ -292,6 +296,11 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                           ),
                         ).paddingOnly(bottom: 20).onPressed(
                           () {
+                            context.read<AuthProvider>().setSignupRequestBody =
+                                context
+                                    .read<AuthProvider>()
+                                    .getSignupRequestBody
+                                    .copyWith(userTypeId: userType.uid);
                             if (userType.name == 'vendor') {
                               toggleSelection('vendor');
                               typeId.value = userType.uid;

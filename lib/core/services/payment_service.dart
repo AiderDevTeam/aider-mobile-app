@@ -67,49 +67,15 @@ class PaymentService {
 
   Future<void> openPayStackForm(
     BuildContext context, {
-    required String customerEmail,
-    required double amount,
-    required String reference,
+    required String paymentUrl,
   }) async {
-    final request = PaystackTransactionRequest(
-      reference: reference,
-      secretKey: RemoteConfigService.getRemoteData.payStackSecretKey,
-      email: customerEmail,
-      amount: amount * 100,
-      currency: PaystackCurrency.ngn,
-      channel: [
-        PaystackPaymentChannel.mobileMoney,
-        PaystackPaymentChannel.card,
-        PaystackPaymentChannel.ussd,
-        PaystackPaymentChannel.bankTransfer,
-        PaystackPaymentChannel.bank,
-        PaystackPaymentChannel.qr,
-        PaystackPaymentChannel.eft,
-      ],
-    );
-
-    final initializedTransaction = await initializeTransaction(request);
-
-    if (!context.mounted) return;
-    if (!initializedTransaction.status) {
-      AppDialogUtil.showWarningAlert(context, initializedTransaction.message);
-      return;
-    }
-
     final result = await AppDialogUtil.showScrollableBottomSheet(
       context: context,
       isDismissible: false,
       builder: (context) => PayStackModalContent(
-        transaction: initializedTransaction,
+        paymentUrl: paymentUrl,
       ),
     );
-
-    if (result != null) {
-      if (!context.mounted) return;
-      context
-          .read<TransactionProvider>()
-          .collectionCallback(context, stan: reference);
-    }
   }
 
   static Future<Either<Failure, PaystackAccountVerificationResponse>>

@@ -1,14 +1,14 @@
 import 'dart:collection';
-import 'dart:convert';
 
 import 'package:aider_mobile_app/core/domain/models/address/address_model.dart';
+import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
 import 'package:aider_mobile_app/core/services/cloudinary_service.dart';
-import 'package:aider_mobile_app/core/services/socket_service.dart';
 import 'package:aider_mobile_app/core/providers/base_provider.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/category/category_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/category/sub_category_item_model.dart';
+import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/exchange_schedule_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +23,7 @@ import '../../../../../core/utils/media_file_util.dart';
 import '../../../../../core/providers/location_provider.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../../../shared_widgets/modals/success_modal_content.dart';
+import '../../../rentals/domain/models/booking/booking_model.dart';
 import '../../data/repositories/product_repository.dart';
 import '../../domain/models/history/product_history_model.dart';
 import '../../domain/models/product_photo/product_photo_model.dart';
@@ -131,6 +132,12 @@ class ProductProvider extends BaseProvider with CanRent {
         'Item listed',
         alignment: Alignment(0.0, HelperUtil.isIOS ? -0.88 : -0.90),
       );
+
+      // increment items listed
+      final user = context.read<UserProvider>().getUser;
+      context.read<UserProvider>().setUser =
+          user.copyWith(itemsListed: (user.itemsListed ?? 0) + 1);
+
       AppNavigator.pushNamed(context, AppRoute.listedProductsScreen,
           arguments: true);
       clearProductDescription();
@@ -162,7 +169,9 @@ class ProductProvider extends BaseProvider with CanRent {
     setLoading(true, component: loadingComponent);
 
     final result = await _productRepository.fetchUserProducts(
-        nextPage: nextPage, pageSize: pageSize);
+        user: context.read<UserProvider>().getUser,
+        nextPage: nextPage,
+        pageSize: pageSize);
 
     result.fold((left) {
       setComponentErrorType = {
@@ -181,8 +190,8 @@ class ProductProvider extends BaseProvider with CanRent {
   }
 
   /// RENTING
-  Future<void> requestForItem(BuildContext context, String productExternalId,
-      {required Map<String, dynamic> requestBody}) async {
+  Future<void> requestForItem(BuildContext context, ProductModel product,
+      {required BookingModel booking}) async {
     AppDialogUtil.loadingDialog(context);
     if (context.mounted &&
         (context.read<ProductProvider>().getPlaceId.isNotEmpty &&
@@ -196,14 +205,23 @@ class ProductProvider extends BaseProvider with CanRent {
         "longitude": locationDetails?.geometry?['location']['lng'] ?? 0,
       };
 
-      requestBody["exchangeSchedule"] = {
-        ...context.read<ProductProvider>().getLocation,
-        ...longAndLat,
-        "timeOfExchange": context.read<ProductProvider>().getTimeOfExchange
-      };
+      booking = booking.copyWith(
+        bookedProduct: booking.bookedProduct?.copyWith(
+          exchangeSchedule: ExchangeScheduleModel(
+            city: context.read<ProductProvider>().getLocation['city'],
+            country: context.read<ProductProvider>().getLocation['country'],
+            countryCode:
+                context.read<ProductProvider>().getLocation['countryCode'],
+            originName:
+                context.read<ProductProvider>().getLocation['originName'],
+            timeOfExchange: context.read<ProductProvider>().getTimeOfExchange,
+          ),
+        ),
+      );
     }
-    final result = await _productRepository.requestForItem(productExternalId,
-        requestBody: requestBody);
+
+    final result =
+        await _productRepository.requestForItem(product, booking: booking);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -236,11 +254,11 @@ class ProductProvider extends BaseProvider with CanRent {
 
   /// PRODUCT PHOTOS
   Future<bool> deleteProductPhoto(BuildContext context,
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
     final result = await _productRepository.deleteProductPhoto(
-        productExternalId: productExternalId, requestBody: requestBody);
+        productUid: productUid, requestBody: requestBody);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -258,8 +276,8 @@ class ProductProvider extends BaseProvider with CanRent {
       });
       response = false;
     }, (right) {
-      final index = _userProductHistory.data
-          .indexWhere((obj) => obj.externalId == productExternalId);
+      final index =
+          _userProductHistory.data.indexWhere((obj) => obj.uid == productUid);
       if (index >= 0) {
         final userProduct = _userProductHistory.data[index].copyWith(
             photos: List.from(_userProductHistory.data[index].photos ?? [])
@@ -286,7 +304,7 @@ class ProductProvider extends BaseProvider with CanRent {
   }
 
   Future<void> addProductPhoto(BuildContext context,
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
 
@@ -295,7 +313,7 @@ class ProductProvider extends BaseProvider with CanRent {
     requestBody['photos[]'] = [imagePath];
 
     final result = await _productRepository.addProductPhoto(
-        productExternalId: productExternalId, requestBody: requestBody);
+        productUid: productUid, requestBody: requestBody);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -320,11 +338,11 @@ class ProductProvider extends BaseProvider with CanRent {
 
   /// DELETE PRODUCT
   Future<void> deleteProduct(BuildContext context,
-      {bool fromCloset = false, String productExternalId = ''}) async {
+      {bool fromCloset = false, String productUid = ''}) async {
     AppDialogUtil.loadingDialog(context);
 
     final result = await _productRepository.deleteProduct(
-      productExternalId: productExternalId,
+      productUid: productUid,
     );
 
     if (context.mounted) {
@@ -344,7 +362,7 @@ class ProductProvider extends BaseProvider with CanRent {
       if (right) {
         final history = _userProductHistory.copyWith(
             data: List.from(_userProductHistory.data)
-              ..removeWhere((obj) => obj.externalId == productExternalId));
+              ..removeWhere((obj) => obj.uid == productUid));
         _userProductHistory = history;
         notifyListeners();
 
@@ -366,7 +384,7 @@ class ProductProvider extends BaseProvider with CanRent {
 
   /// PRODUCT UPDATE
   Future<void> updateProduct(BuildContext context,
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
 
@@ -394,7 +412,7 @@ class ProductProvider extends BaseProvider with CanRent {
     }
 
     final result = await _productRepository.updateProduct(
-        productExternalId: productExternalId, requestBody: requestBody);
+        productUid: productUid, requestBody: requestBody);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -409,8 +427,8 @@ class ProductProvider extends BaseProvider with CanRent {
         );
       });
     }, (product) {
-      final index = _userProductHistory.data
-          .indexWhere((obj) => obj.externalId == productExternalId);
+      final index =
+          _userProductHistory.data.indexWhere((obj) => obj.uid == productUid);
       if (index >= 0) {
         List<ProductModel> products = List.from(_userProductHistory.data);
         products[index] = product;
@@ -438,12 +456,12 @@ class ProductProvider extends BaseProvider with CanRent {
 
   /// DELETE PRODUCT PRICE
   Future<bool> deleteProductPrice(BuildContext context,
-      {required String productExternalId,
+      {required String productUid,
       required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
 
     final result = await _productRepository.deleteProductPrice(
-        productExternalId: productExternalId, requestBody: requestBody);
+        productUid: productUid, requestBody: requestBody);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -462,8 +480,8 @@ class ProductProvider extends BaseProvider with CanRent {
       response = false;
     }, (right) {
       response = true;
-      final index = _userProductHistory.data
-          .indexWhere((obj) => obj.externalId == productExternalId);
+      final index =
+          _userProductHistory.data.indexWhere((obj) => obj.uid == productUid);
       if (index >= 0) {
         final newProduct = _userProductHistory.data[index].copyWith(
           prices: List.from(_userProductHistory.data[index].prices ?? [])

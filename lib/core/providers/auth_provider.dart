@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
+import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/errors/failure.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
@@ -22,9 +23,16 @@ class AuthProvider extends BaseProvider {
 
   // Signup Request Body
   UserModel _signupRequestBody = const UserModel();
+  Map<String, dynamic> _signupRequestLocation = {};
 
   set setSignupRequestBody(UserModel data) {
     _signupRequestBody = data;
+    notifyListeners();
+  }
+
+  Map<String, dynamic> get getSignupRequestLocation => _signupRequestLocation;
+  set setSignupRequestLocation(Map<String, dynamic> data) {
+    _signupRequestLocation = data;
     notifyListeners();
   }
 
@@ -55,8 +63,8 @@ class AuthProvider extends BaseProvider {
         );
       });
     }, (right) {
-      // AppNavigator.pushNamed(context, AppRoute.otpVerificationScreen,
-      //     arguments: right);
+      AppNavigator.pushNamed(context, AppRoute.otpVerificationScreen,
+          arguments: false);
     });
   }
 
@@ -67,6 +75,34 @@ class AuthProvider extends BaseProvider {
   Future<bool> isLoggedIn() async {
     final result = await _authRepository.isLoggedIn();
     return result.fold((l) => false, (r) => r);
+  }
+
+  Future<void> verifyOTP(BuildContext context, String otp,
+      {bool isResetPassword = false}) async {
+    final result = await _authRepository.verifyOTP(
+      otp: otp,
+      email: _otpData['email'],
+      isResetPassword: isResetPassword,
+    );
+    result.fold((l) {
+      AppDialogUtil.popUpModal(
+        context,
+        modalContent: const ErrorModalContent(
+          errorMessage: 'Otp code is incorrect',
+        ),
+      );
+    }, (r) {
+      if (_otpData['action'] == kSignupAction) {
+        AppNavigator.pushReplacementNamed(
+            context, AppRoute.personalDetailScreen);
+        return;
+      }
+      if (_otpData['action'] == kResetPassAction) {
+        AppNavigator.pushReplacementNamed(
+            context, AppRoute.resetPasswordScreen);
+        return;
+      }
+    });
   }
 
   // Logout
@@ -103,14 +139,17 @@ class AuthProvider extends BaseProvider {
           ),
         );
       });
-    }, (loggedInResult) {
+    }, (loggedInResult) async {
+      await context.read<UserProvider>().retrieveUser();
+
       context.read<BottomNavViewModel>().selectNavTab = 0;
       AppNavigator.pushNamedAndRemoveUntil(
           context, AppRoute.homeScreen, (p0) => false);
     });
   }
 
-  Future<void> signup(BuildContext context, {required UserModel user}) async {
+  Future<void> signup(BuildContext context,
+      {required UserModel user, required Map<String, dynamic> location}) async {
     AppDialogUtil.loadingDialog(context);
 
     final authUser = await _authRepository.signup(
@@ -119,6 +158,8 @@ class AuthProvider extends BaseProvider {
     );
 
     authUser.fold((failure) {
+      print(
+          'failure: email : ${user.email} password : ${user.password} ${FailureToMessage.mapFailureToMessage(failure)}');
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         AppDialogUtil.popUpModal(
           context,
@@ -130,7 +171,9 @@ class AuthProvider extends BaseProvider {
       return;
     }, (authUser) async {
       user = user.copyWith(uid: authUser.uid);
-      context.read<UserProvider>().setUser = user;
+      await context
+          .read<UserProvider>()
+          .createUser(context, user: user, location: getSignupRequestLocation);
     });
   }
 
@@ -156,18 +199,22 @@ class AuthProvider extends BaseProvider {
     }, (right) {
       if (isResend) return;
       AppNavigator.pushNamed(context, AppRoute.otpVerificationScreen,
-          arguments: '0000');
+          arguments: true);
     });
   }
 
   Future<void> resetPassword(BuildContext context,
       {bool inApp = false,
       required String email,
-      required String password}) async {
+      required String password,
+      required String otp}) async {
     AppDialogUtil.loadingDialog(context);
 
-    final result =
-        await _authRepository.resetPassword(password: password, email: email);
+    final result = await _authRepository.resetPassword(
+      password: password,
+      email: email,
+      otp: otp,
+    );
 
     if (context.mounted) {
       AppNavigator.pop(context);

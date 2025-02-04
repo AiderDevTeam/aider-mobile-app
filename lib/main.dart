@@ -5,9 +5,9 @@ import 'package:aider_mobile_app/core/services/git_it_service_locator.dart';
 import 'package:aider_mobile_app/core/providers/location_provider.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
 import 'package:aider_mobile_app/src/features/kyc/presentation/view_model/kyc_view_model.dart';
-import 'package:aider_mobile_app/src/features/rentals/presentation/view_model/rental_view_model.dart';
+import 'package:aider_mobile_app/src/features/rentals/presentation/providers/rental_provider.dart';
 import 'package:aider_mobile_app/src/features/review/presentation/view_models/review_view_model.dart';
-import 'package:aider_mobile_app/src/features/search/presentation/view_model/search_view_model.dart';
+import 'package:aider_mobile_app/src/features/search/presentation/providers/search_provider.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -61,12 +61,12 @@ Future<void> main() async {
                 create: (context) => BottomNavViewModel()),
             ChangeNotifierProvider<InboxViewModel>(
                 create: (context) => InboxViewModel()),
-            ChangeNotifierProvider<RentalViewModel>(
-                create: (context) => RentalViewModel()),
+            ChangeNotifierProvider<RentalProvider>(
+                create: (context) => RentalProvider()),
             ChangeNotifierProvider<TransactionProvider>(
                 create: (context) => TransactionProvider()),
-            ChangeNotifierProvider<SearchViewModel>(
-                create: (context) => SearchViewModel()),
+            ChangeNotifierProvider<SearchProvider>(
+                create: (context) => SearchProvider()),
             ChangeNotifierProvider<KycViewModel>(
                 create: (context) => KycViewModel()),
             ChangeNotifierProvider<ReviewViewModel>(

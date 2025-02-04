@@ -91,7 +91,7 @@ dependencies:
   toggle_switch: ^2.3.0
 
   flutter_native_splash: ^2.3.9
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
   freezed_annotation: ^2.4.1
   cloud_firestore: ^5.6.2
   firebase_auth: ^5.4.1
@@ -106,8 +106,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   envied_generator: ^0.5.3
   freezed: ^2.4.6
-  json_serializable: ^6.7.1
-  build_runner: ^2.4.7
+  json_serializable: ^6.8.0
+  build_runner: ^2.1.4
   mockito: ^5.4.4
 
 flutter_icons:

@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-
 part 'exchange_schedule_model.freezed.dart';
 part 'exchange_schedule_model.g.dart';
 
@@ -17,9 +16,6 @@ class ExchangeScheduleModel with _$ExchangeScheduleModel {
     final String? timeOfExchange,
   }) = _ExchangeScheduleModel;
 
-
   factory ExchangeScheduleModel.fromJson(Map<String, dynamic> json) =>
       _$ExchangeScheduleModelFromJson(json);
-
 }
-

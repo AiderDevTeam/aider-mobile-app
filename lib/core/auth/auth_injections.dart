@@ -13,8 +13,8 @@ void initAuth() {
 
   sl.registerLazySingleton<UserLocalDatasource>(
       () => UserLocalDatasourceImpl(localStorageService: sl()));
-  sl.registerLazySingleton<AuthRemoteDatasource>(
-      () => AuthRemoteDatasourceImpl(firebaseAuth: sl()));
+  sl.registerLazySingleton<AuthRemoteDatasource>(() =>
+      AuthRemoteDatasourceImpl(firebaseAuth: sl(), httpServiceRequester: sl()));
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(authRemoteDatasource: sl()));
   sl.registerLazySingleton<UserRemoteDatasourceV2>(() =>

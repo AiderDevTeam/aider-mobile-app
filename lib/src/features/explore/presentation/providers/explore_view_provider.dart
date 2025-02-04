@@ -1,8 +1,11 @@
 import 'dart:collection';
 
+import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
 import 'package:aider_mobile_app/core/providers/base_provider.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../core/auth/data/repositories/user_repository_v2.dart';
 import '../../../../../core/constants/common.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/routing/app_navigator.dart';
@@ -15,6 +18,7 @@ import '../../data/repositories/explore_repository.dart';
 
 class ExploreViewProvider extends BaseProvider {
   final _exploreRepository = sl.get<ExploreRepository>();
+  final _userRepository = sl.get<UserRepositoryV2>();
 
   List _sections = [];
   int _sectionCurrentPageNumber = 1;
@@ -34,6 +38,94 @@ class ExploreViewProvider extends BaseProvider {
     } else {
       _sections = data;
     }
+    setSectionUserIdMap();
+  }
+
+  /// Note: in order to reduce number of database queries
+  /// we are storing the product data in a map
+  /// where the key is the user id and the value is the list of products reference in the section with same userId
+  ///
+  /// We can then set the user detail in the for products with the same userId by fetching the user detail from the database once and updating all products user
+  ///
+  /// so intead of fetching user detail for each product we fetch it once and update all products user where the userId is the same by using the reference
+  final Map<String, List<dynamic>> _userIdToSectionProductMap = {};
+  void setSectionUserIdMap() {
+    for (var i = 0; i < _sections.length; i++) {
+      var section = _sections[i];
+      if (section['type'] == 'product') {
+        for (var j = 0; j < section['data'].length; j++) {
+          var product = section['data'][j];
+          if (_userIdToSectionProductMap[product['userId']] == null) {
+            _userIdToSectionProductMap[product['userId']] = [];
+          }
+          _userIdToSectionProductMap[product['userId']]!
+              .add(_sections[i]['data'][j]);
+        }
+      }
+    }
+
+    ZLoggerService.logOnInfo(
+        'userIdToSectionProductMap: $_userIdToSectionProductMap');
+  }
+
+  Future<bool> fetchProductUserDetail(BuildContext context,
+      {required String uid, required String productUid}) async {
+    AppDialogUtil.loadingDialog(context);
+    ZLoggerService.logOnInfo('fetchProductUserDetail: $uid, $productUid');
+    final result = await _userRepository.fetchUserDetailByUID(uid: uid);
+    if (context.mounted) {
+      AppNavigator.pop(context);
+    }
+
+    bool hasUserDetails = false;
+    result.fold((failure) {
+      AppDialogUtil.popUpModal(context,
+          modalContent: const ErrorModalContent(
+            errorMessage: "an error occurred while fetching product details",
+          ));
+      hasUserDetails = false;
+    }, (right) {
+      setProductUserDetail(right);
+      hasUserDetails = true;
+    });
+    return hasUserDetails;
+  }
+
+  /// Note: this function is called when the user detail is fetched from the database
+  /// it updates the product user detail in the map of all products with same userId by using the reference
+  void setProductUserDetail(UserModel user) {
+    ZLoggerService.logOnInfo('setProductUserDetail: $user');
+    final productsWithUser = _userIdToSectionProductMap[user.uid];
+    print('productsWithUser before setting: $productsWithUser');
+    if (productsWithUser != null) {
+      for (var product in productsWithUser) {
+        user = user.copyWith(addresses: null);
+        product['user'] = user.toJson();
+      }
+    }
+    print('productsWithUser after setting: $_userIdToSectionProductMap');
+    notifyListeners();
+  }
+
+  Future<ProductModel?> getProductByUserIdAndProductUid(
+      BuildContext context, String userId, String productUid) async {
+    final productsWithUser = _userIdToSectionProductMap[userId];
+    if (productsWithUser != null) {
+      for (var i = 0; i < productsWithUser.length; i++) {
+        var product = productsWithUser[i];
+        if (product['uid'] == productUid) {
+          if (product['user'] == null) {
+            final hasUserDetails = await fetchProductUserDetail(context,
+                uid: userId, productUid: productUid);
+            if (!hasUserDetails) {
+              return null;
+            }
+          }
+          return ProductModel.fromJson(_userIdToSectionProductMap[userId]![i]);
+        }
+      }
+    }
+    return null;
   }
 
   Future<void> fetchSections(BuildContext context, {required int page}) async {

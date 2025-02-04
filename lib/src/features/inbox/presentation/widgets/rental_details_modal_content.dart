@@ -8,7 +8,6 @@ import '../../../rentals/domain/models/booking/booking_model.dart';
 import '../../../rentals/presentation/widgets/my_items_card.dart';
 import '../../../rentals/presentation/widgets/rented_item_card.dart';
 
-
 class RentalDetailModalContent extends StatelessWidget {
   const RentalDetailModalContent({
     super.key,
@@ -23,7 +22,6 @@ class RentalDetailModalContent extends StatelessWidget {
   final bool isBookingPaid;
   final String? messageExternalId;
 
-
   @override
   Widget build(BuildContext context) {
     return DraggableBottomSheet(
@@ -37,18 +35,17 @@ class RentalDetailModalContent extends StatelessWidget {
           title: 'Rental Details',
           content: SingleChildScrollView(
             controller: scrollController,
-            child: isSender?
-            RentedItemCard(
-              rentalProduct: booking,
-              messageExternalId: messageExternalId,
-              isVendor: false,
-            )
-                :
-            MyItemCard(
-              rentalProduct: booking,
-              messageExternalId: messageExternalId,
-              isVendor: true,
-            ),
+            child: isSender
+                ? RentedItemCard(
+                    booking: booking,
+                    messageExternalId: messageExternalId,
+                    isVendor: false,
+                  )
+                : MyItemCard(
+                    booking: booking,
+                    messageExternalId: messageExternalId,
+                    isVendor: true,
+                  ),
           ).paddingSymmetric(horizontal: kWidthPadding, vertical: 20),
         );
       },

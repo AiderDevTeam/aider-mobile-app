@@ -17,7 +17,7 @@ import '../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../shared_widgets/common/row_text.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
-import '../view_model/rental_view_model.dart';
+import '../providers/rental_provider.dart';
 
 class RateAndReviewModal extends StatefulWidget {
   const RateAndReviewModal({
@@ -41,6 +41,7 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
     productReviewController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return DraggableBottomSheet(
@@ -53,13 +54,13 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
           scrollController: scrollController,
           bottomNavigationBar: AppBottomNavWrapper(
             child: AppPrimaryButton(
-              onPressed: () async{
-                if(rating == 0){
+              onPressed: () async {
+                if (rating == 0) {
                   AppDialogUtil.showWarningAlert(context, 'Rate this product');
                   return;
                 }
 
-                await context.read<RentalViewModel>().createProductReviews(
+                await context.read<RentalProvider>().createProductReviews(
                   context,
                   type: widget.type,
                   bookingProductExternalId: widget.bookingProductExternalId,
@@ -69,7 +70,6 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
                     "comment": productReviewController.text,
                   },
                 );
-
               },
               text: 'Submit',
               height: 56,
@@ -82,11 +82,11 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
                 .color(kPrimaryBlack)
                 .height(24, 20),
             rightWidget: IconButton(
-              onPressed: (){
+              onPressed: () {
                 AppNavigator.pop(context);
               },
               icon: Icon(
-                  Icons.close,
+                Icons.close,
                 size: AppThemeUtil.radius(24),
               ),
             ),
@@ -98,7 +98,12 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
                 RowText(
                   leftWidget: const Text(
                     'Rate',
-                  ).bold().fontSize(14).color(kPrimaryBlack).letterSpacing(-0.15).height(0.11, 14),
+                  )
+                      .bold()
+                      .fontSize(14)
+                      .color(kPrimaryBlack)
+                      .letterSpacing(-0.15)
+                      .height(0.11, 14),
                 ),
                 const VSpace(height: 8),
                 RatingStarsWidget(
@@ -110,7 +115,12 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
                 RowText(
                   leftWidget: const Text(
                     'Review',
-                  ).bold().fontSize(14).color(kPrimaryBlack).letterSpacing(-0.15).height(0.11, 14),
+                  )
+                      .bold()
+                      .fontSize(14)
+                      .color(kPrimaryBlack)
+                      .letterSpacing(-0.15)
+                      .height(0.11, 14),
                 ),
                 const VSpace(height: 8),
                 AppInputField(

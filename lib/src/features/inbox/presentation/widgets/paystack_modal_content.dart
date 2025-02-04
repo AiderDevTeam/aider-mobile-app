@@ -8,17 +8,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
-import '../../../transaction/domain/models/paystack/paystack_initialized_transaction.dart';
 
 class PayStackModalContent extends StatefulWidget {
   const PayStackModalContent({
     super.key,
-    required this.transaction,
+    required this.paymentUrl,
     this.onWebResourceError,
     this.confirmationButton,
   });
 
-  final PaystackInitializedTraction transaction;
+  final String paymentUrl;
   final ValueSetter<WebResourceError>? onWebResourceError;
   final Widget? confirmationButton;
 
@@ -42,15 +41,22 @@ class _PayStackModalContentState extends State<PayStackModalContent> {
           onProgress: (int progress) {
             loadingProgress.value = progress / 100;
           },
-          onWebResourceError: (WebResourceError error) {},
+          onWebResourceError: (WebResourceError error) {
+            if (widget.onWebResourceError != null) {
+              widget.onWebResourceError!(error);
+            }
+          },
           onNavigationRequest: (NavigationRequest request) {
+            final uri = Uri.parse(request.url);
+            if (uri.hasQuery && uri.queryParameters.containsKey('reference')) {
+              AppNavigator.pop(context, uri.queryParameters['reference']);
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
         ),
       )
-      ..loadRequest(Uri.parse(
-        widget.transaction.data!.authorizationUrl,
-      ));
+      ..loadRequest(Uri.parse(widget.paymentUrl));
   }
 
   @override

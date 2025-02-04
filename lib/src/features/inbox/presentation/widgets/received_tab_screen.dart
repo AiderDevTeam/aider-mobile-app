@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/routing/app_route.dart';
 import '../../../../../core/providers/base_view.dart';
-import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/aider_empty_state.dart';
 import '../view_models/inbox_view_model.dart';
 import 'inbox_item.dart';
@@ -26,12 +25,7 @@ class _ReceivedTabScreenState extends State<ReceivedTabScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      context.read<InboxViewModel>().emitVendorConversations(
-            context.read<UserProvider>().getUser.externalId ?? "",
-          );
-
-      if (!mounted) return;
-      context.read<InboxViewModel>().fetchVendorConversations();
+      context.read<InboxViewModel>().fetchVendorBookingRequests();
     });
     super.initState();
   }
@@ -40,11 +34,11 @@ class _ReceivedTabScreenState extends State<ReceivedTabScreen> {
   Widget build(BuildContext context) {
     return BaseView<InboxViewModel>(builder: (context, inboxConsumer, child) {
       if (inboxConsumer.isComponentLoading('receivedInbox') &&
-          inboxConsumer.getReceivedChats.isEmpty) {
+          inboxConsumer.getReceivedBookings.isEmpty) {
         return const InboxLoadingEffect();
       }
 
-      if (inboxConsumer.getReceivedChats.isEmpty) {
+      if (inboxConsumer.getReceivedBookings.isEmpty) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -61,16 +55,16 @@ class _ReceivedTabScreenState extends State<ReceivedTabScreen> {
       }
 
       return ListView.builder(
-        itemCount: inboxConsumer.getReceivedChats.length,
+        itemCount: inboxConsumer.getReceivedBookings.length,
         itemBuilder: (context, index) {
-          final chat = inboxConsumer.getReceivedChats[index];
+          final booking = inboxConsumer.getReceivedBookings[index];
           return InboxItem(
-            chat: chat,
-            sent: true,
+            booking: booking,
+            sent: false,
           ).onPressed(() {
             AppNavigator.pushNamed(context, AppRoute.chatScreen, arguments: {
               'sent': false,
-              'chat': chat,
+              'booking': booking,
             });
           }).paddingOnly(bottom: 16.0);
         },

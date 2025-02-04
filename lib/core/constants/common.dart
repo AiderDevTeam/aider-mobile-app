@@ -1,4 +1,3 @@
-
 const kWidthPadding = 20.0;
 const kCurrency = '₦';
 

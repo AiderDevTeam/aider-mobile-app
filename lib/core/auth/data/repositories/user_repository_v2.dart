@@ -1,6 +1,7 @@
 import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
 import 'package:aider_mobile_app/core/auth/domain/models/user_types/user_type_model.dart';
 import 'package:aider_mobile_app/core/errors/failure.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../services/crash_service.dart';
@@ -13,8 +14,10 @@ abstract class UserRepositoryV2 {
   Future<Either<Failure, bool>> verifyDisplayName(
       {required String displayName});
   Future<Either<Failure, bool>> verifyEmail({required String email});
-  Future<Either<Failure, void>> addProfileImage({required String imageUrl});
+  Future<Either<Failure, String>> addProfileImage({required String imageUrl});
   Future<Either<Failure, List<UserTypeModel>>> fetchUserType();
+  Future<Either<Failure, UserModel>> fetchUserDetailByUID(
+      {required String uid});
 }
 
 class UserRepositoryV2Impl implements UserRepositoryV2 {
@@ -23,7 +26,7 @@ class UserRepositoryV2Impl implements UserRepositoryV2 {
   UserRepositoryV2Impl({required this.userRemoteDatasourceV2});
 
   @override
-  Future<Either<Failure, void>> addProfileImage(
+  Future<Either<Failure, String>> addProfileImage(
       {required String imageUrl}) async {
     try {
       final result =
@@ -42,6 +45,7 @@ class UserRepositoryV2Impl implements UserRepositoryV2 {
       final result = await userRemoteDatasourceV2.fetchUserDetail();
       return Right(result);
     } catch (e, s) {
+      ZLoggerService.logOnError('Failed to fetch user detail: $e');
       CrashService.setCrashKey('fetchUserDetail', 'Fetching user detail');
       return Left(FailureToMessage.returnLeftError(e, s));
     }
@@ -104,6 +108,20 @@ class UserRepositoryV2Impl implements UserRepositoryV2 {
       return Right(result);
     } catch (e, s) {
       CrashService.setCrashKey('verifyEmail', 'Verifying email');
+      return Left(FailureToMessage.returnLeftError(e, s));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserModel>> fetchUserDetailByUID(
+      {required String uid}) async {
+    try {
+      final result =
+          await userRemoteDatasourceV2.fetchUserDetailByUID(uid: uid);
+      return Right(result);
+    } catch (e, s) {
+      CrashService.setCrashKey(
+          'fetchUserDetailByUID', 'Fetching user detail by UID');
       return Left(FailureToMessage.returnLeftError(e, s));
     }
   }

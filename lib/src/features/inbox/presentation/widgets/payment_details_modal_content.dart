@@ -8,7 +8,6 @@ import '../../../rentals/domain/models/booking/booking_model.dart';
 import '../../../rentals/presentation/widgets/my_items_card.dart';
 import '../../../rentals/presentation/widgets/rented_item_card.dart';
 
-
 class PaymentDetailModalContent extends StatelessWidget {
   const PaymentDetailModalContent({
     super.key,
@@ -32,17 +31,16 @@ class PaymentDetailModalContent extends StatelessWidget {
           title: 'Rental details',
           content: SingleChildScrollView(
             controller: scrollController,
-            child: isSender?
-            RentedItemCard(
-              rentalProduct: booking,
-              isVendor: false,
-              isBookingPaid: true,
-            )
-                :
-            MyItemCard(
-              rentalProduct: booking,
-              isVendor: true,
-            ),
+            child: isSender
+                ? RentedItemCard(
+                    booking: booking,
+                    isVendor: false,
+                    isBookingPaid: true,
+                  )
+                : MyItemCard(
+                    booking: booking,
+                    isVendor: true,
+                  ),
           ).paddingSymmetric(horizontal: kWidthPadding, vertical: 20),
         );
       },

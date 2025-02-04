@@ -6,7 +6,6 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:aider_mobile_app/core/providers/base_view.dart';
-import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_icon_text_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/cards/app_card.dart';
@@ -18,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/auth/domain/models/wallet/wallet_model.dart';
 import '../../../../../core/providers/wallet_provider.dart';
-import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../widgets/bank_account_modal.dart';
 

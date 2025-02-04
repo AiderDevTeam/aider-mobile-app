@@ -1,5 +1,6 @@
 import 'package:aider_mobile_app/core/errors/errors.dart';
 import 'package:aider_mobile_app/core/auth/domain/models/login/login_model.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../services/crash_service.dart';
@@ -22,6 +23,7 @@ abstract class AuthRepository {
   Future<Either<Failure, void>> verifyOTP({
     required String email,
     required String otp,
+    bool isResetPassword = false,
   });
 
   Future<Either<Failure, void>> sendOTP({
@@ -32,6 +34,7 @@ abstract class AuthRepository {
 
   Future<Either<Failure, void>> resetPassword({
     required String email,
+    required String otp,
     required String password,
   });
 
@@ -62,7 +65,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, void>> forgotPassword({required String email}) async {
     try {
-      final result = await authRemoteDatasource.forgotPassword(email: email);
+      final result = await authRemoteDatasource.sendOTP(email: email);
       return Right(result);
     } catch (e, s) {
       CrashService.setCrashKey('forgotPassword', 'Forgot password');
@@ -100,10 +103,11 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> resetPassword({
     required String email,
     required String password,
+    required String otp,
   }) async {
     try {
       final result = await authRemoteDatasource.resetPassword(
-          email: email, password: password);
+          email: email, otp: otp, password: password);
       return Right(result);
     } catch (e, s) {
       CrashService.setCrashKey('resetPassword', 'Resetting password');
@@ -130,10 +134,11 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> verifyOTP({
     required String email,
     required String otp,
+    bool isResetPassword = false,
   }) async {
     try {
-      final result =
-          await authRemoteDatasource.verifyOTP(email: email, otp: otp);
+      final result = await authRemoteDatasource.verifyOTP(
+          email: email, otp: otp, isResetPassword: isResetPassword);
       return Right(result);
     } catch (e, s) {
       CrashService.setCrashKey('verifyOTP', 'Verifying OTP');
@@ -158,6 +163,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final result = await authRemoteDatasource.sendOTP(email: email);
       return Right(result);
     } catch (e, s) {
+      ZLoggerService.logOnError('sendOTP Sending OTP $e');
       CrashService.setCrashKey('sendOTP', 'Sending OTP');
       return Left(FailureToMessage.returnLeftError(e, s));
     }

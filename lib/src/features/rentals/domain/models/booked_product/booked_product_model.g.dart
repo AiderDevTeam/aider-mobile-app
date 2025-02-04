@@ -17,8 +17,6 @@ _$BookedProductModelImpl _$$BookedProductModelImplFromJson(
       startDate: json['startDate'] as String?,
       endDate: json['endDate'] as String?,
       duration: (json['duration'] as num?)?.toInt(),
-      daysSpan: (json['daysSpan'] as num?)?.toInt(),
-      isOverdue: json['isOverdue'] as bool?,
       returnedEarly: json['returnedEarly'] as bool?,
       product: json['product'] == null
           ? null
@@ -47,8 +45,6 @@ Map<String, dynamic> _$$BookedProductModelImplToJson(
       'startDate': instance.startDate,
       'endDate': instance.endDate,
       'duration': instance.duration,
-      'daysSpan': instance.daysSpan,
-      'isOverdue': instance.isOverdue,
       'returnedEarly': instance.returnedEarly,
       'product': instance.product,
       'isReviewed': instance.isReviewed,

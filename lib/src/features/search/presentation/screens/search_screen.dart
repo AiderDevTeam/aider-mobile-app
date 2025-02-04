@@ -21,7 +21,7 @@ import '../../../../shared_widgets/common/error_response_message.dart';
 import '../../../../shared_widgets/common/product_grid_view.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../explore/presentation/widgets/product_loading_effect.dart';
-import '../view_model/search_view_model.dart';
+import '../providers/search_provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -37,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> searchAllProducts([String? nextPage]) async {
     if (!mounted) return;
-    await context.read<SearchViewModel>().searchAllProducts(
+    await context.read<SearchProvider>().searchAllProducts(
           context,
           requestBody: {"searchInput": searchController.text},
           nextPage: nextPage,
@@ -50,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final searchProvider = context.read<SearchViewModel>();
+      final searchProvider = context.read<SearchProvider>();
       searchProvider.setSearchCallbackResponse(false, notify: true);
       searchController.text = searchProvider.getPreviousSearchText;
     });
@@ -96,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   AppNavigator.pop(context);
                 }),
                 const HSpace(width: 8),
-                BaseView<SearchViewModel>(
+                BaseView<SearchProvider>(
                   builder: (context, searchConsumer, child) => AppInputField(
                     hintText: "Find anything",
                     autocorrect: false,
@@ -129,7 +129,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     // }),
                     onFieldSubmitted: (String value) async {
                       if (value.isEmpty) return;
-                      await context.read<SearchViewModel>().searchAllProducts(
+                      await context.read<SearchProvider>().searchAllProducts(
                         context,
                         requestBody: {"searchInput": value},
                         queryParam: {'pageSize': kProductPerPage},
@@ -145,7 +145,7 @@ class _SearchScreenState extends State<SearchScreen> {
               color: kGrey100,
               height: 1,
             ),
-            BaseView<SearchViewModel>(
+            BaseView<SearchProvider>(
               builder: (context, searchConsumer, child) {
                 if (searchConsumer.isComponentLoading('searchAllProducts') &&
                     searchConsumer.getProducts.isEmpty) {
@@ -210,12 +210,12 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     if (query!.isEmpty) {
       context
-          .read<SearchViewModel>()
+          .read<SearchProvider>()
           .setSearchCallbackResponse(false, notify: true);
     }
     _debounce = Timer(const Duration(milliseconds: 500), () async {
       if (query.trim().isEmpty) return;
-      await context.read<SearchViewModel>().searchAllProducts(
+      await context.read<SearchProvider>().searchAllProducts(
         context,
         requestBody: {"searchInput": searchController.text},
         queryParam: {

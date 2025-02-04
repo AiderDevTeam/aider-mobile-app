@@ -1,3 +1,4 @@
+import 'package:aider_mobile_app/core/extensions/date_extension.dart';
 import 'package:aider_mobile_app/core/extensions/string_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
@@ -7,6 +8,7 @@ import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:aider_mobile_app/src/shared_widgets/forms/form_label.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/colors.dart';
@@ -56,7 +58,8 @@ class _EditUserProfileState extends State<EditUserProfile> {
       lastNameController.text = user.lastName ?? '';
       selectedItem.value = (user.gender ?? '').toString().capitalize();
       emailController.text = user.email ?? '';
-      dobController.text = user.birthday ?? '';
+      dobController.text =
+          DateFormat('dd/MM/yyyy').format(DateTime.parse(user.birthday ?? ''));
       locationController.text = user.address?.originName ?? '';
       displayNameController.text = user.displayName ?? '';
       setState(() {});
@@ -122,11 +125,9 @@ class _EditUserProfileState extends State<EditUserProfile> {
                   if (croppedFile != null) {
                     if (!mounted) return;
                     await context.read<UserProvider>().addProfilePhoto(
-                      context,
-                      requestBody: {
-                        "profilePhoto": croppedFile,
-                      },
-                    );
+                          context,
+                          imageUrl: croppedFile,
+                        );
                   }
                 }
               },
@@ -347,6 +348,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                   listItems: const ['Male', 'Female'],
                   onChanged: (value) {
                     selectedItem.value = value;
+                    setState(() {});
                   },
                   validator: (value) {
                     if (value.toString().isEmpty) return 'Please select gender';

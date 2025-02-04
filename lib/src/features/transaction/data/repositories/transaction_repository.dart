@@ -5,13 +5,12 @@ import '../../../../../core/services/crash_service.dart';
 import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/services/payment_service.dart';
 import '../../domain/models/bank/bank_model.dart';
-import '../../domain/models/transaction/transaction_model.dart';
 import '../datasources/transaction_local_datasource.dart';
 import '../datasources/transaction_remote_datasource.dart';
 
 abstract class TransactionRepository {
-  Future<Either<Failure, TransactionModel>> initiateTransaction(
-      {required Map<String, dynamic> requestBody});
+  Future<Either<Failure, String>> initiateTransaction(
+      {required String bookingUid});
   Future<Either<Failure, String>> enquireAccountName(
       {required Map<String, dynamic> queryParam});
   Future<Either<Failure, bool>> collectionCallback({required String stan});
@@ -31,13 +30,14 @@ class TransactionRepositoryImpl extends TransactionRepository {
   final TransactionLocalDatasource transactionLocalDatasource;
 
   @override
-  Future<Either<Failure, TransactionModel>> initiateTransaction(
-      {required Map<String, dynamic> requestBody}) async {
+  Future<Either<Failure, String>> initiateTransaction(
+      {required String bookingUid}) async {
     try {
       final response = await transactionRemoteDatasource.initiateTransaction(
-          requestBody: requestBody);
+          bookingUid: bookingUid);
       return Right(response);
     } catch (e, s) {
+      ZLoggerService.logOnError('Failed to initiate transaction: $e');
       CrashService.setCrashKey('transaction', 'initiate a transaction');
       return Left(FailureToMessage.returnLeftError(e, s));
     }

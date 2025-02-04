@@ -42,6 +42,17 @@ class ProductModel with _$ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
 
+  Map<String, dynamic> customToJson() {
+    final productJson = toJson();
+    productJson['prices'] = prices?.map((price) => price.toJson()).toList();
+    productJson['address'] = address?.toJson();
+    productJson['photos'] = photos?.map((photo) => photo.toJson()).toList();
+    productJson['reviews'] = reviews?.map((review) => review.toJson()).toList();
+    productJson['unavailableBookingDates'] =
+        unavailableBookingDates?.map((date) => date.toJson()).toList();
+    return productJson;
+  }
+
   bool get hasPhotos => (photos ?? []).isNotEmpty;
   String get firstPhoto => hasPhotos ? (photos?.first.photoUrl ?? '') : '';
 

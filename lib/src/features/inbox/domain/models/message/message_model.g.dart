@@ -8,26 +8,28 @@ part of 'message_model.dart';
 
 _$MessageModelImpl _$$MessageModelImplFromJson(Map<String, dynamic> json) =>
     _$MessageModelImpl(
+      uid: json['uid'] as String?,
       id: (json['id'] as num?)?.toInt(),
       externalId: json['externalId'] as String?,
-      conversationId: (json['conversationId'] as num?)?.toInt(),
-      senderExternalId: json['senderExternalId'] as String?,
+      senderUid: json['senderUid'] as String?,
+      receiverUid: json['receiverUid'] as String?,
       type: json['type'] as String?,
-      senderMessage: json['senderMessage'],
-      receiverMessage: json['receiverMessage'],
+      bookingUid: json['bookingUid'] as String?,
+      message: json['message'] as String?,
       sentAt: json['sentAt'] as String?,
       onGoing: json['onGoing'] as bool?,
     );
 
 Map<String, dynamic> _$$MessageModelImplToJson(_$MessageModelImpl instance) =>
     <String, dynamic>{
+      'uid': instance.uid,
       'id': instance.id,
       'externalId': instance.externalId,
-      'conversationId': instance.conversationId,
-      'senderExternalId': instance.senderExternalId,
+      'senderUid': instance.senderUid,
+      'receiverUid': instance.receiverUid,
       'type': instance.type,
-      'senderMessage': instance.senderMessage,
-      'receiverMessage': instance.receiverMessage,
+      'bookingUid': instance.bookingUid,
+      'message': instance.message,
       'sentAt': instance.sentAt,
       'onGoing': instance.onGoing,
     };

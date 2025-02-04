@@ -178,7 +178,8 @@ class _AdditionalDetailScreenState extends State<AdditionalDetailScreen> {
                       if (result != null) {
                         locationController.text = result['originName'] ?? '';
                         if (!context.mounted) return;
-                        context.read<AuthProvider>().setSignupRequestBody =
+
+                        context.read<AuthProvider>().setSignupRequestLocation =
                             result;
                       }
                     },

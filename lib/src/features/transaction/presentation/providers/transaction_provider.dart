@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/services/git_it_service_locator.dart';
 import '../../../../../core/services/logger_service.dart';
-import '../../../../../core/services/socket_service.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../data/repositories/transaction_repository.dart';
@@ -26,13 +25,13 @@ class TransactionProvider extends BaseProvider {
     notifyListeners();
   }
 
-  Future<TransactionModel?> initiateTransaction(BuildContext context,
-      {required Map<String, dynamic> requestBody}) async {
+  Future<String?> initiateTransaction(BuildContext context,
+      {required String bookingUid}) async {
     setPaymentLoading = true;
     final result = await _transactionRepository.initiateTransaction(
-        requestBody: requestBody);
+        bookingUid: bookingUid);
 
-    TransactionModel? transaction;
+    String? paymentUrl;
 
     result.fold((failure) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -43,11 +42,11 @@ class TransactionProvider extends BaseProvider {
           ),
         );
       });
-    }, (trans) {
-      transaction = trans;
+    }, (paymentUrlResponse) {
+      paymentUrl = paymentUrlResponse;
     });
 
-    return transaction;
+    return paymentUrl;
   }
 
   Future<void> collectionCallback(BuildContext context,

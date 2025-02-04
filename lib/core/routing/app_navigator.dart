@@ -55,66 +55,94 @@ class AppNavigator {
         return MaterialPageRoute(builder: (context) => const SplashScreen());
 
       case AppRoute.onboardingScreen:
-        return MaterialPageRoute(builder: (context) => const OnboardingScreen());
+        return MaterialPageRoute(
+            builder: (context) => const OnboardingScreen());
 
       case AppRoute.phoneNumberScreen:
-        return MaterialPageRoute(builder: (context) => const PhoneNumberScreen());
+        return MaterialPageRoute(
+            builder: (context) => const PhoneNumberScreen());
 
       case AppRoute.otpVerificationScreen:
-        return MaterialPageRoute(builder: (context) => OtpVerificationScreen(otpCode: args as String?,));
+        return MaterialPageRoute(
+            builder: (context) => OtpVerificationScreen(
+                  isResetPassword: args as bool? ?? false,
+                ));
 
       case AppRoute.personalDetailScreen:
-        return MaterialPageRoute(builder: (context) => const PersonalDetailScreen());
+        return MaterialPageRoute(
+            builder: (context) => const PersonalDetailScreen());
 
       case AppRoute.additionalDetailScreen:
-        return MaterialPageRoute(builder: (context) => const AdditionalDetailScreen());
+        return MaterialPageRoute(
+            builder: (context) => const AdditionalDetailScreen());
 
       case AppRoute.userTypeScreen:
         return MaterialPageRoute(builder: (context) => const UserTypeScreen());
 
       case AppRoute.forgotPasswordSuccessScreen:
-        return MaterialPageRoute(builder: (context) => const ForgotPasswordSuccessScreen());
+        return MaterialPageRoute(
+            builder: (context) => const ForgotPasswordSuccessScreen());
 
       case AppRoute.homeScreen:
         return MaterialPageRoute(builder: (context) => const HomeScreen());
       case AppRoute.seeAllCategoriesScreen:
-        return MaterialPageRoute(builder: (context) => SeeAllCategoriesScreen(param: args as Map<String, dynamic>));
+        return MaterialPageRoute(
+            builder: (context) =>
+                SeeAllCategoriesScreen(param: args as Map<String, dynamic>));
 
       case AppRoute.listProductScreen:
-        return MaterialPageRoute(builder: (context) => const ListProductScreen());
+        return MaterialPageRoute(
+            builder: (context) => const ListProductScreen());
 
       case AppRoute.accountSettingsScreen:
-        return MaterialPageRoute(builder: (context) => const AccountSettingsScreen());
+        return MaterialPageRoute(
+            builder: (context) => const AccountSettingsScreen());
 
       case AppRoute.seeAllRentalListeningScreen:
-        return MaterialPageRoute(builder: (context) => SeeAllRentalListeningScreen(param: args as Map<String, dynamic>));
+        return MaterialPageRoute(
+            builder: (context) => SeeAllRentalListeningScreen(
+                param: args as Map<String, dynamic>));
 
-        case AppRoute.productDescriptionScreen:
-        return MaterialPageRoute(builder: (context) => const ProductDescriptionScreen());
+      case AppRoute.productDescriptionScreen:
+        return MaterialPageRoute(
+            builder: (context) => const ProductDescriptionScreen());
 
       case AppRoute.listedProductsScreen:
-        return MaterialPageRoute(builder: (context) => ListedProductsScreen(navigateFromListing: args as bool,));
+        return MaterialPageRoute(
+            builder: (context) => ListedProductsScreen(
+                  navigateFromListing: args as bool,
+                ));
 
       case AppRoute.changePassword:
-        return MaterialPageRoute(builder: (context) => const ChangePasswordScreen());
+        return MaterialPageRoute(
+            builder: (context) => const ChangePasswordScreen());
 
       case AppRoute.editProfile:
         return MaterialPageRoute(builder: (context) => const EditUserProfile());
 
       case AppRoute.notificationScreen:
-        return MaterialPageRoute(builder: (context) => const NotificationScreen());
+        return MaterialPageRoute(
+            builder: (context) => const NotificationScreen());
 
       case AppRoute.supportScreen:
         return MaterialPageRoute(builder: (context) => const SupportScreen());
 
       case AppRoute.productDetailScreen:
-        return MaterialPageRoute(builder: (context) => ProductDetailScreen(product: args as ProductModel,));
+        return MaterialPageRoute(
+            builder: (context) => ProductDetailScreen(
+                  product: args as ProductModel,
+                ));
 
       case AppRoute.editListedProductScreen:
-        return MaterialPageRoute(builder: (context) => EditListedProductScreen(product: args as ProductModel,));
+        return MaterialPageRoute(
+            builder: (context) => EditListedProductScreen(
+                  product: args as ProductModel,
+                ));
 
       case AppRoute.chatScreen:
-        return MaterialPageRoute(builder: (context) => ChatScreen(param: args as Map<String, dynamic>));
+        return MaterialPageRoute(
+            builder: (context) =>
+                ChatScreen(param: args as Map<String, dynamic>));
 
       case AppRoute.search:
         return PageRouteBuilder(
@@ -122,11 +150,12 @@ class AppNavigator {
             transitionDuration: const Duration(milliseconds: 200),
             reverseTransitionDuration: const Duration(milliseconds: 200),
             pageBuilder: (_, __, ___) => const SearchScreen(),
-            transitionsBuilder: (_, animation, __, child) => FadeTransition(opacity: animation, child: child)
-        );
-        
+            transitionsBuilder: (_, animation, __, child) =>
+                FadeTransition(opacity: animation, child: child));
+
       case AppRoute.vendorProfileScreen:
-        return MaterialPageRoute(builder: (context) => VendorProfileScreen(user: args as UserModel));
+        return MaterialPageRoute(
+            builder: (context) => VendorProfileScreen(user: args as UserModel));
 
       case AppRoute.paymentScreen:
         return MaterialPageRoute(builder: (context) => const PaymentScreen());
@@ -138,40 +167,50 @@ class AppNavigator {
         return MaterialPageRoute(builder: (context) => const BvnSelfieScreen());
 
       case AppRoute.driversVerificationScreen:
-        return MaterialPageRoute(builder: (context) => const DriversLicenseVerificationScreen());
+        return MaterialPageRoute(
+            builder: (context) => const DriversLicenseVerificationScreen());
 
       case AppRoute.driversSelfieScreen:
-        return MaterialPageRoute(builder: (context) => const DriversSelfieScreen());
+        return MaterialPageRoute(
+            builder: (context) => const DriversSelfieScreen());
 
       case AppRoute.verifyIdentityScreen:
         return MaterialPageRoute(builder: (context) => const VerifyIdentity());
 
       case AppRoute.ninVerificationScreenOne:
-        return MaterialPageRoute(builder: (context) => const NiNDetailsScreenOne());
+        return MaterialPageRoute(
+            builder: (context) => const NiNDetailsScreenOne());
 
       case AppRoute.ninVerificationScreenTwo:
-        return MaterialPageRoute(builder: (context) => const NiNDetailsScreenTwo());
+        return MaterialPageRoute(
+            builder: (context) => const NiNDetailsScreenTwo());
 
       case AppRoute.userIdentityScreen:
-        return MaterialPageRoute(builder: (context) => const UserIdentificationScreen());
+        return MaterialPageRoute(
+            builder: (context) => const UserIdentificationScreen());
 
       case AppRoute.passportScreen:
-        return MaterialPageRoute(builder: (context) => const PassportScreenOne());
+        return MaterialPageRoute(
+            builder: (context) => const PassportScreenOne());
 
       case AppRoute.reviewScreen:
         return MaterialPageRoute(builder: (context) => const ReviewsScreen());
 
       case AppRoute.passportSelfie:
-        return MaterialPageRoute(builder: (context) => const PassportSelfieScreen());
+        return MaterialPageRoute(
+            builder: (context) => const PassportSelfieScreen());
 
       case AppRoute.ninSelfieScreen:
         return MaterialPageRoute(builder: (context) => const NinSelfieScreen());
 
       case AppRoute.afterVerificationScreen:
-        return MaterialPageRoute(builder: (context) => AfterVerification(param: args as Map<String, dynamic>));
+        return MaterialPageRoute(
+            builder: (context) =>
+                AfterVerification(param: args as Map<String, dynamic>));
 
       case AppRoute.resetPasswordScreen:
-        return MaterialPageRoute(builder: (context) => const ResetPasswordScreen());
+        return MaterialPageRoute(
+            builder: (context) => const ResetPasswordScreen());
 
       default:
         return _errorRoute();
@@ -215,7 +254,8 @@ class AppNavigator {
   static void pop(BuildContext context, [Object? result]) =>
       Navigator.pop(context, result);
 
-  static NavigatorState of(BuildContext context, {bool rootNavigator = false}) =>
+  static NavigatorState of(BuildContext context,
+          {bool rootNavigator = false}) =>
       Navigator.of(context, rootNavigator: rootNavigator);
 
   static Future<Object?> popAndPushNamed(

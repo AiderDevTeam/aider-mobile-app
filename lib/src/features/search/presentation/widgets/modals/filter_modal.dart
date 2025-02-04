@@ -31,7 +31,7 @@ import '../../../../explore/presentation/providers/explore_view_provider.dart';
 import '../../../../explore/presentation/widgets/suggestion_tag.dart';
 import '../../../../product/domain/models/category/sub_category_item_model.dart';
 import '../../../../product/presentation/providers/product_provider.dart';
-import '../../view_model/search_view_model.dart';
+import '../../providers/search_provider.dart';
 
 class FilterModal extends StatefulWidget {
   const FilterModal(
@@ -69,7 +69,7 @@ class _FilterModalState extends State<FilterModal> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProductProvider>().fetchPopularSubCategoryItems(context);
-      context.read<SearchViewModel>().fetchPopularLocations();
+      context.read<SearchProvider>().fetchPopularLocations();
     });
     super.initState();
   }
@@ -360,7 +360,7 @@ class _FilterModalState extends State<FilterModal> {
                   .color(kGrey700)
                   .paddingSymmetric(horizontal: kWidthPadding),
               const VSpace(height: 20),
-              BaseView<SearchViewModel>(
+              BaseView<SearchProvider>(
                   builder: (context, searchConsumer, child) {
                 if (searchConsumer.getAddress.isEmpty) {
                   return const ScreenEmptyState(

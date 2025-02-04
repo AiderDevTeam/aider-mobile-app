@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:aider_mobile_app/core/constants/common.dart';
@@ -9,15 +10,17 @@ import '../../../../../core/errors/failure.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/services/git_it_service_locator.dart';
 import '../../../../../core/services/logger_service.dart';
-import '../../../../../core/services/socket_service.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
+import '../../../rentals/data/repositories/rental_repository.dart';
+import '../../../rentals/domain/models/booking/booking_model.dart';
 import '../../data/repositories/inbox_repository.dart';
 import '../../domain/models/chat/chat_model.dart';
 import '../../domain/models/message/message_model.dart';
 
 class InboxViewModel extends BaseProvider {
   final _inboxRepository = sl.get<InboxRepository>();
+  final _rentalRepository = sl.get<RentalRepository>();
 
   List<ChatModel> _sentChats = [];
   List<ChatModel> _receivedChats = [];
@@ -41,22 +44,48 @@ class InboxViewModel extends BaseProvider {
   UnmodifiableListView<ChatModel> get getReceivedChats =>
       UnmodifiableListView(_receivedChats);
 
-  void fetchVendorConversations() {
+  List<BookingModel> _sentBookings = [];
+  List<BookingModel> _receivedBookings = [];
+
+  set setSentBookings(List<BookingModel> value) {
+    _sentBookings = value;
+    notifyListeners();
+  }
+
+  set setReceivedBookings(List<BookingModel> value) {
+    _receivedBookings = value;
+    notifyListeners();
+  }
+
+  UnmodifiableListView<BookingModel> get getSentBookings =>
+      UnmodifiableListView(_sentBookings);
+
+  UnmodifiableListView<BookingModel> get getReceivedBookings =>
+      UnmodifiableListView(_receivedBookings);
+
+  void fetchVendorBookingRequests() async {
     try {
       setLoading(true, component: 'receivedInbox');
-      // SocketService().once('fetchVendorConversation', (data) {
-      //   ZLoggerService.logOnInfo(
-      //       'FETCHING RECEIVED CONVERSATIONS \n ---- $data ---- \n${DateTime.now()}');
-      //   if (data != null) {
-      //   _receivedChats = ChatList.fromJson(data).list;
-      //   notifyListeners();
-      //   _persistReceivedChat();
-      // }
-      // });
-
-      // SocketService().off('fetchVendorConversations');
-    } catch (e) {
-      // SocketService().off('fetchVendorConversations');
+      final result = await _rentalRepository.fetchMyItems(
+        queryParam: {
+          'pageSize': kProductPerPage,
+          'type': 'rented',
+        },
+      );
+      result.fold((left) {
+        setComponentErrorType = {
+          'error': FailureToMessage.mapFailureToMessage(left),
+          'component': 'receivedInbox'
+        };
+      }, (history) {
+        setReceivedBookings = history.data;
+      });
+    } catch (e, s) {
+      ZLoggerService.logOnError('error fetching rented items: $e');
+      setComponentErrorType = {
+        'error': FailureToMessage.returnLeftError(e, s),
+        'component': 'receivedInbox'
+      };
     } finally {
       setLoading(false, component: 'receivedInbox');
     }
@@ -65,78 +94,76 @@ class InboxViewModel extends BaseProvider {
   UnmodifiableListView<ChatModel> get getSentChats =>
       UnmodifiableListView(_sentChats);
 
-  void fetchRenterConversations() {
+  void fetchRenterBookingRequests() async {
     try {
       setLoading(true, component: 'sentInbox');
-      // SocketService().once('fetchRenterConversation', (data) {
-      //   ZLoggerService.logOnInfo(
-      //       'FETCHING SENT CONVERSATIONS \n ---- $data ---- \n${DateTime.now()}');
-      //   if (data != null) {
-      //     _sentChats = ChatList.fromJson(data).list;
-      //     notifyListeners();
-      //     _persistSentChat();
-      //   }
-      // });
-
-      // SocketService().off('fetchRenterConversations');
+      final result = await _rentalRepository.fetchRentedItems(
+        queryParam: {
+          'pageSize': kProductPerPage,
+          'type': 'rented',
+        },
+        isCompleted: false,
+      );
+      result.fold((left) {
+        setComponentErrorType = {
+          'error': FailureToMessage.mapFailureToMessage(left),
+          'component': 'sentInbox'
+        };
+      }, (history) {
+        setSentBookings = history.data;
+      });
     } catch (e) {
-      // SocketService().off('fetchRenterConversations');
+      setComponentErrorType = {'error': e.toString(), 'component': 'sentInbox'};
+      ZLoggerService.logOnError('error fetching rented items: $e');
     } finally {
       setLoading(false, component: 'sentInbox');
     }
   }
 
-  /// CHAT MESSAGES
-  void emitMessages(int conversationId) {
-    // SocketService().emit('sendMessages', {
-    //   "conversationId": conversationId,
-    // });
-    ZLoggerService.logOnInfo('EMITTING MESSAGES');
-  }
-
-  UnmodifiableListView<MessageModel> get getMessages =>
-      UnmodifiableListView(_messages);
+  List<MessageModel> get getMessages => (_messages);
   void clearMessages() {
     _messages.clear();
   }
 
-  void fetchMessages() {
+  void setMessages(List<MessageModel> messages) {
+    _messages = messages;
+    notifyListeners();
+  }
+
+  StreamSubscription<List<MessageModel>>? _messagesSubscription;
+
+  void listenToMessages(String bookingUid) {
     try {
-      setLoading(true, component: 'messages');
+      ZLoggerService.logOnInfo(
+          'listening to messages for booking: $bookingUid');
       clearMessages();
-      // SocketService().on('fetchMessages', (data) {
-      //   ZLoggerService.logOnInfo(
-      //       'FETCHING MESSAGES \n ---- $data ---- \n${DateTime.now()}');
 
-      //   if (data != null) {
-      //     if (data.runtimeType != List) {
-      //       final message = MessageModel.fromJson(data ?? {});
-      //       final index = _messages.indexWhere((obj) =>
-      //           obj.externalId == message.externalId &&
-      //           obj.conversationId == message.conversationId);
-      //     if (index >= 0) {
-      //       _messages[index] = message;
-      //     } else {
-      //       final newIndex = _messages.indexWhere(
-      //           (obj) => obj.conversationId == message.conversationId);
-
-      //         if (newIndex >= 0) {
-      //           _messages.insert(0, message);
-      //         }
-      //     }
-      //     notifyListeners();
-      //     return;
-      //   }
-      //   _messages = MessageList.fromJson(data).list;
-      //   notifyListeners();
-      // });
-    } finally {
-      setLoading(false, component: 'messages');
+      _messagesSubscription?.cancel();
+      _messagesSubscription =
+          _inboxRepository.fetchMessagesStream(bookingUid).listen(
+        (messages) {
+          setMessages(messages);
+        },
+        onError: (error) {
+          setComponentErrorType = {
+            'error': error.toString(),
+            'component': 'messages'
+          };
+        },
+      );
+    } catch (e) {
+      setComponentErrorType = {'error': e.toString(), 'component': 'messages'};
     }
   }
 
+  @override
+  void dispose() {
+    _messagesSubscription?.cancel();
+    super.dispose();
+  }
+
   void closeFetchMessage() {
-    // SocketService().off('fetchMessages');
+    _messagesSubscription?.cancel();
   }
 
   bool get canNudge =>
@@ -157,23 +184,28 @@ class InboxViewModel extends BaseProvider {
   /// BOOKING REQUEST ACCEPTANCE
   Future<void> approveBookingRequest(BuildContext context,
       {String? messageExternalId,
-      required String bookingExternalId,
-      required Map<String, dynamic> requestBody}) async {
-    if (requestBody['status'] == 'canceled')
+      required BookingModel booking,
+      required BookingProgressStatus status}) async {
+    if (status != BookingProgressStatus.accepted) {
       AppDialogUtil.loadingDialog(context);
-    if (requestBody['status'] == 'rejected')
-      AppDialogUtil.loadingDialog(context);
-
-    if (requestBody['status'] == 'accepted') setAcceptingRequestLoading = true;
-    final result = await _inboxRepository.approveBookingRequest(
-        bookingExternalId: bookingExternalId, requestBody: requestBody);
-    if (context.mounted) {
-      AppNavigator.pop(context);
     }
 
+    if (status == BookingProgressStatus.accepted) {
+      setAcceptingRequestLoading = true;
+    }
+
+    final result = await _inboxRepository.approveBookingRequest(
+        booking: booking, status: status);
+
+    // if (context.mounted) {
+    //   AppNavigator.pop(context);
+    // }
+
     result.fold((failure) {
-      if (requestBody['status'] == 'accepted')
+      if (status == BookingProgressStatus.accepted) {
         setAcceptingRequestLoading = false;
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         AppDialogUtil.popUpModal(
           context,
@@ -182,23 +214,16 @@ class InboxViewModel extends BaseProvider {
           ),
         );
       });
-    }, (booking) {
-      final index =
-          _messages.indexWhere((obj) => obj.externalId == messageExternalId);
-      if (index >= 0) {
-        _messages[index] = _messages[index].copyWith(
-          senderMessage: booking,
-        );
-
-        if (requestBody['status'] == 'accepted')
-          setAcceptingRequestLoading = false;
+    }, (_) {
+      if (status == BookingProgressStatus.accepted) {
+        setAcceptingRequestLoading = false;
       }
 
-      if (requestBody['status'] == 'canceled') {
+      if (status == BookingProgressStatus.cancelled) {
         Navigator.pop(context);
         return;
       }
-      if (requestBody['status'] == 'rejected') {
+      if (status == BookingProgressStatus.rejected) {
         Navigator.pop(context);
         return;
       }
@@ -208,14 +233,12 @@ class InboxViewModel extends BaseProvider {
 
   /// SEND NUDGE
   Future<void> sendNudge(BuildContext context,
-      {String? conversationId,
-      required Map<String, dynamic> requestBody}) async {
+      {required BookingModel booking}) async {
     AppDialogUtil.loadingDialog(context);
-    final result = await _inboxRepository.sendNudge(
-        conversationId: conversationId, requestBody: requestBody);
-    if (context.mounted) {
-      AppNavigator.pop(context);
-    }
+    final result = await _inboxRepository.sendNudge(booking: booking);
+    // if (context.mounted) {
+    //   AppNavigator.pop(context);
+    // }
 
     result.fold((failure) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {

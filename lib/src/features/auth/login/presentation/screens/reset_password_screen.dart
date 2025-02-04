@@ -31,6 +31,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {});
+    final authProvider = context.read<AuthProvider>();
+    emailController.text = authProvider.getOTPData['email'];
     super.initState();
   }
 
@@ -105,6 +107,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   context,
                   email: emailController.text,
                   password: newPasswordController.text,
+                  otp: context.read<AuthProvider>().getOTPData['otp'],
                 );
               } else {
                 setState(

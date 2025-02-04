@@ -166,7 +166,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                       AppNavigator.pop(context);
                       await context.read<ProductProvider>().deleteProduct(
                             context,
-                            productExternalId: product.externalId ?? '',
+                            productUid: product.uid ?? '',
                           );
                     },
                     reverseYesNo: true,
@@ -201,7 +201,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
 
                   await context.read<ProductProvider>().updateProduct(
                     context,
-                    productExternalId: product.externalId ?? '',
+                    productUid: product.uid ?? '',
                     requestBody: {
                       "subCategoryItemId": subCategoryItem?.id,
                       "name": itemNameController.text,
@@ -325,8 +325,8 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                                                     ProductProvider>()
                                                                 .addProductPhoto(
                                                               context,
-                                                              productExternalId:
-                                                                  product.externalId ??
+                                                              productUid:
+                                                                  product.uid ??
                                                                       '',
                                                               requestBody: {
                                                                 "photos[]":
@@ -400,8 +400,8 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                                                     ProductProvider>()
                                                                 .addProductPhoto(
                                                               context,
-                                                              productExternalId:
-                                                                  product.externalId ??
+                                                              productUid:
+                                                                  product.uid ??
                                                                       '',
                                                               requestBody: {
                                                                 "photos[]":
@@ -452,8 +452,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                                   .read<ProductProvider>()
                                                   .deleteProductPhoto(
                                                 context,
-                                                productExternalId:
-                                                    product.externalId ?? '',
+                                                productUid: product.uid ?? '',
                                                 requestBody: {
                                                   "photoId": photo['id'],
                                                 },
@@ -648,8 +647,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                                                 .read<ProductProvider>()
                                                 .deleteProductPrice(
                                               context,
-                                              productExternalId:
-                                                  product.externalId ?? '',
+                                              productUid: product.uid ?? '',
                                               requestBody: {
                                                 "productPriceId":
                                                     price['productPriceId'],
