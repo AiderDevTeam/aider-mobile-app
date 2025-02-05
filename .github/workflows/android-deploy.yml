@@ -1,69 +1,69 @@
-name: Flutter Continuous Deployment
+# name: Flutter Continuous Deployment
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  build-android:
-    name: Build and Deploy Android
-    runs-on: ubuntu-latest
+# jobs:
+#   build-android:
+#     name: Build and Deploy Android
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: stable
+#     - name: Set up Flutter
+#       uses: subosito/flutter-action@v2
+#       with:
+#         flutter-version: stable
 
-    - name: Install dependencies
-      run: flutter pub get
+#     - name: Install dependencies
+#       run: flutter pub get
 
-    - name: Build APK
-      run: flutter build apk --release
+#     - name: Build APK
+#       run: flutter build apk --release
 
-    - name: Sign APK
-      run: | 
-        cp android/app/build/outputs/flutter-apk/app-release.apk app-release.apk
-        # Optionally, add signing steps if required
+#     - name: Sign APK
+#       run: | 
+#         cp android/app/build/outputs/flutter-apk/app-release.apk app-release.apk
+#         # Optionally, add signing steps if required
 
-    - name: Deploy to Google Play
-      uses: r0adkll/upload-google-play@v1
-      with:
-        serviceAccountJson: ${{ secrets.PLAY_STORE_KEY }}
-        packageName: com.example.app
-        releaseFiles: app-release.apk
-        track: production
+#     - name: Deploy to Google Play
+#       uses: r0adkll/upload-google-play@v1
+#       with:
+#         serviceAccountJson: ${{ secrets.PLAY_STORE_KEY }}
+#         packageName: com.example.app
+#         releaseFiles: app-release.apk
+#         track: production
 
-  build-ios:
-    name: Build and Deploy iOS to TestFlight
-    runs-on: macos-latest
+#   build-ios:
+#     name: Build and Deploy iOS to TestFlight
+#     runs-on: macos-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: stable
+#     - name: Set up Flutter
+#       uses: subosito/flutter-action@v2
+#       with:
+#         flutter-version: stable
 
-    - name: Install dependencies
-      run: flutter pub get
+#     - name: Install dependencies
+#       run: flutter pub get
 
-    - name: Build IPA
-      run: flutter build ipa --release
+#     - name: Build IPA
+#       run: flutter build ipa --release
 
-    - name: Upload to TestFlight
-      env:
-        APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
-        APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-        APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
-      run: |
-        fastlane pilot upload \
-          --username <your-apple-id> \
-          --api_key_path <path-to-api-key> \
-          --ipa build/ios/ipa/YourApp.ipa
+#     - name: Upload to TestFlight
+#       env:
+#         APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+#         APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+#         APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+#       run: |
+#         fastlane pilot upload \
+#           --username <your-apple-id> \
+#           --api_key_path <path-to-api-key> \
+#           --ipa build/ios/ipa/YourApp.ipa
