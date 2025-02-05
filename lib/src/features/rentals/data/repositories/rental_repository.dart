@@ -24,8 +24,7 @@ abstract class RentalRepository {
   Future<Either<Failure, void>> confirmDropOff(
       {required String bookingUid, required String type});
   Future<Either<Failure, ReviewModel>> createProductReviews(
-      {required String bookingExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String bookingUid, required Map<String, dynamic> requestBody});
   Future<Either<Failure, bool>> persistRentedItemHistory(
       BookedProductHistoryModel historyModel);
   Future<Either<Failure, bool>> persistMyItemHistory(
@@ -110,11 +109,11 @@ class RentalRepositoryImpl extends RentalRepository {
 
   @override
   Future<Either<Failure, ReviewModel>> createProductReviews(
-      {required String bookingExternalId,
+      {required String bookingUid,
       required Map<String, dynamic> requestBody}) async {
     try {
       final response = await rentalRemoteDataSource.createProductReviews(
-          bookingExternalId: bookingExternalId, requestBody: requestBody);
+          bookingUid: bookingUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
       return Left(FailureToMessage.returnLeftError(e, s));

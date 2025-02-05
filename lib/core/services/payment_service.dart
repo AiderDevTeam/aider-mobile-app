@@ -8,16 +8,12 @@ import 'package:aider_mobile_app/src/features/transaction/domain/models/bank/ban
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 import '../../src/features/inbox/presentation/widgets/paystack_modal_content.dart';
 import '../../src/features/transaction/domain/models/paystack/paystac_account_verification_response.dart';
 import '../../src/features/transaction/domain/models/paystack/paystack_banks.dart';
-import '../../src/features/transaction/domain/models/paystack/paystack_currency.dart';
 import '../../src/features/transaction/domain/models/paystack/paystack_initialized_transaction.dart';
-import '../../src/features/transaction/domain/models/paystack/paystack_payment_channel.dart';
 import '../../src/features/transaction/domain/models/paystack/paystack_transaction_request.dart';
-import '../../src/features/transaction/presentation/providers/transaction_provider.dart';
 import '../errors/failure.dart';
 
 class PaymentService {
@@ -89,7 +85,7 @@ class PaymentService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-              'Bearer sk_live_039d786dc43325fcd6ea1803467b391146683139',
+              'Bearer ${RemoteConfigService.getRemoteData.configs['payStackSk']}',
         },
       );
 

@@ -25,8 +25,7 @@ abstract class RentalRemoteDataSource {
   Future<void> confirmDropOff(
       {required String bookingUid, required String type});
   Future<ReviewModel> createProductReviews(
-      {required String bookingExternalId,
-      required Map<String, dynamic> requestBody});
+      {required String bookingUid, required Map<String, dynamic> requestBody});
   Future<void> earlyReturn(
       {required String bookingUid, required BookedProductModel bookedProduct});
   Future<void> reportBookingWith(
@@ -202,11 +201,11 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
 
   @override
   Future<ReviewModel> createProductReviews(
-      {required String bookingExternalId,
+      {required String bookingUid,
       required Map<String, dynamic> requestBody}) async {
     final docRef = firebaseFirestore.collection(kReviewsCollection).doc();
 
-    requestBody['externalId'] = docRef.id;
+    requestBody['uid'] = docRef.id;
     await docRef.set(requestBody);
     return ReviewModel.fromJson(requestBody);
   }

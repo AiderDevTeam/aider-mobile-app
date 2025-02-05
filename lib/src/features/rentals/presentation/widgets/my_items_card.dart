@@ -419,8 +419,7 @@ class _MyItemCardState extends State<MyItemCard> {
                         context: context,
                         builder: (context) => RateAndReviewModal(
                           type: "renter",
-                          bookingProductExternalId:
-                              rentalProduct?.externalId ?? '',
+                          booking: widget.booking,
                         ),
                       );
                     },

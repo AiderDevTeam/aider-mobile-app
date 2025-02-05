@@ -235,12 +235,12 @@ class RentalProvider extends BaseProvider {
 
   Future<void> createProductReviews(BuildContext context,
       {required String type,
-      required String bookingProductExternalId,
+      required String bookingUid,
       required Map<String, dynamic> requestBody}) async {
     AppDialogUtil.loadingDialog(context);
 
     final result = await _rentalRepository.createProductReviews(
-        requestBody: requestBody, bookingExternalId: bookingProductExternalId);
+        requestBody: requestBody, bookingUid: bookingUid);
 
     if (context.mounted) {
       AppNavigator.pop(context);
@@ -263,8 +263,8 @@ class RentalProvider extends BaseProvider {
       });
     }, (right) {
       if (type == 'product') {
-        final index = _rentedProductHistory.data.indexWhere(
-            (obj) => obj.bookedProduct?.externalId == bookingProductExternalId);
+        final index = _rentedProductHistory.data
+            .indexWhere((obj) => obj.uid == bookingUid);
         if (index >= 0) {
           final hasUserReview =
               _rentedProductHistory.data[index].bookedProduct?.copyWith(
@@ -286,8 +286,8 @@ class RentalProvider extends BaseProvider {
           AppNavigator.pop(context);
         }
       } else {
-        final index = _myItemsProductHistory.data.indexWhere(
-            (obj) => obj.bookedProduct?.externalId == bookingProductExternalId);
+        final index = _myItemsProductHistory.data
+            .indexWhere((obj) => obj.uid == bookingUid);
         if (index >= 0) {
           final hasUserReview =
               _myItemsProductHistory.data[index].bookedProduct?.copyWith(

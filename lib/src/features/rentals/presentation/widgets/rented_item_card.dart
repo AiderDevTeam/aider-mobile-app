@@ -437,8 +437,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                       context: context,
                       builder: (context) => RateAndReviewModal(
                         type: "product",
-                        bookingProductExternalId:
-                            rentalProduct?.externalId ?? '',
+                        booking: widget.booking,
                       ),
                     );
                   },

@@ -26,7 +26,7 @@ jobs:
       run: flutter build apk --release
 
     - name: Sign APK
-      run: |
+      run: | 
         cp android/app/build/outputs/flutter-apk/app-release.apk app-release.apk
         # Optionally, add signing steps if required
 

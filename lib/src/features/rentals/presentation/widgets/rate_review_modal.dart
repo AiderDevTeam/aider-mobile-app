@@ -17,15 +17,16 @@ import '../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../shared_widgets/common/row_text.dart';
 import '../../../../shared_widgets/forms/app_input_field.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
+import '../../domain/models/booking/booking_model.dart';
 import '../providers/rental_provider.dart';
 
 class RateAndReviewModal extends StatefulWidget {
   const RateAndReviewModal({
     super.key,
-    required this.bookingProductExternalId,
+    required this.booking,
     required this.type,
   });
-  final String bookingProductExternalId;
+  final BookingModel booking;
   final String type;
 
   @override
@@ -63,11 +64,13 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
                 await context.read<RentalProvider>().createProductReviews(
                   context,
                   type: widget.type,
-                  bookingProductExternalId: widget.bookingProductExternalId,
+                  bookingUid: widget.booking.uid ?? '',
                   requestBody: {
                     "type": widget.type,
                     "rating": rating,
                     "comment": productReviewController.text,
+                    'vendorUid': widget.booking.vendorUid,
+                    'renterUid': widget.booking.userUid,
                   },
                 );
               },
