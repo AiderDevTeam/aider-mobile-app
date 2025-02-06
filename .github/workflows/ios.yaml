@@ -1,4 +1,3 @@
-
 name: Push iOS build on TestFlight
 
 on:
@@ -50,8 +49,16 @@ jobs:
 
       - name: Set up Distribution Certificate
         run: |
-          echo $DISTRIBUTION_CERTIFICATE | base64 --decode > signingCertificate.p12
-          keychain add-certificates --certificate signingCertificate.p12 --certificate-password $DISTRIBUTION_CERTIFICATE_PASSWORD
+          # Decode certificate
+          echo "$DISTRIBUTION_CERTIFICATE" | base64 --decode > signingCertificate.p12
+          
+          # Add to keychain using security command
+          security import signingCertificate.p12 \
+            -k "$HOME/Library/Keychains/login.keychain-db" \
+            -P "$DISTRIBUTION_CERTIFICATE_PASSWORD" \
+            -T /usr/bin/codesign
+          
+          # Clean up
           rm signingCertificate.p12
 
       - name: Set up Code signing settings on Xcode project
