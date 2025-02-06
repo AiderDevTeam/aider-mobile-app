@@ -110,6 +110,11 @@ jobs:
           </plist>
           EOF
 
+      - name: Show export options contents
+        run: |
+          echo "Export options contents:"
+          cat exportOptions.plist
+
       - name: Build IPA for Distribution
         run: |
           # Check if VERSION file exists
@@ -129,19 +134,13 @@ jobs:
           
           echo "Uploading build $buildName (build number: $buildNumber)"
           
-          # Debug: Show current directory and contents
-          pwd
-          ls -la
+          # Prepare iOS build
+          cd ios
+          pod install
+          cd ..
           
-          # Debug: Show ios directory contents
-          echo "iOS directory contents:"
-          ls -la ios/
-          
-          # Ensure Xcode project exists
-          if [ ! -d "ios/Runner.xcodeproj" ]; then
-            echo "Error: Xcode project not found"
-            exit 1
-          fi
+          # Debug: Show Xcode project settings
+          xcodebuild -list -project ios/Runner.xcodeproj
           
           # Build IPA
           flutter build ipa \
@@ -149,6 +148,7 @@ jobs:
             --build-number=$buildNumber \
             --build-name=$buildName \
             --export-options-plist=exportOptions.plist \
+            --no-codesign \
             --verbose
 
       - name: Upload IPA to App Store Connect
