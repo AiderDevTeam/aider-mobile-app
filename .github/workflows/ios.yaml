@@ -129,12 +129,27 @@ jobs:
           
           echo "Uploading build $buildName (build number: $buildNumber)"
           
+          # Debug: Show current directory and contents
+          pwd
+          ls -la
+          
+          # Debug: Show ios directory contents
+          echo "iOS directory contents:"
+          ls -la ios/
+          
+          # Ensure Xcode project exists
+          if [ ! -d "ios/Runner.xcodeproj" ]; then
+            echo "Error: Xcode project not found"
+            exit 1
+          fi
+          
           # Build IPA
           flutter build ipa \
             --release \
             --build-number=$buildNumber \
             --build-name=$buildName \
-            --export-options-plist=exportOptions.plist
+            --export-options-plist=exportOptions.plist \
+            --verbose
 
       - name: Upload IPA to App Store Connect
         run: |
