@@ -90,15 +90,29 @@ jobs:
 
       - name: Build IPA for Distribution
         run: |
-          file='VERSION'
-          fileData=`cat $file`
+          # Check if VERSION file exists
+          if [ ! -f "VERSION" ]; then
+            echo "1.0" > VERSION
+            echo "Created VERSION file with default version 1.0"
+          fi
+          
+          # Read version
+          fileData=$(cat VERSION)
           IFS='.'
           read -a versionValue <<< "$fileData"
+          
+          # Calculate build number and name
           buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + ${{ github.run_number }} ))
-          IFS=''
           buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
-          echo "Uploading build $buildName"
-          flutter build ipa --release --build-number=$buildNumber --build-name=$buildName --export-options-plist=$HOME/export_options.plist
+          
+          echo "Uploading build $buildName (build number: $buildNumber)"
+          
+          # Build IPA
+          flutter build ipa \
+            --release \
+            --build-number=$buildNumber \
+            --build-name=$buildName \
+            --export-options-plist=$HOME/export_options.plist
 
       - name: Upload IPA to App Store Connect
         run: |
