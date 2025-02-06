@@ -52,11 +52,11 @@ jobs:
           # Decode certificate
           echo "$DISTRIBUTION_CERTIFICATE" | base64 --decode > signingCertificate.p12
           
-          # Add to keychain using security command
-          security import signingCertificate.p12 \
-            -k "$HOME/Library/Keychains/login.keychain-db" \
-            -P "$DISTRIBUTION_CERTIFICATE_PASSWORD" \
-            -T /usr/bin/codesign
+          # Add certificate with legacy support
+          keychain add-certificates \
+            --certificate signingCertificate.p12 \
+            --certificate-password "$DISTRIBUTION_CERTIFICATE_PASSWORD" \
+            --legacy
           
           # Clean up
           rm signingCertificate.p12
