@@ -49,14 +49,28 @@ jobs:
 
       - name: Set up Distribution Certificate
         run: |
-          # Decode certificate
+          # Decode certificate and verify
           echo "$DISTRIBUTION_CERTIFICATE" | base64 --decode > signingCertificate.p12
+          if [ ! -s signingCertificate.p12 ]; then
+            echo "Error: Failed to create valid p12 file"
+            exit 1
+          fi
           
-          # Add certificate with legacy support
-          keychain add-certificates \
-            --certificate signingCertificate.p12 \
-            --certificate-password "$DISTRIBUTION_CERTIFICATE_PASSWORD" \
-            --legacy
+          # Create keychain
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -l ~/Library/Keychains/build.keychain
+          
+          # Import certificate
+          security import signingCertificate.p12 \
+            -k ~/Library/Keychains/build.keychain \
+            -P "$DISTRIBUTION_CERTIFICATE_PASSWORD" \
+            -A
+          
+          # Set key partition list
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
+            -k "" ~/Library/Keychains/build.keychain
           
           # Clean up
           rm signingCertificate.p12
