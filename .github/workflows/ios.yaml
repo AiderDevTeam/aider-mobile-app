@@ -49,10 +49,20 @@ jobs:
 
       - name: Set up Distribution Certificate
         run: |
+          # Check if certificate is empty
+          if [ -z "$DISTRIBUTION_CERTIFICATE" ]; then
+            echo "Error: DISTRIBUTION_CERTIFICATE is empty"
+            exit 1
+          fi
+          
+          # Debug certificate length (should be non-zero)
+          echo "Certificate length: $(echo $DISTRIBUTION_CERTIFICATE | wc -c)"
+          
           # Decode certificate and verify
           echo "$DISTRIBUTION_CERTIFICATE" | base64 --decode > signingCertificate.p12
           if [ ! -s signingCertificate.p12 ]; then
             echo "Error: Failed to create valid p12 file"
+            ls -l signingCertificate.p12
             exit 1
           fi
           
