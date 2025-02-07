@@ -148,16 +148,16 @@ jobs:
             -configuration Release \
             -archivePath build/Runner.xcarchive \
             archive
+
+          echo "IPA location:"
+          find $(pwd) -name "*.ipa"
           
           xcodebuild -exportArchive \
             -archivePath build/Runner.xcarchive \
             -exportOptionsPlist ../exportOptions.plist \
             -exportPath build/Runner.ipa
 
-      - name: Show IPA contents
-        run: |
-          echo "IPA location:"
-          find $(pwd) -name "*.ipa"
+         
 
       - name: Upload IPA to App Store Connect
         run: |
