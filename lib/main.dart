@@ -122,6 +122,5 @@ Future<void> preLoaders() async {
   await sl.get<RemoteConfigService>().init();
   await sl.get<LocalNotificationService>().init();
   await CrashService.setCrashlyticsCollectionEnabled(
-      !RemoteConfigService.getRemoteData.configs['env']['production'] ==
-          'true');
+      RemoteConfigService.getRemoteData.configs['env']['production'] != 'true');
 }

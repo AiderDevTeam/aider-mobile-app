@@ -134,6 +134,12 @@ jobs:
           
           echo "Uploading build $buildName (build number: $buildNumber)"
           
+          # Update Podfile platform version
+          cd ios
+          sed -i '' 's/platform :ios, '"'"'.*'"'"'/platform :ios, '"'"'12.0'"'"'/' Podfile
+          pod install --repo-update
+          cd ..
+          
           # Build archive first
           flutter build ipa \
             --release \
@@ -149,6 +155,8 @@ jobs:
             -sdk iphoneos \
             -configuration Release \
             -archivePath build/Runner.xcarchive \
+            -destination 'generic/platform=iOS' \
+            IPHONEOS_DEPLOYMENT_TARGET=12.0 \
             archive
 
           echo "IPA location:"
