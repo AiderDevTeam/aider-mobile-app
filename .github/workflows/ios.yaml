@@ -135,7 +135,7 @@ jobs:
           echo "Uploading build $buildName (build number: $buildNumber)"
           
           # Build archive first
-          flutter build ios --release \
+          flutter build ipa --release \
             --build-number=$buildNumber \
             --build-name=$buildName \
             --no-codesign
