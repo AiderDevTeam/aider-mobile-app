@@ -134,13 +134,17 @@ jobs:
           
           echo "Uploading build $buildName (build number: $buildNumber)"
           
-          # Update Podfile platform version
+          # Update Podfile platform version and clean
           cd ios
-          sed -i '' 's/platform :ios, '"'"'.*'"'"'/platform :ios, '"'"'12.0'"'"'/' Podfile
+          sed -i '' 's/platform :ios, '"'"'.*'"'"'/platform :ios, '"'"'13.0'"'"'/' Podfile
+          rm -rf Pods Podfile.lock
+          pod cache clean --all
+          pod repo update
           pod install --repo-update
           cd ..
           
-          # Build archive first
+          # Clean and build
+          flutter clean
           flutter build ios \
             --release \
             --build-number=$buildNumber \
@@ -150,17 +154,18 @@ jobs:
           
           # Create IPA using xcodebuild
           cd ios
+          xcodebuild clean
           xcodebuild -workspace Runner.xcworkspace \
             -scheme Runner \
             -sdk iphoneos \
             -configuration Release \
             -archivePath build/Runner.xcarchive \
             -destination 'generic/platform=iOS' \
-            IPHONEOS_DEPLOYMENT_TARGET=12.0 \
+            IPHONEOS_DEPLOYMENT_TARGET=13.0 \
             archive
 
-          echo "IPA location:"
-          find $(pwd) -name "*.ipa"
+          echo "Archive location:"
+          ls -la build/Runner.xcarchive
           
           xcodebuild -exportArchive \
             -archivePath build/Runner.xcarchive \
