@@ -1,3 +1,4 @@
+
 name: Push iOS build on TestFlight
 
 on:
@@ -31,7 +32,7 @@ jobs:
         run: |
           flutter clean
           flutter pub get
-#          flutter analyze --fatal-infos
+          flutter analyze --fatal-infos
           
       - name: Install the CodeMagic CLI
         run:  pip install codemagic-cli-tools
@@ -49,133 +50,23 @@ jobs:
 
       - name: Set up Distribution Certificate
         run: |
-          # Check if certificate is empty
-          if [ -z "$DISTRIBUTION_CERTIFICATE" ]; then
-            echo "Error: DISTRIBUTION_CERTIFICATE is empty"
-            exit 1
-          fi
-          
-          # Debug certificate length (should be non-zero)
-          echo "Certificate length: $(echo $DISTRIBUTION_CERTIFICATE | wc -c)"
-          
-          # Decode certificate and verify
-          echo "$DISTRIBUTION_CERTIFICATE" | base64 --decode > signingCertificate.p12
-          if [ ! -s signingCertificate.p12 ]; then
-            echo "Error: Failed to create valid p12 file"
-            ls -l signingCertificate.p12
-            exit 1
-          fi
-          
-          # Create keychain
-          security create-keychain -p "" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "" build.keychain
-          security set-keychain-settings -t 3600 -l ~/Library/Keychains/build.keychain
-          
-          # Import certificate
-          security import signingCertificate.p12 \
-            -k ~/Library/Keychains/build.keychain \
-            -P "$DISTRIBUTION_CERTIFICATE_PASSWORD" \
-            -A
-          
-          # Set key partition list
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
-            -k "" ~/Library/Keychains/build.keychain
-          
-          # Clean up
-          rm signingCertificate.p12
+          echo $DISTRIBUTION_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $DISTRIBUTION_CERTIFICATE_PASSWORD
 
       - name: Set up Code signing settings on Xcode project
         run: xcode-project use-profiles
 
-      - name: Create export options plist
-        run: |
-          cat << EOF > exportOptions.plist
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store</string>
-              <key>teamID</key>
-              <string>${{ secrets.TEAM_ID }}</string>
-              <key>signingStyle</key>
-              <string>manual</string>
-              <key>provisioningProfiles</key>
-              <dict>
-                  <key>${{ secrets.BUNDLE_ID }}</key>
-                  <string>${{ secrets.PROVISIONING_PROFILE_NAME }}</string>
-              </dict>
-          </dict>
-          </plist>
-          EOF
-
-      - name: Show export options contents
-        run: |
-          echo "Export options contents:"
-          cat exportOptions.plist
-
       - name: Build IPA for Distribution
         run: |
-          # Check if VERSION file exists
-          if [ ! -f "VERSION" ]; then
-            echo "1.0" > VERSION
-            echo "Created VERSION file with default version 1.0"
-          fi
-          
-          # Read version
-          fileData=$(cat VERSION)
+          file='VERSION'
+          fileData=`cat $file`
           IFS='.'
           read -a versionValue <<< "$fileData"
-          
-          # Calculate build number and name
           buildNumber=$(( ${versionValue[0]} * 1000000 + ${versionValue[1]} * 10000 + ${{ github.run_number }} ))
+          IFS=''
           buildName="${versionValue[0]}.${versionValue[1]}.${{ github.run_number }}"
-          
-          echo "Uploading build $buildName (build number: $buildNumber)"
-          
-          # Update Podfile platform version and clean
-          cd ios
-          sed -i '' 's/platform :ios, '"'"'.*'"'"'/platform :ios, '"'"'13.0'"'"'/' Podfile
-          rm -rf Pods Podfile.lock
-          pod cache clean --all
-          pod repo update
-          pod install --repo-update
-          cd ..
-          
-          # Clean and build
-          flutter clean
-          flutter build ios \
-            --release \
-            --build-number=$buildNumber \
-            --build-name=$buildName \
-            --no-codesign \
-            --target=lib/main.dart
-          
-          # Create IPA using xcodebuild
-          cd ios
-          xcodebuild clean
-          xcodebuild -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -sdk iphoneos \
-            -configuration Release \
-            -archivePath build/Runner.xcarchive \
-            -destination 'generic/platform=iOS' \
-            IPHONEOS_DEPLOYMENT_TARGET=13.0 \
-            archive
-
-          echo "Archive location:"
-          ls -la build/Runner.xcarchive
-          
-          xcodebuild -exportArchive \
-            -archivePath build/Runner.xcarchive \
-            -exportOptionsPlist ../exportOptions.plist \
-            -exportPath build/Runner.ipa
-
-      - name: Show IPA contents
-        run: |
-          echo "IPA location:"
-          find $(pwd) -name "*.ipa"
+          echo "Uploading build $buildName"
+          flutter build ipa --release --build-number=$buildNumber --build-name=$buildName --export-options-plist=$HOME/export_options.plist
 
       - name: Upload IPA to App Store Connect
         run: |
