@@ -145,7 +145,8 @@ jobs:
             --release \
             --build-number=$buildNumber \
             --build-name=$buildName \
-            --no-codesign
+            --no-codesign \
+            --target=lib/main.dart
           
           # Create IPA using xcodebuild
           cd ios
