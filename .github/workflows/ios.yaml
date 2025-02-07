@@ -154,6 +154,11 @@ jobs:
             -exportOptionsPlist ../exportOptions.plist \
             -exportPath build/Runner.ipa
 
+      - name: Show IPA contents
+        run: |
+          echo "IPA location:"
+          find $(pwd) -name "*.ipa"
+
       - name: Upload IPA to App Store Connect
         run: |
           APP_FILE=$(find $(pwd) -name "*.ipa")
