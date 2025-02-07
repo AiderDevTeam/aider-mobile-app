@@ -140,17 +140,16 @@ jobs:
           pod install --repo-update
           cd ..
           
-          # Debug: Show Xcode project settings
-          xcodebuild -list -project ios/Runner.xcodeproj
-          
           # Build IPA
           flutter build ipa \
             --release \
             --build-number=$buildNumber \
             --build-name=$buildName \
             --export-options-plist=exportOptions.plist \
-            --no-codesign \
-            --verbose
+            --target-platform ios \
+            --target lib/main.dart \
+            --verbose \
+            --no-tree-shake-icons
 
       - name: Upload IPA to App Store Connect
         run: |
