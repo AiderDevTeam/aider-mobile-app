@@ -135,10 +135,12 @@ jobs:
           echo "Uploading build $buildName (build number: $buildNumber)"
           
           # Build archive first
-          flutter build ipa --release \
+          flutter build ipa \
+            --release \
             --build-number=$buildNumber \
             --build-name=$buildName \
-            --no-codesign
+            --no-codesign \
+            --target=lib/main.dart
           
           # Create IPA using xcodebuild
           cd ios
@@ -157,7 +159,10 @@ jobs:
             -exportOptionsPlist ../exportOptions.plist \
             -exportPath build/Runner.ipa
 
-         
+      - name: Show IPA contents
+        run: |
+          echo "IPA location:"
+          find $(pwd) -name "*.ipa"
 
       - name: Upload IPA to App Store Connect
         run: |
