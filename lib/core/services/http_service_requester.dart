@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:aider_mobile_app/core/services/remote_config_service.dart';
 import 'package:dio/dio.dart';
 import 'package:retry/retry.dart';
 
-import '../env/environment.dart';
 import '../errors/errors.dart';
 import '../services/api_config.dart';
 import '../services/logger_service.dart';
@@ -18,6 +18,8 @@ class HttpServiceRequester {
   HttpServiceRequester._internal();
 
   final dio = Dio();
+  bool isProduction =
+      RemoteConfigService.getRemoteData.configs['env']['production'] == 'true';
 
   Future<Response> postRequest({
     required String endpoint,
@@ -45,7 +47,7 @@ class HttpServiceRequester {
           )
           .timeout(Duration(seconds: HelperUtil.timeOutSeconds));
 
-      if (Environment.inDevMode) {
+      if (!isProduction) {
         ZLoggerService.logRequests(
             endpoint: endpoint,
             method: 'POST',
@@ -85,7 +87,7 @@ class HttpServiceRequester {
           )
           .timeout(Duration(seconds: HelperUtil.timeOutSeconds));
 
-      if (Environment.inDevMode) {
+      if (!isProduction) {
         ZLoggerService.logRequests(
           endpoint: endpoint,
           method: 'PUT',
@@ -128,7 +130,7 @@ class HttpServiceRequester {
                     e.type == DioExceptionType.receiveTimeout)),
       );
 
-      if (Environment.inDevMode) {
+      if (!isProduction) {
         ZLoggerService.logRequests(
             endpoint: endpoint,
             method: 'GET',
@@ -164,7 +166,7 @@ class HttpServiceRequester {
           )
           .timeout(Duration(seconds: HelperUtil.timeOutSeconds));
 
-      if (Environment.inDevMode) {
+      if (!isProduction) {
         ZLoggerService.logRequests(
           endpoint: endpoint,
           method: 'DELETE',
@@ -203,7 +205,7 @@ class HttpServiceRequester {
           )
           .timeout(Duration(seconds: HelperUtil.timeOutSeconds));
 
-      if (Environment.inDevMode) {
+      if (!isProduction) {
         ZLoggerService.logRequests(
             endpoint: endpoint,
             method: 'POST',

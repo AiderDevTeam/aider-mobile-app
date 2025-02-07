@@ -2,11 +2,11 @@ import 'package:aider_mobile_app/core/constants/colors.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
+import 'package:aider_mobile_app/core/services/remote_config_service.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
-import '../../../../../core/env/environment.dart';
 import '../../../../../core/utils/url_launcher_util.dart';
 import '../widgets/profile_tab_navigate.dart';
 
@@ -28,7 +28,7 @@ class _SupportScreenState extends State<SupportScreen> {
           ProfileTabNavigate(
             text: 'Chat with us',
             iconName: 'ChatsTeardrop.svg',
-            onPressed: () async{
+            onPressed: () async {
               await UrlLauncherUtil().openWhatsapp();
             },
           ),
@@ -36,8 +36,10 @@ class _SupportScreenState extends State<SupportScreen> {
           ProfileTabNavigate(
             text: 'Send us an email',
             iconName: 'email.svg',
-            onPressed: () async{
-              await UrlLauncherUtil().openEmail(Environment.supportEmail, 'subject');
+            onPressed: () async {
+              String email = RemoteConfigService.getRemoteData.configs['env']
+                  ['supportEmail'] as String;
+              await UrlLauncherUtil().openEmail(email, 'subject');
             },
           ),
           const VSpace(height: 32),
@@ -56,7 +58,9 @@ class _SupportScreenState extends State<SupportScreen> {
               ),
             ),
             onPressed: () async {
-              await UrlLauncherUtil().openUrl(Environment.supportInstagram);
+              String instagramUrl = RemoteConfigService
+                  .getRemoteData.configs['env']['supportInstagram'] as String;
+              await UrlLauncherUtil().openUrl(instagramUrl);
             },
           ),
           const VSpace(height: 12),
@@ -70,7 +74,7 @@ class _SupportScreenState extends State<SupportScreen> {
                 borderRadius: BorderRadius.circular(AppThemeUtil.radius(12)),
               ),
             ),
-            onPressed: () async{
+            onPressed: () async {
               await UrlLauncherUtil().openUrl('http://twitter.com/getaiderapp');
             },
           ),

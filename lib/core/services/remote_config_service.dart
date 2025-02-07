@@ -3,8 +3,6 @@ import 'dart:developer';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
-import '../env/environment.dart';
-
 class RemoteConfigService {
   static final RemoteConfigService _remoteConfigService =
       RemoteConfigService._internal();
@@ -20,21 +18,19 @@ class RemoteConfigService {
       await _firebaseRemoteConfig.ensureInitialized();
       await _firebaseRemoteConfig.setConfigSettings(RemoteConfigSettings(
         fetchTimeout: const Duration(seconds: 30),
-        minimumFetchInterval: Environment.inDevMode
-            ? const Duration(seconds: 20)
-            : const Duration(hours: 2),
+        minimumFetchInterval: const Duration(seconds: 20),
       ));
 
-      await _firebaseRemoteConfig.setDefaults(<String, dynamic>{
-        'baseUrl': Environment.getLiveBaseUrl,
-        'testBaseUrl': Environment.getStagingBaseUrl,
-        'socketBaseUrl': Environment.getSocketBaseUrl,
-        'googleMapKey': Environment.getGoogleMapKey,
-        'socketKey': Environment.getSocketKey,
-        'payStackPublicKey': Environment.getPayStackPublicKey,
-        'cloudinaryCloudName': Environment.getCloudinaryCloudName,
-        'cloudinaryUploadPreset': Environment.getCloudinaryUploadPreset,
-      });
+      // await _firebaseRemoteConfig.setDefaults(<String, dynamic>{
+      //   'baseUrl': Environment.getLiveBaseUrl,
+      //   'testBaseUrl': Environment.getStagingBaseUrl,
+      //   'socketBaseUrl': Environment.getSocketBaseUrl,
+      //   'googleMapKey': Environment.getGoogleMapKey,
+      //   'socketKey': Environment.getSocketKey,
+      //   'payStackPublicKey': Environment.getPayStackPublicKey,
+      //   'cloudinaryCloudName': Environment.getCloudinaryCloudName,
+      //   'cloudinaryUploadPreset': Environment.getCloudinaryUploadPreset,
+      // });
 
       await _firebaseRemoteConfig.fetchAndActivate();
 
@@ -58,15 +54,15 @@ class RemoteConfigService {
       print('LIVE_BASE_URL 2: ${_firebaseRemoteConfig.getString('baseUrl')}');
     } catch (e) {
       _configDataModel = RemoteConfigModel(
-        baseUrl: Environment.getLiveBaseUrl,
-        testBaseUrl: Environment.getStagingBaseUrl,
-        socketBaseUrl: Environment.getSocketBaseUrl,
-        googleMapKey: Environment.getGoogleMapKey,
-        socketKey: Environment.getSocketKey,
-        payStackPublicKey: Environment.getPayStackPublicKey,
-        payStackSecretKey: Environment.getPayStackSecretKey,
-        cloudinaryCloudName: Environment.getCloudinaryCloudName,
-        cloudinaryUploadPreset: Environment.getCloudinaryUploadPreset,
+        baseUrl: "",
+        testBaseUrl: "",
+        socketBaseUrl: "",
+        googleMapKey: "",
+        socketKey: "",
+        payStackPublicKey: "",
+        payStackSecretKey: "",
+        cloudinaryCloudName: "",
+        cloudinaryUploadPreset: "",
         configs: {},
       );
       log(e.toString());

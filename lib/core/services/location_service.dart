@@ -1,4 +1,3 @@
-import 'package:aider_mobile_app/core/env/environment.dart';
 import 'package:aider_mobile_app/core/services/api_routes.dart';
 import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/services/remote_config_service.dart';

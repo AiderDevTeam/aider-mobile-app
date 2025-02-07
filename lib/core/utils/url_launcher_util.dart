@@ -1,41 +1,41 @@
 import 'dart:developer';
+import 'package:aider_mobile_app/core/services/remote_config_service.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../env/environment.dart';
 import 'helper_util.dart';
 
-class UrlLauncherUtil{
+class UrlLauncherUtil {
   static final UrlLauncherUtil _launcherUtil = UrlLauncherUtil._internal();
   factory UrlLauncherUtil() => _launcherUtil;
   UrlLauncherUtil._internal();
 
-
-  Future<void> openUrl(String url) async{
-    try{
-      if(await canLaunchUrl(Uri.parse(url))){
+  Future<void> openUrl(String url) async {
+    try {
+      if (await canLaunchUrl(Uri.parse(url))) {
         launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
       }
-    }catch(e){
+    } catch (e) {
       log(e.toString());
     }
   }
 
-  Future<void> callPhone(String phoneNumber) async{
-    try{
-      if(await canLaunchUrl(Uri.parse('tel:$phoneNumber'))){
-        launchUrl(Uri.parse('tel:$phoneNumber'), mode: LaunchMode.externalApplication);
+  Future<void> callPhone(String phoneNumber) async {
+    try {
+      if (await canLaunchUrl(Uri.parse('tel:$phoneNumber'))) {
+        launchUrl(Uri.parse('tel:$phoneNumber'),
+            mode: LaunchMode.externalApplication);
       }
-    }catch(e){
+    } catch (e) {
       log(e.toString());
     }
   }
 
-  Future<void> openEmail(String email, String subject) async{
+  Future<void> openEmail(String email, String subject) async {
     String? encodeQueryParameters(Map<String, String> params) {
       return params.entries
           .map((MapEntry<String, String> e) =>
-      '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
           .join('&');
     }
 
@@ -50,21 +50,22 @@ class UrlLauncherUtil{
     launchUrl(emailLaunchUri);
   }
 
-  Future<void> openWhatsapp() async{
-    var androidUrl = "whatsapp://send?phone=${Environment.supportWhatsapp}&text=Hi, I need some help";
-    var iosUrl = "https://wa.me/${Environment.supportWhatsapp}?text=${Uri.parse('Hi, I need some help')}";
+  Future<void> openWhatsapp() async {
+    String whatsappNumber = RemoteConfigService.getRemoteData.configs['env']
+        ['supportWhatsapp'] as String;
+    var androidUrl =
+        "whatsapp://send?phone=${whatsappNumber}&text=Hi, I need some help";
+    var iosUrl =
+        "https://wa.me/${whatsappNumber}?text=${Uri.parse('Hi, I need some help')}";
 
-    try{
-      if(HelperUtil.isIOS){
+    try {
+      if (HelperUtil.isIOS) {
         await launchUrl(Uri.parse(iosUrl));
-      }
-      else{
+      } else {
         await launchUrl(Uri.parse(androidUrl));
       }
-    } on Exception{
+    } on Exception {
       debugPrint("No Whatsapp on the device");
     }
   }
-
-
 }

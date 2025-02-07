@@ -17,7 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import 'core/env/environment.dart';
 import 'core/providers/wallet_provider.dart';
 import 'core/routing/app_navigator.dart';
 import 'core/routing/app_route.dart';
@@ -122,5 +121,7 @@ Future<void> preLoaders() async {
       PushNotificationService.firebaseMessagingBackgroundHandler);
   await sl.get<RemoteConfigService>().init();
   await sl.get<LocalNotificationService>().init();
-  await CrashService.setCrashlyticsCollectionEnabled(!Environment.inDevMode);
+  await CrashService.setCrashlyticsCollectionEnabled(
+      !RemoteConfigService.getRemoteData.configs['env']['production'] ==
+          'true');
 }
