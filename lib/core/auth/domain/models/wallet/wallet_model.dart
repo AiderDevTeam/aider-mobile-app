@@ -7,7 +7,7 @@ part 'wallet_model.g.dart';
 class WalletModel with _$WalletModel {
   const factory WalletModel({
     final String? uid,
-    final String? userId,
+    final String? userUid,
     final String? externalId,
     final String? bankName,
     final String? bankCode,

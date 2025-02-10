@@ -5,6 +5,7 @@ import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../core/auth/domain/models/user/user_model.dart';
 import '../../../../../core/constants/common.dart';
 import '../../../../../core/providers/base_view.dart';
 import '../../../../shared_widgets/common/aider_empty_state.dart';
@@ -15,11 +16,11 @@ class VendorListedProductTab extends StatefulWidget {
   const VendorListedProductTab({
     super.key,
     this.edit = false,
-    this.vendorExternalId,
+    required this.vendor,
   });
 
   final bool edit;
-  final String? vendorExternalId;
+  final UserModel vendor;
 
   @override
   State<VendorListedProductTab> createState() => _VendorListedProductTabState();
@@ -28,7 +29,7 @@ class VendorListedProductTab extends StatefulWidget {
 class _VendorListedProductTabState extends State<VendorListedProductTab> {
   Future<void> fetchVendorProducts([String? nextPage]) async {
     await context.read<ProductProvider>().fetchVendorProducts(context,
-        vendorExternalId: widget.vendorExternalId,
+        vendor: widget.vendor,
         nextPage: nextPage,
         queryParam: {
           'pageSize': kProductPerPage,

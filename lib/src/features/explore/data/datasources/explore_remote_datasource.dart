@@ -74,14 +74,14 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
       {required String sectionExternalId,
       required int page,
       required int dataPerPage}) async {
-    final response = await firestore
-        .collection(kCategoriesCollection)
-        .where('sectionExternalId', isEqualTo: sectionExternalId)
-        .where('isActive', isEqualTo: true)
-        .get();
+    final categories =
+        (RemoteConfigService.getRemoteData.configs['categories'] as List)
+            .skip((page - 1) * dataPerPage)
+            .take(dataPerPage)
+            .toList();
 
-    return response.docs
-        .map((doc) => CategoryModel.fromJson(doc.data()))
+    return categories
+        .map((category) => CategoryModel.fromJson(category))
         .toList();
   }
 
@@ -92,7 +92,7 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
       required int dataPerPage}) async {
     final response = await firestore
         .collection(kProductsCollection)
-        .where('sectionExternalId', isEqualTo: sectionExternalId)
+        // .where('sectionExternalId', isEqualTo: sectionExternalId)
         .get();
 
     return response.docs

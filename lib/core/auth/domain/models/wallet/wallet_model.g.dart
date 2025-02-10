@@ -9,7 +9,7 @@ part of 'wallet_model.dart';
 _$WalletModelImpl _$$WalletModelImplFromJson(Map<String, dynamic> json) =>
     _$WalletModelImpl(
       uid: json['uid'] as String?,
-      userId: json['userId'] as String?,
+      userUid: json['userUid'] as String?,
       externalId: json['externalId'] as String?,
       bankName: json['bankName'] as String?,
       bankCode: json['bankCode'] as String?,
@@ -21,7 +21,7 @@ _$WalletModelImpl _$$WalletModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$WalletModelImplToJson(_$WalletModelImpl instance) =>
     <String, dynamic>{
       'uid': instance.uid,
-      'userId': instance.userId,
+      'userUid': instance.userUid,
       'externalId': instance.externalId,
       'bankName': instance.bankName,
       'bankCode': instance.bankCode,

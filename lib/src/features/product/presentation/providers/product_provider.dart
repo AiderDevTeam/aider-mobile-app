@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
 import 'package:aider_mobile_app/core/domain/models/address/address_model.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
@@ -527,7 +528,7 @@ class ProductProvider extends BaseProvider with CanRent {
   PaginationModel? get getVendorProductMeta => _vendorProductHistory.meta;
 
   Future<void> fetchVendorProducts(BuildContext context,
-      {String? vendorExternalId,
+      {required UserModel vendor,
       required Map<String, dynamic> queryParam,
       String loadingComponent = 'fetchVendorProducts',
       String? nextPage}) async {
@@ -538,9 +539,7 @@ class ProductProvider extends BaseProvider with CanRent {
     setLoading(true, component: loadingComponent);
 
     final result = await _productRepository.fetchVendorProducts(
-        vendorExternalId: vendorExternalId,
-        nextPage: nextPage,
-        queryParam: queryParam);
+        vendor: vendor, nextPage: nextPage, queryParam: queryParam);
 
     result.fold((left) {
       setComponentErrorType = {

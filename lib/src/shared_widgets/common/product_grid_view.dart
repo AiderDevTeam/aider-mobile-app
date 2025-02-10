@@ -118,7 +118,7 @@ class ProductGridView extends StatelessWidget {
           final fetchedProduct = await context
               .read<ExploreViewProvider>()
               .getProductByUserIdAndProductUid(
-                  context, product.userId ?? '', product.uid ?? '');
+                  context, product.userUid ?? '', product.uid ?? '');
 
           if (fetchedProduct == null) {
             AppDialogUtil.popUpModal(context,

@@ -79,8 +79,13 @@ class WalletProvider extends BaseProvider {
     result.fold((failure) {}, (wallets) {
       _userWallets = wallets;
       if (wallets.isNotEmpty) {
-        setWalletAsDefault =
-            wallets.firstWhere((wallet) => wallet.isDefault == true);
+        final defaultWallets =
+            wallets.where((wallet) => wallet.isDefault == true);
+        if (defaultWallets.isNotEmpty) {
+          setWalletAsDefault = defaultWallets.first;
+        } else {
+          setWalletAsDefault = wallets.first;
+        }
       }
     });
 

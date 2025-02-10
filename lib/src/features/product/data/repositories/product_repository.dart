@@ -30,7 +30,7 @@ abstract class ProductRepository {
   Future<Either<Failure, bool>> deleteProductPrice(
       {required String productUid, required Map<String, dynamic> requestBody});
   Future<Either<Failure, ProductHistoryModel>> fetchVendorProducts(
-      {String? vendorExternalId,
+      {required UserModel vendor,
       String? nextPage,
       required Map<String, dynamic> queryParam});
 
@@ -223,16 +223,15 @@ class ProductRepositoryImpl extends ProductRepository {
 
   @override
   Future<Either<Failure, ProductHistoryModel>> fetchVendorProducts(
-      {String? vendorExternalId,
+      {required UserModel vendor,
       String? nextPage,
       required Map<String, dynamic> queryParam}) async {
     try {
       final response = await productRemoteDatasource.fetchVendorProducts(
-          vendorExternalId: vendorExternalId,
-          nextPage: nextPage,
-          queryParam: queryParam);
+          vendor: vendor, nextPage: nextPage, queryParam: queryParam);
       return Right(response);
     } catch (e, s) {
+      ZLoggerService.logOnError('Error: ${e.toString()}: ${s.toString()}');
       CrashService.setCrashKey('product', 'list vendor products');
       return Left(FailureToMessage.returnLeftError(e, s));
     }

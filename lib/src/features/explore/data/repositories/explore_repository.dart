@@ -67,6 +67,8 @@ class ExploreRepositoryImpl extends ExploreRepository {
           dataPerPage: dataPerPage);
       return Right(response);
     } catch (e, s) {
+      ZLoggerService.logOnError(
+          'FETCHING CATEGORIES ERROR \n ---- ${e.toString()} ---- \n${DateTime.now()}');
       CrashService.setCrashKey('explore', 'fetching categories');
       return Left(FailureToMessage.returnLeftError(e, s));
     }

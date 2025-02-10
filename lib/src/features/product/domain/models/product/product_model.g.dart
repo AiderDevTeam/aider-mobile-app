@@ -10,7 +10,7 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
     _$ProductModelImpl(
       id: (json['id'] as num?)?.toInt(),
       uid: json['uid'] as String?,
-      userId: json['userId'] as String?,
+      userUid: json['userUid'] as String?,
       externalId: json['externalId'] as String?,
       subCategoryItemId: json['subCategoryItemId'] as String?,
       name: json['name'] as String?,
@@ -50,7 +50,7 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'uid': instance.uid,
-      'userId': instance.userId,
+      'userUid': instance.userUid,
       'externalId': instance.externalId,
       'subCategoryItemId': instance.subCategoryItemId,
       'name': instance.name,

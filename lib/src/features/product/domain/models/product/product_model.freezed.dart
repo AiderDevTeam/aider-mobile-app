@@ -22,7 +22,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) {
 mixin _$ProductModel {
   int? get id => throw _privateConstructorUsedError;
   String? get uid => throw _privateConstructorUsedError;
-  String? get userId => throw _privateConstructorUsedError;
+  String? get userUid => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   String? get subCategoryItemId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
@@ -62,7 +62,7 @@ abstract class $ProductModelCopyWith<$Res> {
   $Res call(
       {int? id,
       String? uid,
-      String? userId,
+      String? userUid,
       String? externalId,
       String? subCategoryItemId,
       String? name,
@@ -103,7 +103,7 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
   $Res call({
     Object? id = freezed,
     Object? uid = freezed,
-    Object? userId = freezed,
+    Object? userUid = freezed,
     Object? externalId = freezed,
     Object? subCategoryItemId = freezed,
     Object? name = freezed,
@@ -131,9 +131,9 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
+      userUid: freezed == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
               as String?,
       externalId: freezed == externalId
           ? _value.externalId
@@ -261,7 +261,7 @@ abstract class _$$ProductModelImplCopyWith<$Res>
   $Res call(
       {int? id,
       String? uid,
-      String? userId,
+      String? userUid,
       String? externalId,
       String? subCategoryItemId,
       String? name,
@@ -303,7 +303,7 @@ class __$$ProductModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? uid = freezed,
-    Object? userId = freezed,
+    Object? userUid = freezed,
     Object? externalId = freezed,
     Object? subCategoryItemId = freezed,
     Object? name = freezed,
@@ -331,9 +331,9 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
+      userUid: freezed == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
               as String?,
       externalId: freezed == externalId
           ? _value.externalId
@@ -413,7 +413,7 @@ class _$ProductModelImpl extends _ProductModel {
   const _$ProductModelImpl(
       {this.id,
       this.uid,
-      this.userId,
+      this.userUid,
       this.externalId,
       this.subCategoryItemId,
       this.name,
@@ -445,7 +445,7 @@ class _$ProductModelImpl extends _ProductModel {
   @override
   final String? uid;
   @override
-  final String? userId;
+  final String? userUid;
   @override
   final String? externalId;
   @override
@@ -515,7 +515,7 @@ class _$ProductModelImpl extends _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, uid: $uid, userId: $userId, externalId: $externalId, subCategoryItemId: $subCategoryItemId, name: $name, description: $description, quantity: $quantity, status: $status, value: $value, postedAt: $postedAt, prices: $prices, photos: $photos, shareLink: $shareLink, address: $address, user: $user, subCategoryItem: $subCategoryItem, rating: $rating, unavailableBookingDates: $unavailableBookingDates, reviews: $reviews)';
+    return 'ProductModel(id: $id, uid: $uid, userUid: $userUid, externalId: $externalId, subCategoryItemId: $subCategoryItemId, name: $name, description: $description, quantity: $quantity, status: $status, value: $value, postedAt: $postedAt, prices: $prices, photos: $photos, shareLink: $shareLink, address: $address, user: $user, subCategoryItem: $subCategoryItem, rating: $rating, unavailableBookingDates: $unavailableBookingDates, reviews: $reviews)';
   }
 
   @override
@@ -525,7 +525,7 @@ class _$ProductModelImpl extends _ProductModel {
             other is _$ProductModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.uid, uid) || other.uid == uid) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.userUid, userUid) || other.userUid == userUid) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.subCategoryItemId, subCategoryItemId) ||
@@ -559,7 +559,7 @@ class _$ProductModelImpl extends _ProductModel {
         runtimeType,
         id,
         uid,
-        userId,
+        userUid,
         externalId,
         subCategoryItemId,
         name,
@@ -599,7 +599,7 @@ abstract class _ProductModel extends ProductModel {
   const factory _ProductModel(
       {final int? id,
       final String? uid,
-      final String? userId,
+      final String? userUid,
       final String? externalId,
       final String? subCategoryItemId,
       final String? name,
@@ -627,7 +627,7 @@ abstract class _ProductModel extends ProductModel {
   @override
   String? get uid;
   @override
-  String? get userId;
+  String? get userUid;
   @override
   String? get externalId;
   @override

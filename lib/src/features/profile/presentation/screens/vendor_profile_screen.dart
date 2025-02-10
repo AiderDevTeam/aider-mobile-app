@@ -1,4 +1,3 @@
-
 import 'package:aider_mobile_app/core/constants/colors.dart';
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart';
@@ -17,7 +16,10 @@ import '../../../../shared_widgets/common/network_image_view.dart';
 import '../../../review/presentation/screens/items_tab_screen.dart';
 
 class VendorProfileScreen extends StatefulWidget {
-  const VendorProfileScreen({super.key, required this.user,});
+  const VendorProfileScreen({
+    super.key,
+    required this.user,
+  });
 
   final UserModel user;
 
@@ -25,7 +27,8 @@ class VendorProfileScreen extends StatefulWidget {
   State<VendorProfileScreen> createState() => _VendorProfileScreenState();
 }
 
-class _VendorProfileScreenState extends State<VendorProfileScreen> with TickerProviderStateMixin {
+class _VendorProfileScreenState extends State<VendorProfileScreen>
+    with TickerProviderStateMixin {
   late TabController _controller;
 
   @override
@@ -59,8 +62,8 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> with TickerPr
                       DecoratedBox(
                         decoration: BoxDecoration(
                             color: kPrimaryWhite,
-                            borderRadius: BorderRadius.circular(AppThemeUtil.radius(12))
-                        ),
+                            borderRadius:
+                                BorderRadius.circular(AppThemeUtil.radius(12))),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -68,71 +71,83 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> with TickerPr
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                (!user.hasProfilePhoto)?
-                                CircleAvatar(
-                                  backgroundColor: kGrey200,
-                                  maxRadius: AppThemeUtil.radius(50.0),
-                                  child: ZSvgIcon(
-                                    'user.svg',
-                                    size: AppThemeUtil.radius(24.0),
-                                  ),
-                                )
-                                    :
-                                NetworkImageView(
-                                  imageUrl: user.profilePhotoUrl?? '',
-                                  width: AppThemeUtil.radius(100),
-                                  height: AppThemeUtil.radius(100),
-                                  radius: 50.0,
-                                ),
+                                (!user.hasProfilePhoto)
+                                    ? CircleAvatar(
+                                        backgroundColor: kGrey200,
+                                        maxRadius: AppThemeUtil.radius(50.0),
+                                        child: ZSvgIcon(
+                                          'user.svg',
+                                          size: AppThemeUtil.radius(24.0),
+                                        ),
+                                      )
+                                    : NetworkImageView(
+                                        imageUrl: user.profilePhotoUrl ?? '',
+                                        width: AppThemeUtil.radius(100),
+                                        height: AppThemeUtil.radius(100),
+                                        radius: 50.0,
+                                      ),
                                 (user.idVerificationStatus == kCompletedStatus)
                                     ? Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppThemeUtil.width(14.0),
-                                    vertical: AppThemeUtil.height(8.0),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: kSuccess100,
-                                    borderRadius: BorderRadius.circular(AppThemeUtil.radius(8.0)),
-                                    border: Border.all(color: kSuccess200),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      ZSvgIcon(
-                                        'seal_check.svg',
-                                        size: AppThemeUtil.radius(20.0),
-                                        color: kSuccess600,
-                                      ),
-                                      const HSpace(width: 8.0),
-                                      const Text('Verified').semiBold().fontSize(14.0).color(kSuccess600)
-                                    ],
-                                  ),
-                                )
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: AppThemeUtil.width(14.0),
+                                          vertical: AppThemeUtil.height(8.0),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: kSuccess100,
+                                          borderRadius: BorderRadius.circular(
+                                              AppThemeUtil.radius(8.0)),
+                                          border:
+                                              Border.all(color: kSuccess200),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            ZSvgIcon(
+                                              'seal_check.svg',
+                                              size: AppThemeUtil.radius(20.0),
+                                              color: kSuccess600,
+                                            ),
+                                            const HSpace(width: 8.0),
+                                            const Text('Verified')
+                                                .semiBold()
+                                                .fontSize(14.0)
+                                                .color(kSuccess600)
+                                          ],
+                                        ),
+                                      )
                                     : Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: AppThemeUtil.width(14.0),
-                                    vertical: AppThemeUtil.height(8.0),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: kError100,
-                                    borderRadius: BorderRadius.circular(AppThemeUtil.radius(8.0)),
-                                    border: Border.all(color: kError700),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      ZSvgIcon(
-                                        'seal_check.svg',
-                                        size: AppThemeUtil.radius(20.0),
-                                        color: kError700,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: AppThemeUtil.width(14.0),
+                                          vertical: AppThemeUtil.height(8.0),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: kError100,
+                                          borderRadius: BorderRadius.circular(
+                                              AppThemeUtil.radius(8.0)),
+                                          border: Border.all(color: kError700),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            ZSvgIcon(
+                                              'seal_check.svg',
+                                              size: AppThemeUtil.radius(20.0),
+                                              color: kError700,
+                                            ),
+                                            const HSpace(width: 8.0),
+                                            const Text('Unverified')
+                                                .semiBold()
+                                                .fontSize(14.0)
+                                                .color(kError700)
+                                          ],
+                                        ),
                                       ),
-                                      const HSpace(width: 8.0),
-                                      const Text('Unverified').semiBold().fontSize(14.0).color(kError700)
-                                    ],
-                                  ),
-                                ),
                               ],
                             ),
                             const VSpace(height: 14.0),
-                            Text(user.fullName).bold().fontSize(20.0).color(kGrey1200).letterSpacing(-0.4),
+                            Text(user.fullName)
+                                .bold()
+                                .fontSize(20.0)
+                                .color(kGrey1200)
+                                .letterSpacing(-0.4),
                             const VSpace(height: 8.0),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,20 +161,30 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> with TickerPr
                                       size: AppThemeUtil.radius(16.0),
                                     ).paddingOnly(top: 2.0),
                                     const HSpace(width: 4.0),
-                                    Text(user.address?.originName?? '').medium().fontSize(14.0).color(kGrey800).flexible(),
+                                    Text(user.address?.originName ?? '')
+                                        .medium()
+                                        .fontSize(14.0)
+                                        .color(kGrey800)
+                                        .flexible(),
                                   ],
                                 ).flexible(),
                                 const HSpace(width: 8.0),
                                 Row(
                                   children: [
-                                    const Text('Rental Score').regular().fontSize(14.0).color(kGrey800),
+                                    const Text('Rental Score')
+                                        .regular()
+                                        .fontSize(14.0)
+                                        .color(kGrey800),
                                     const HSpace(width: 4.0),
                                     ZSvgIcon(
                                       'star.svg',
                                       size: AppThemeUtil.radius(14.0),
                                     ),
                                     const HSpace(width: 4.0),
-                                    Text('${user.statistics?.renterAverageRating ?? 0.0}').semiBold().fontSize(14.0).color(kGrey800),
+                                    Text('${user.statistics?.renterAverageRating ?? 0.0}')
+                                        .semiBold()
+                                        .fontSize(14.0)
+                                        .color(kGrey800),
                                   ],
                                 ),
                               ],
@@ -194,12 +219,13 @@ class _VendorProfileScreenState extends State<VendorProfileScreen> with TickerPr
               child: TabBarView(
                 controller: _controller,
                 children: [
-                  VendorListedProductTab(vendorExternalId: widget.user.externalId),
-                  ItemsTabScreen(vendor: widget.user,).paddingOnly(
-                    top: kWidthPadding,
-                    left: kWidthPadding,
-                    right: kWidthPadding
-                  ),
+                  VendorListedProductTab(vendor: widget.user),
+                  ItemsTabScreen(
+                    vendor: widget.user,
+                  ).paddingOnly(
+                      top: kWidthPadding,
+                      left: kWidthPadding,
+                      right: kWidthPadding),
                 ],
               ),
             ),

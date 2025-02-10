@@ -31,7 +31,7 @@ abstract class ProductRemoteDatasource {
   Future<bool> deleteProductPrice(
       {required String productUid, required Map<String, dynamic> requestBody});
   Future<ProductHistoryModel> fetchVendorProducts(
-      {String? vendorExternalId,
+      {required UserModel vendor,
       String? nextPage,
       required Map<String, dynamic> queryParam});
   Future<List<SubCategoryItemModel>> fetchPopularSubCategoryItems();
@@ -71,7 +71,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       }
 
       requestBody = requestBody.copyWith(
-          userId: firebaseAuth.currentUser!.uid,
+          userUid: firebaseAuth.currentUser!.uid,
           uid: docRef.id,
           externalId: docRef.id,
           postedAt: DateTime.now().toIso8601String());
@@ -90,7 +90,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   @override
   Future<ProductHistoryModel> fetchUserProducts(
       {required UserModel user, String? nextPage, int? pageSize}) async {
-    Query query = productCollection.where('userId', isEqualTo: user.uid);
+    Query query = productCollection.where('userUid', isEqualTo: user.uid);
     // .orderBy('postedAt', descending: true);
 
     if (nextPage != null) {
@@ -160,7 +160,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
         userDropOffStatus: BookingProgressStatus.notStarted,
         productUid: product.uid,
         userUid: firebaseAuth.currentUser!.uid,
-        vendorUid: product.userId!,
+        vendorUid: product.userUid!,
         bookedProduct: booking.bookedProduct?.copyWith(
           duration: duration['duration'],
           returnedEarly: false,
@@ -179,7 +179,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
         sentAt: DateTime.now().toIso8601String(),
         bookingUid: docRef.id,
         senderUid: firebaseAuth.currentUser!.uid,
-        receiverUid: product.userId!,
+        receiverUid: product.userUid!,
         onGoing: true,
       );
 
@@ -263,26 +263,38 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
 
   @override
   Future<ProductHistoryModel> fetchVendorProducts(
-      {String? vendorExternalId,
+      {required UserModel vendor,
       String? nextPage,
       required Map<String, dynamic> queryParam}) async {
-    // final response = await httpServiceRequester.getRequest(
-    //     endpoint: nextPage ?? ApiRoutes.getVendorProducts(vendorExternalId),
-    //     queryParam: queryParam);
+    Query query = productCollection.where('userUid', isEqualTo: vendor.uid);
+    // .orderBy('postedAt', descending: true);
 
-    // var body = response.data;
-    // if (body['success'] == false) {
-    //   throw ServerException(message: body['message'] ?? '');
-    // }
+    if (nextPage != null) {
+      query =
+          query.startAfterDocument(await productCollection.doc(nextPage).get());
+    }
 
-    // return ProductHistoryModel.fromJson({
-    //   'data': body['data'] ?? [],
-    //   'meta': body['meta'],
-    // });
+    final response =
+        await query.limit(queryParam['pageSize'] ?? kProductPerPage).get();
+
+    if (response.docs.isEmpty) {
+      return ProductHistoryModel.fromJson({
+        'data': null,
+        'meta': null,
+      });
+    }
 
     return ProductHistoryModel.fromJson({
-      'data': [],
-      'meta': {},
+      'data': response.docs.map((e) {
+        final data = (e.data() as Map<String, dynamic>);
+
+        final jsonUser = vendor.customToJson();
+        data['user'] = jsonUser;
+        return data;
+      }).toList(),
+      'meta': {
+        'nextPage': response.docs.last.id,
+      },
     });
   }
 
@@ -327,7 +339,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   @override
   Future<int> fetchProductCount() async {
     final response = await productCollection
-        .where('userId', isEqualTo: firebaseAuth.currentUser!.uid)
+        .where('userUid', isEqualTo: firebaseAuth.currentUser!.uid)
         .count()
         .get();
 

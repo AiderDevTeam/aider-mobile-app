@@ -1,5 +1,4 @@
 
-import 'package:aider_mobile_app/src/features/search/domain/models/search/search_model.dart';
 
 import '../../../../../core/services/local_storage_service.dart';
 import '../../../../../core/services/logger_service.dart';

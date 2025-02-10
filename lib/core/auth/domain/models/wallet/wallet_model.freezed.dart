@@ -21,7 +21,7 @@ WalletModel _$WalletModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$WalletModel {
   String? get uid => throw _privateConstructorUsedError;
-  String? get userId => throw _privateConstructorUsedError;
+  String? get userUid => throw _privateConstructorUsedError;
   String? get externalId => throw _privateConstructorUsedError;
   String? get bankName => throw _privateConstructorUsedError;
   String? get bankCode => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $WalletModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String? uid,
-      String? userId,
+      String? userUid,
       String? externalId,
       String? bankName,
       String? bankCode,
@@ -72,7 +72,7 @@ class _$WalletModelCopyWithImpl<$Res, $Val extends WalletModel>
   @override
   $Res call({
     Object? uid = freezed,
-    Object? userId = freezed,
+    Object? userUid = freezed,
     Object? externalId = freezed,
     Object? bankName = freezed,
     Object? bankCode = freezed,
@@ -85,9 +85,9 @@ class _$WalletModelCopyWithImpl<$Res, $Val extends WalletModel>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
+      userUid: freezed == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
               as String?,
       externalId: freezed == externalId
           ? _value.externalId
@@ -127,7 +127,7 @@ abstract class _$$WalletModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String? uid,
-      String? userId,
+      String? userUid,
       String? externalId,
       String? bankName,
       String? bankCode,
@@ -150,7 +150,7 @@ class __$$WalletModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uid = freezed,
-    Object? userId = freezed,
+    Object? userUid = freezed,
     Object? externalId = freezed,
     Object? bankName = freezed,
     Object? bankCode = freezed,
@@ -163,9 +163,9 @@ class __$$WalletModelImplCopyWithImpl<$Res>
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
               as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
+      userUid: freezed == userUid
+          ? _value.userUid
+          : userUid // ignore: cast_nullable_to_non_nullable
               as String?,
       externalId: freezed == externalId
           ? _value.externalId
@@ -200,7 +200,7 @@ class __$$WalletModelImplCopyWithImpl<$Res>
 class _$WalletModelImpl implements _WalletModel {
   const _$WalletModelImpl(
       {this.uid,
-      this.userId,
+      this.userUid,
       this.externalId,
       this.bankName,
       this.bankCode,
@@ -214,7 +214,7 @@ class _$WalletModelImpl implements _WalletModel {
   @override
   final String? uid;
   @override
-  final String? userId;
+  final String? userUid;
   @override
   final String? externalId;
   @override
@@ -230,7 +230,7 @@ class _$WalletModelImpl implements _WalletModel {
 
   @override
   String toString() {
-    return 'WalletModel(uid: $uid, userId: $userId, externalId: $externalId, bankName: $bankName, bankCode: $bankCode, accountNumber: $accountNumber, accountName: $accountName, isDefault: $isDefault)';
+    return 'WalletModel(uid: $uid, userUid: $userUid, externalId: $externalId, bankName: $bankName, bankCode: $bankCode, accountNumber: $accountNumber, accountName: $accountName, isDefault: $isDefault)';
   }
 
   @override
@@ -239,7 +239,7 @@ class _$WalletModelImpl implements _WalletModel {
         (other.runtimeType == runtimeType &&
             other is _$WalletModelImpl &&
             (identical(other.uid, uid) || other.uid == uid) &&
-            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.userUid, userUid) || other.userUid == userUid) &&
             (identical(other.externalId, externalId) ||
                 other.externalId == externalId) &&
             (identical(other.bankName, bankName) ||
@@ -256,7 +256,7 @@ class _$WalletModelImpl implements _WalletModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, uid, userId, externalId,
+  int get hashCode => Object.hash(runtimeType, uid, userUid, externalId,
       bankName, bankCode, accountNumber, accountName, isDefault);
 
   /// Create a copy of WalletModel
@@ -278,7 +278,7 @@ class _$WalletModelImpl implements _WalletModel {
 abstract class _WalletModel implements WalletModel {
   const factory _WalletModel(
       {final String? uid,
-      final String? userId,
+      final String? userUid,
       final String? externalId,
       final String? bankName,
       final String? bankCode,
@@ -292,7 +292,7 @@ abstract class _WalletModel implements WalletModel {
   @override
   String? get uid;
   @override
-  String? get userId;
+  String? get userUid;
   @override
   String? get externalId;
   @override

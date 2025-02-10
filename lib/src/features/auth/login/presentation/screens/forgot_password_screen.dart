@@ -50,6 +50,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           AppPrimaryButton(
             onPressed: () async {
               if (formKey.currentState!.validate()) {
+                Provider.of<AuthProvider>(context, listen: false).setOTPData({
+                  'action': kResetPassAction,
+                  "email": emailController.text,
+                });
                 Provider.of<AuthProvider>(context, listen: false)
                     .forgotPassword(
                   context,

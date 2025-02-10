@@ -31,7 +31,7 @@ class WalletRemoteDatasourceImpl implements WalletRemoteDatasource {
     final newDocRef = _walletCollection.doc(); // Generate new ID
 
     walletModel = walletModel.copyWith(
-      userId: user?.uid,
+      userUid: user?.uid,
       uid: newDocRef.id,
     );
 
@@ -59,7 +59,7 @@ class WalletRemoteDatasourceImpl implements WalletRemoteDatasource {
   Future<List<WalletModel>> getWallets() async {
     final user = firebaseAuth.currentUser;
     final result =
-        await _walletCollection.where('userId', isEqualTo: user?.uid).get();
+        await _walletCollection.where('userUid', isEqualTo: user?.uid).get();
 
     if (result.docs.isEmpty) {
       return [];

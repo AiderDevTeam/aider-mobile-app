@@ -55,10 +55,10 @@ class ExploreViewProvider extends BaseProvider {
       if (section['type'] == 'product') {
         for (var j = 0; j < section['data'].length; j++) {
           var product = section['data'][j];
-          if (_userIdToSectionProductMap[product['userId']] == null) {
-            _userIdToSectionProductMap[product['userId']] = [];
+          if (_userIdToSectionProductMap[product['userUid']] == null) {
+            _userIdToSectionProductMap[product['userUid']] = [];
           }
-          _userIdToSectionProductMap[product['userId']]!
+          _userIdToSectionProductMap[product['userUid']]!
               .add(_sections[i]['data'][j]);
         }
       }

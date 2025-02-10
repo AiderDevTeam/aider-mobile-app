@@ -58,7 +58,8 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
         .where(userTypeUid, isEqualTo: firebaseAuth.currentUser!.uid);
 
     if (isCompleted) {
-      query.where('status', isEqualTo: 'completed');
+      query.where('collectionStatus',
+          isEqualTo: BookingProgressStatus.accepted.name);
     }
 
     final response = await query.get();

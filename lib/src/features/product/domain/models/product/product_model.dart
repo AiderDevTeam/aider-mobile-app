@@ -19,7 +19,7 @@ class ProductModel with _$ProductModel {
   const factory ProductModel({
     final int? id,
     final String? uid,
-    final String? userId,
+    final String? userUid,
     final String? externalId,
     final String? subCategoryItemId,
     final String? name,
