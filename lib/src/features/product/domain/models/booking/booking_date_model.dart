@@ -1,17 +1,23 @@
+class BookingDateModel {
+  final int? id;
+  final String? date;
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+  BookingDateModel({
+    this.id,
+    this.date,
+  });
 
-part 'booking_date_model.freezed.dart';
-part 'booking_date_model.g.dart';
+  factory BookingDateModel.fromJson(Map<String, dynamic> json) {
+    return BookingDateModel(
+      id: json['id'],
+      date: json['date'],
+    );
+  }
 
-
-@freezed
-class BookingDateModel with _$BookingDateModel {
-  const factory BookingDateModel({
-    final int? id,
-    final String? date,
-  }) = _BookingDateModel;
-
-  factory BookingDateModel.fromJson(Map<String, dynamic> json) =>
-      _$BookingDateModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date,
+    };
+  }
 }

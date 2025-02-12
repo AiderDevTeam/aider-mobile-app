@@ -28,6 +28,7 @@ class InboxRemoteDatasourceImpl extends InboxRemoteDatasource {
   final FirebaseFirestore firestore;
   final FirebaseAuth firebaseAuth;
   late final bookingCollection = firestore.collection(kBookingCollection);
+  late final productCollection = firestore.collection(kProductsCollection);
   late final messageCollection = firestore.collection(kMessagesCollection);
 
   @override
@@ -41,9 +42,27 @@ class InboxRemoteDatasourceImpl extends InboxRemoteDatasource {
           message: "you don't have permission to approve this booking");
     }
 
-    return bookingCollection
-        .doc(booking.uid)
-        .update({'bookingAcceptanceStatus': status.name});
+    await firestore.runTransaction((trx) async {
+      final bookingRef = bookingCollection.doc(booking.uid);
+      final productRef = productCollection.doc(booking.productUid);
+
+      final bookingDoc = await bookingRef.get();
+      final bookingData = BookingModel.fromJson(bookingDoc.data()!);
+
+      if (bookingData.bookingAcceptanceStatus == status) {
+        throw ServerException(
+            message: "booking already status already set: ${status.name}");
+      }
+
+      trx.update(bookingRef, {'bookingAcceptanceStatus': status.name});
+
+      if (status == BookingProgressStatus.accepted) {
+        trx.update(productRef, {
+          'quantity':
+              FieldValue.increment(-(bookingData.bookedProduct!.quantity!))
+        });
+      }
+    });
   }
 
   @override

@@ -12,7 +12,7 @@ void initAuth() {
   final sl = GetIt.instance;
 
   sl.registerLazySingleton<UserLocalDatasource>(
-      () => UserLocalDatasourceImpl(localStorageService: sl()));
+      () => UserLocalDatasourceImpl());
   sl.registerLazySingleton<AuthRemoteDatasource>(() =>
       AuthRemoteDatasourceImpl(firebaseAuth: sl(), httpServiceRequester: sl()));
   sl.registerLazySingleton<AuthRepository>(
@@ -20,8 +20,9 @@ void initAuth() {
   sl.registerLazySingleton<UserRemoteDatasourceV2>(() =>
       UserRemoteDatasourceV2Impl(
           firestore: sl(), auth: sl(), cloudinaryService: sl()));
-  sl.registerLazySingleton<UserRepositoryV2>(
-      () => UserRepositoryV2Impl(userRemoteDatasourceV2: sl()));
+
+  sl.registerLazySingleton<UserRepositoryV2>(() => UserRepositoryV2Impl(
+      userRemoteDatasourceV2: sl(), userLocalDatasource: sl()));
 
   sl.registerLazySingleton<WalletRemoteDatasource>(() =>
       WalletRemoteDatasourceImpl(firebaseFirestore: sl(), firebaseAuth: sl()));

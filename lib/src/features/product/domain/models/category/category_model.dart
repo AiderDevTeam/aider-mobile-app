@@ -1,35 +1,55 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'sub_category_model.dart';
 
-part 'category_model.freezed.dart';
-part 'category_model.g.dart';
+class CategoryModel {
+  final int? id;
+  final String? externalId;
+  final String? name;
+  final String? imageUrl;
+  final String? status;
+  final List<SubCategoryModel>? subCategories;
 
+  CategoryModel({
+    this.id,
+    this.externalId,
+    this.name,
+    this.imageUrl,
+    this.status,
+    this.subCategories,
+  });
 
-@freezed
-class CategoryModel with _$CategoryModel {
-  const factory CategoryModel({
-    final int? id,
-    final String? externalId,
-    final String? name,
-    final String? imageUrl,
-    final String? status,
-    final List<SubCategoryModel>? subCategories,
-  }) = _CategoryModel;
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    return CategoryModel(
+      id: json['id'],
+      externalId: json['externalId'],
+      name: json['name'],
+      imageUrl: json['imageUrl'],
+      status: json['status'],
+      subCategories: json['subCategories'] != null
+          ? (json['subCategories'] as List)
+              .map((obj) => SubCategoryModel.fromJson(obj))
+              .toList()
+          : null,
+    );
+  }
 
-  factory CategoryModel.fromJson(Map<String, dynamic> json) =>
-      _$CategoryModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'externalId': externalId,
+      'name': name,
+      'imageUrl': imageUrl,
+      'status': status,
+      'subCategories': subCategories,
+    };
+  }
 }
-
-
 
 class CategoryList {
   CategoryList({required this.list});
   final List<CategoryModel> list;
 
   factory CategoryList.fromJson(List parsedJson) {
-    final list = parsedJson.map((obj) => CategoryModel.fromJson(obj) ).toList();
+    final list = parsedJson.map((obj) => CategoryModel.fromJson(obj)).toList();
     return CategoryList(list: list);
   }
-
 }

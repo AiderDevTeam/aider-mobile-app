@@ -3,48 +3,74 @@
 part of 'statistic_model.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
+// TypeAdapterGenerator
 // **************************************************************************
 
-_$StatisticModelImpl _$$StatisticModelImplFromJson(Map<String, dynamic> json) =>
-    _$StatisticModelImpl(
-      id: (json['id'] as num?)?.toInt(),
-      rentedItemsCount: (json['rentedItemsCount'] as num?)?.toInt(),
-      listedItemsCount: (json['listedItemsCount'] as num?)?.toInt(),
-      vendorAverageRating: json['vendorAverageRating'] as num?,
-      renterAverageRating: json['renterAverageRating'] as num?,
-      vendorReviewsCount: (json['vendorReviewsCount'] as num?)?.toInt(),
-      renterReviewsCount: (json['renterReviewsCount'] as num?)?.toInt(),
-      pendingVendorBookingsCount:
-          (json['pendingVendorBookingsCount'] as num?)?.toInt(),
-      pendingRenterBookingsCount:
-          (json['pendingRenterBookingsCount'] as num?)?.toInt(),
-      vendorBookingsPendingAcceptanceCount:
-          (json['vendorBookingsPendingAcceptanceCount'] as num?)?.toInt(),
-      vendorIndividualRatingCounts: json['vendorIndividualRatingCounts'] == null
-          ? null
-          : VendorIndividualRatingCountsModel.fromJson(
-              json['vendorIndividualRatingCounts'] as Map<String, dynamic>),
-      renterIndividualRatingCounts: json['renterIndividualRatingCounts'] == null
-          ? null
-          : RenterIndividualRatingCountsModel.fromJson(
-              json['renterIndividualRatingCounts'] as Map<String, dynamic>),
-    );
+class StatisticModelAdapter extends TypeAdapter<StatisticModel> {
+  @override
+  final int typeId = 2;
 
-Map<String, dynamic> _$$StatisticModelImplToJson(
-        _$StatisticModelImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'rentedItemsCount': instance.rentedItemsCount,
-      'listedItemsCount': instance.listedItemsCount,
-      'vendorAverageRating': instance.vendorAverageRating,
-      'renterAverageRating': instance.renterAverageRating,
-      'vendorReviewsCount': instance.vendorReviewsCount,
-      'renterReviewsCount': instance.renterReviewsCount,
-      'pendingVendorBookingsCount': instance.pendingVendorBookingsCount,
-      'pendingRenterBookingsCount': instance.pendingRenterBookingsCount,
-      'vendorBookingsPendingAcceptanceCount':
-          instance.vendorBookingsPendingAcceptanceCount,
-      'vendorIndividualRatingCounts': instance.vendorIndividualRatingCounts,
-      'renterIndividualRatingCounts': instance.renterIndividualRatingCounts,
+  @override
+  StatisticModel read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+    return StatisticModel(
+      id: fields[0] as int?,
+      rentedItemsCount: fields[1] as int?,
+      listedItemsCount: fields[2] as int?,
+      vendorAverageRating: fields[3] as num?,
+      renterAverageRating: fields[4] as num?,
+      vendorReviewsCount: fields[5] as int?,
+      renterReviewsCount: fields[6] as int?,
+      pendingVendorBookingsCount: fields[7] as int?,
+      pendingRenterBookingsCount: fields[8] as int?,
+      vendorBookingsPendingAcceptanceCount: fields[9] as int?,
+      vendorIndividualRatingCounts:
+          fields[10] as VendorIndividualRatingCountsModel?,
+      renterIndividualRatingCounts:
+          fields[11] as RenterIndividualRatingCountsModel?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, StatisticModel obj) {
+    writer
+      ..writeByte(12)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.rentedItemsCount)
+      ..writeByte(2)
+      ..write(obj.listedItemsCount)
+      ..writeByte(3)
+      ..write(obj.vendorAverageRating)
+      ..writeByte(4)
+      ..write(obj.renterAverageRating)
+      ..writeByte(5)
+      ..write(obj.vendorReviewsCount)
+      ..writeByte(6)
+      ..write(obj.renterReviewsCount)
+      ..writeByte(7)
+      ..write(obj.pendingVendorBookingsCount)
+      ..writeByte(8)
+      ..write(obj.pendingRenterBookingsCount)
+      ..writeByte(9)
+      ..write(obj.vendorBookingsPendingAcceptanceCount)
+      ..writeByte(10)
+      ..write(obj.vendorIndividualRatingCounts)
+      ..writeByte(11)
+      ..write(obj.renterIndividualRatingCounts);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StatisticModelAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

@@ -116,6 +116,8 @@ class RentalRepositoryImpl extends RentalRepository {
           bookingUid: bookingUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
+      ZLoggerService.logOnError('error creating product reviews: $e $s');
+      CrashService.setCrashKey('booking', 'create product reviews');
       return Left(FailureToMessage.returnLeftError(e, s));
     }
   }

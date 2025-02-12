@@ -68,64 +68,36 @@ class ExploreViewProvider extends BaseProvider {
         'userIdToSectionProductMap: $_userIdToSectionProductMap');
   }
 
-  Future<bool> fetchProductUserDetail(BuildContext context,
-      {required String uid, required String productUid}) async {
-    AppDialogUtil.loadingDialog(context);
-    ZLoggerService.logOnInfo('fetchProductUserDetail: $uid, $productUid');
-    final result = await _userRepository.fetchUserDetailByUID(uid: uid);
-    if (context.mounted) {
-      AppNavigator.pop(context);
-    }
+  UserModel? _productUser;
+  UserModel? get getProductUser => _productUser;
 
-    bool hasUserDetails = false;
-    result.fold((failure) {
-      AppDialogUtil.popUpModal(context,
-          modalContent: const ErrorModalContent(
-            errorMessage: "an error occurred while fetching product details",
-          ));
-      hasUserDetails = false;
-    }, (right) {
-      setProductUserDetail(right);
-      hasUserDetails = true;
-    });
-    return hasUserDetails;
-  }
-
-  /// Note: this function is called when the user detail is fetched from the database
-  /// it updates the product user detail in the map of all products with same userId by using the reference
-  void setProductUserDetail(UserModel user) {
-    ZLoggerService.logOnInfo('setProductUserDetail: $user');
-    final productsWithUser = _userIdToSectionProductMap[user.uid];
-    print('productsWithUser before setting: $productsWithUser');
-    if (productsWithUser != null) {
-      for (var product in productsWithUser) {
-        user = user.copyWith(addresses: null);
-        product['user'] = user.toJson();
-      }
-    }
-    print('productsWithUser after setting: $_userIdToSectionProductMap');
+  void setProductUser(UserModel user) {
+    _productUser = user;
     notifyListeners();
   }
 
-  Future<ProductModel?> getProductByUserIdAndProductUid(
-      BuildContext context, String userId, String productUid) async {
-    final productsWithUser = _userIdToSectionProductMap[userId];
-    if (productsWithUser != null) {
-      for (var i = 0; i < productsWithUser.length; i++) {
-        var product = productsWithUser[i];
-        if (product['uid'] == productUid) {
-          if (product['user'] == null) {
-            final hasUserDetails = await fetchProductUserDetail(context,
-                uid: userId, productUid: productUid);
-            if (!hasUserDetails) {
-              return null;
-            }
-          }
-          return ProductModel.fromJson(_userIdToSectionProductMap[userId]![i]);
-        }
-      }
-    }
-    return null;
+  void clearProductUser() {
+    _productUser = null;
+    notifyListeners();
+  }
+
+  Future<void> fetchProductUserDetail({required String uid}) async {
+    clearProductUser();
+    setLoading(true, component: 'fetchProductUserDetail');
+
+    ZLoggerService.logOnInfo('fetchProductUserDetail: $uid');
+    final result = await _userRepository.fetchUserDetailByUID(uid: uid);
+
+    result.fold((failure) {
+      setComponentErrorType = {
+        'error': FailureToMessage.mapFailureToMessage(failure),
+        'component': 'fetchProductUserDetail'
+      };
+    }, (right) {
+      ZLoggerService.logOnInfo('fetchProductUserDetail: $right');
+      setProductUser(right);
+    });
+    setLoading(false, component: 'fetchProductUserDetail');
   }
 
   Future<void> fetchSections(BuildContext context, {required int page}) async {

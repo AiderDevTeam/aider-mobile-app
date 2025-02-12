@@ -1,24 +1,67 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hive/hive.dart';
 
-part 'address_model.freezed.dart';
 part 'address_model.g.dart';
 
-@freezed
-class AddressModel with _$AddressModel {
-  const factory AddressModel({
-    final int? id,
-    final String? uid,
-    final String? externalId,
-    final String? city,
-    final String? originName,
-    final String? country,
-    final String? countryCode,
-    final double? latitude,
-    final double? longitude,
-  }) = _AddressModel;
+@HiveType(typeId: 1)
+class AddressModel {
+  @HiveField(0)
+  final int? id;
+  @HiveField(1)
+  final String? uid;
+  @HiveField(2)
+  final String? externalId;
+  @HiveField(3)
+  final String? city;
+  @HiveField(4)
+  final String? originName;
+  @HiveField(5)
+  final String? country;
+  @HiveField(6)
+  final String? countryCode;
+  @HiveField(7)
+  final double? latitude;
+  @HiveField(8)
+  final double? longitude;
 
-  factory AddressModel.fromJson(Map<String, dynamic> json) =>
-      _$AddressModelFromJson(json);
+  const AddressModel({
+    this.id,
+    this.uid,
+    this.externalId,
+    this.city,
+    this.originName,
+    this.country,
+    this.countryCode,
+    this.latitude,
+    this.longitude,
+  });
+
+  factory AddressModel.fromJson(Map<String, dynamic> json) {
+    return AddressModel(
+      id: json['id'],
+      uid: json['uid'],
+      externalId: json['externalId'],
+      city: json['city'],
+      originName: json['originName'],
+      country: json['country'],
+      countryCode: json['countryCode'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'uid': uid,
+      'externalId': externalId,
+      'city': city,
+      'originName': originName,
+      'country': country,
+      'countryCode': countryCode,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
 }
 
 class AddressList {

@@ -1,16 +1,39 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class ProductPhotoModel {
+  final int? id;
+  final String? externalId;
+  final String? photoUrl;
 
-part 'product_photo_model.freezed.dart';
-part 'product_photo_model.g.dart';
+  ProductPhotoModel({
+    this.id,
+    this.externalId,
+    this.photoUrl,
+  });
 
-@freezed
-class ProductPhotoModel with _$ProductPhotoModel {
-  const factory ProductPhotoModel({
-    final int? id,
-    final String? externalId,
-    final String? photoUrl,
-  }) = _ProductPhotoModel;
+  factory ProductPhotoModel.fromJson(Map<String, dynamic> json) {
+    return ProductPhotoModel(
+      id: json['id'],
+      externalId: json['externalId'],
+      photoUrl: json['photoUrl'],
+    );
+  }
 
-  factory ProductPhotoModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductPhotoModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'external_id': externalId,
+      'photo_url': photoUrl,
+    };
+  }
+
+  ProductPhotoModel copyWith({
+    int? id,
+    String? externalId,
+    String? photoUrl,
+  }) {
+    return ProductPhotoModel(
+      id: id ?? this.id,
+      externalId: externalId ?? this.externalId,
+      photoUrl: photoUrl ?? this.photoUrl,
+    );
+  }
 }

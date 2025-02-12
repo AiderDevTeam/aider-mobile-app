@@ -18,7 +18,7 @@ class SearchProvider extends BaseProvider {
   SearchModel? _searchResult;
   bool _searchCallbackResponse = false;
   String _previousSearchText = '';
-  ProductHistoryModel _products = const ProductHistoryModel();
+  ProductHistoryModel _products = ProductHistoryModel();
 
   SearchModel? get getSearchResult => _searchResult;
   bool get getSearchCallbackResponse => _searchCallbackResponse;

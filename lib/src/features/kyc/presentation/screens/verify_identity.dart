@@ -82,7 +82,7 @@ class _VerifyIdentityState extends State<VerifyIdentity> {
                     (identification) =>
                         identification.type?.toLowerCase() ==
                         kycType['type'].toLowerCase(),
-                    orElse: () => const VerificationModel(
+                    orElse: () => VerificationModel(
                       externalId: '',
                       idNumber: '',
                       documentUrl: '',

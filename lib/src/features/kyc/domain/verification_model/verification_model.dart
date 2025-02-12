@@ -1,25 +1,63 @@
 import 'dart:convert';
+import 'package:hive/hive.dart';
 
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'verification_model.freezed.dart';
 part 'verification_model.g.dart';
 
-@freezed
-class VerificationModel with _$VerificationModel {
-  const factory VerificationModel({
-    final String? uid,
-    final String? externalId,
-    final String? idNumber,
-    final String? documentUrl,
-    final String? selfieUrl,
-    final String? type,
-    final String? status,
-    final String? rejectionReason,
-  }) = _VerificationModel;
+@HiveType(typeId: 4)
+class VerificationModel {
+  @HiveField(0)
+  final String? uid;
+  @HiveField(1)
+  final String? externalId;
+  @HiveField(2)
+  final String? idNumber;
+  @HiveField(3)
+  final String? documentUrl;
+  @HiveField(4)
+  final String? selfieUrl;
+  @HiveField(5)
+  final String? type;
+  @HiveField(6)
+  final String? status;
+  @HiveField(7)
+  final String? rejectionReason;
 
-  factory VerificationModel.fromJson(Map<String, dynamic> json) =>
-      _$VerificationModelFromJson(json);
+  VerificationModel({
+    this.uid,
+    this.externalId,
+    this.idNumber,
+    this.documentUrl,
+    this.selfieUrl,
+    this.type,
+    this.status,
+    this.rejectionReason,
+  });
+
+  factory VerificationModel.fromJson(Map<String, dynamic> json) {
+    return VerificationModel(
+      uid: json['uid'],
+      externalId: json['external_id'],
+      idNumber: json['id_number'],
+      documentUrl: json['document_url'],
+      selfieUrl: json['selfie_url'],
+      type: json['type'],
+      status: json['status'],
+      rejectionReason: json['rejection_reason'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'external_id': externalId,
+      'id_number': idNumber,
+      'document_url': documentUrl,
+      'selfie_url': selfieUrl,
+      'type': type,
+      'status': status,
+      'rejection_reason': rejectionReason,
+    };
+  }
 
   static String encode(List<VerificationModel> objects) => json.encode(
         objects.map<Map<String, dynamic>>((obj) => obj.toJson()).toList(),

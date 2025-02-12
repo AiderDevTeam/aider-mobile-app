@@ -1,10 +1,12 @@
 import 'package:flutter/services.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class InputFormatterUtil {
-  static List<MaskTextInputFormatter>? maskInput({String? mask, Map<String, RegExp>? filter}) => [
+  static List<MaskTextInputFormatter>? maskInput(
+          {String? mask, Map<String, RegExp>? filter}) =>
+      [
         MaskTextInputFormatter(
           mask: mask,
           filter: filter,
@@ -12,12 +14,14 @@ class InputFormatterUtil {
         )
       ];
 
-  static TextInputFormatter thousandsSeparatorInputSeparator = ThousandsSeparatorInputFormatter();
+  static TextInputFormatter thousandsSeparatorInputSeparator =
+      ThousandsSeparatorInputFormatter();
 }
 
 class ThousandsSeparatorInputFormatter implements TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.isEmpty) {
       return newValue.copyWith(text: '');
     }

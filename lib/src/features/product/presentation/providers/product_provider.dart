@@ -34,15 +34,15 @@ import 'can_rent_mixin.dart';
 
 class ProductProvider extends BaseProvider with CanRent {
   final _productRepository = sl.get<ProductRepository>();
-  ProductModel _productRequestBody = const ProductModel();
+  ProductModel _productRequestBody = ProductModel();
   String _categoryModalTitle = '';
   List<PriceStructureModel> _priceStructure = [];
-  ProductHistoryModel _userProductHistory = const ProductHistoryModel();
-  ProductHistoryModel _vendorProductHistory = const ProductHistoryModel();
+  ProductHistoryModel _userProductHistory = ProductHistoryModel();
+  ProductHistoryModel _vendorProductHistory = ProductHistoryModel();
   List<CategoryModel> _categories = [];
   List<SubCategoryItemModel> _subCategoryItems = [];
   List<SubCategoryItemModel> _popularSubCategoryItems = [];
-  CategoryModel _selectedCategory = const CategoryModel();
+  CategoryModel _selectedCategory = CategoryModel();
   Map<String, dynamic> _productDescription = {};
 
   set setProductDescription(Map<String, dynamic> userInput) {
@@ -534,7 +534,7 @@ class ProductProvider extends BaseProvider with CanRent {
       String? nextPage}) async {
     setComponentErrorType = null;
     if (nextPage == null) {
-      _vendorProductHistory = const ProductHistoryModel();
+      _vendorProductHistory = ProductHistoryModel();
     }
     setLoading(true, component: loadingComponent);
 

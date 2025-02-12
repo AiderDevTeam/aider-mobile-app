@@ -1,18 +1,41 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import '../../../../../../core/domain/models/pagination/pagination_model.dart';
 import '../product/product_model.dart';
 
-part 'product_history_model.freezed.dart';
-part 'product_history_model.g.dart';
+class ProductHistoryModel {
+  final List<ProductModel> data;
+  final PaginationModel? meta;
 
-@freezed
-class ProductHistoryModel with _$ProductHistoryModel {
-  const factory ProductHistoryModel({
-    @Default([]) final List<ProductModel> data,
-    final PaginationModel? meta,
-  }) = _ProductHistoryModel;
+  ProductHistoryModel({
+    this.data = const [],
+    this.meta,
+  });
 
-  factory ProductHistoryModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductHistoryModelFromJson(json);
+  factory ProductHistoryModel.fromJson(Map<String, dynamic> json) {
+    return ProductHistoryModel(
+      data: json['data'] != null
+          ? (json['data'] as List)
+              .map((obj) => ProductModel.fromJson(obj))
+              .toList()
+          : [],
+      meta:
+          json['meta'] != null ? PaginationModel.fromJson(json['meta']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'data': data.map((obj) => obj.toJson()).toList(),
+      'meta': meta?.toJson(),
+    };
+  }
+
+  ProductHistoryModel copyWith({
+    List<ProductModel>? data,
+    PaginationModel? meta,
+  }) {
+    return ProductHistoryModel(
+      data: data ?? this.data,
+      meta: meta ?? this.meta,
+    );
+  }
 }

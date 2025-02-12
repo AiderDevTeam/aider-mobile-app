@@ -1,25 +1,51 @@
 import 'dart:convert';
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+class BankModel {
+  final int? id;
+  final String? externalId;
+  final String? code;
+  final String? country;
+  final String? currency;
+  final String? longCode;
+  final String? name;
+  final String? sortCode;
 
-part 'bank_model.freezed.dart';
-part 'bank_model.g.dart';
+  const BankModel({
+    this.id,
+    this.externalId,
+    this.code,
+    this.country,
+    this.currency,
+    this.longCode,
+    this.name,
+    this.sortCode,
+  });
 
-@freezed
-class BankModel with _$BankModel {
-  const factory BankModel({
-    final int? id,
-    final String? externalId,
-    final String? code,
-    final String? country,
-    final String? currency,
-    final String? longCode,
-    final String? name,
-    final String? sortCode,
-  }) = _BankModel;
+  factory BankModel.fromJson(Map<String, dynamic> json) {
+    return BankModel(
+      id: json['id'],
+      externalId: json['external_id'],
+      code: json['code'],
+      country: json['country'],
+      currency: json['currency'],
+      longCode: json['long_code'],
+      name: json['name'],
+      sortCode: json['sort_code'],
+    );
+  }
 
-  factory BankModel.fromJson(Map<String, dynamic> json) =>
-      _$BankModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'external_id': externalId,
+      'code': code,
+      'country': country,
+      'currency': currency,
+      'long_code': longCode,
+      'name': name,
+      'sort_code': sortCode,
+    };
+  }
 
   static String encode(List<BankModel> objects) => json.encode(
         objects.map<Map<String, dynamic>>((obj) => obj.toJson()).toList(),

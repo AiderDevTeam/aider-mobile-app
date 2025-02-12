@@ -14,8 +14,7 @@ import '../../domain/review/review_history_model.dart';
 
 class ReviewViewModel extends BaseProvider {
   final _reviewRepository = sl.get<ReviewRepository>();
-  ProductHistoryModel _vendorProductAndReviewHistory =
-      const ProductHistoryModel();
+  ProductHistoryModel _vendorProductAndReviewHistory = ProductHistoryModel();
   ReviewHistoryModel _renterReviewHistory = const ReviewHistoryModel();
 
   UnmodifiableListView<ProductModel> get getVendorProductsAndReviews =>
@@ -43,7 +42,7 @@ class ReviewViewModel extends BaseProvider {
       String? nextPage}) async {
     setComponentErrorType = null;
     if (nextPage == null) {
-      _vendorProductAndReviewHistory = const ProductHistoryModel();
+      _vendorProductAndReviewHistory = ProductHistoryModel();
     }
     setLoading(true, component: loadingComponent);
 

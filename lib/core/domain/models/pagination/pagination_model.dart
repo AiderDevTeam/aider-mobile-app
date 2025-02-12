@@ -1,21 +1,35 @@
+class PaginationModel {
+  final String? previous;
+  final String? next;
+  final int? currentPage;
+  final int? perPage;
+  final int? total;
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+  PaginationModel({
+    this.previous,
+    this.next,
+    this.currentPage,
+    this.perPage,
+    this.total,
+  });
 
-part 'pagination_model.freezed.dart';
-part 'pagination_model.g.dart';
+  factory PaginationModel.fromJson(Map<String, dynamic> json) {
+    return PaginationModel(
+      previous: json['previous'],
+      next: json['next'],
+      currentPage: json['current_page'],
+      perPage: json['per_page'],
+      total: json['total'],
+    );
+  }
 
-
-@freezed
-class PaginationModel with _$PaginationModel {
-  const factory PaginationModel({
-    final String? previous,
-    final String? next,
-    final int? currentPage,
-    final int? perPage,
-    final int? total,
-  }) = _PaginationModel;
-
-  factory PaginationModel.fromJson(Map<String, dynamic> json) =>
-      _$PaginationModelFromJson(json);
-
+  Map<String, dynamic> toJson() {
+    return {
+      'previous': previous,
+      'next': next,
+      'current_page': currentPage,
+      'per_page': perPage,
+      'total': total,
+    };
+  }
 }

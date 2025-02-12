@@ -1,18 +1,25 @@
 // ignore_for_file: invalid_annotation_target
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+class LocationPredictionDetailModel {
+  final Map<String, dynamic>? geometry;
+  final List? addressComponents;
 
-part 'location_prediction_detail_model.freezed.dart';
-part 'location_prediction_detail_model.g.dart';
+  const LocationPredictionDetailModel({
+    this.geometry,
+    this.addressComponents,
+  });
 
-@freezed
-class LocationPredictionDetailModel with _$LocationPredictionDetailModel{
-  const factory LocationPredictionDetailModel({
-    @JsonKey(name: 'geometry') Map<String, dynamic>? geometry,
-    @JsonKey(name: 'address_components') List? addressComponents,
+  factory LocationPredictionDetailModel.fromJson(Map<String, dynamic> json) {
+    return LocationPredictionDetailModel(
+      geometry: json['geometry'],
+      addressComponents: json['address_components'],
+    );
+  }
 
-  }) = _LocationPredictionDetailModel;
-
-  factory LocationPredictionDetailModel.fromJson(Map<String, dynamic> json) => _$LocationPredictionDetailModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'geometry': geometry,
+      'address_components': addressComponents,
+    };
+  }
 }
-

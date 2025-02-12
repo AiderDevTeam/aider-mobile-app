@@ -1,21 +1,40 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class VendorIndividualRatingCountsModel {
+  final int? id;
+  final int? oneRating;
+  final int? twoRating;
+  final int? threeRating;
+  final int? fourRating;
+  final int? fiveRating;
 
+  const VendorIndividualRatingCountsModel({
+    this.id,
+    this.oneRating,
+    this.twoRating,
+    this.threeRating,
+    this.fourRating,
+    this.fiveRating,
+  });
 
-part 'vendor_individual_rating_counts.freezed.dart';
-part 'vendor_individual_rating_counts.g.dart';
+  factory VendorIndividualRatingCountsModel.fromJson(
+      Map<String, dynamic> json) {
+    return VendorIndividualRatingCountsModel(
+      id: json['id'],
+      oneRating: json['oneRating'],
+      twoRating: json['twoRating'],
+      threeRating: json['threeRating'],
+      fourRating: json['fourRating'],
+      fiveRating: json['fiveRating'],
+    );
+  }
 
-
-@freezed
-class VendorIndividualRatingCountsModel with _$VendorIndividualRatingCountsModel {
-  const factory VendorIndividualRatingCountsModel({
-    final int? id,
-    final int? oneRating,
-    final int? twoRating,
-    final int? threeRating,
-    final int? fourRating,
-    final int? fiveRating,
-  }) = _VendorIndividualRatingCountsModel;
-
-  factory VendorIndividualRatingCountsModel.fromJson(Map<String, dynamic> json) =>
-      _$VendorIndividualRatingCountsModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'oneRating': oneRating,
+      'twoRating': twoRating,
+      'threeRating': threeRating,
+      'fourRating': fourRating,
+      'fiveRating': fiveRating,
+    };
+  }
 }

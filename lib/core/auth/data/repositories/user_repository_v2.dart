@@ -1,3 +1,4 @@
+import 'package:aider_mobile_app/core/auth/data/datasources/user_local_datasource.dart';
 import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
 import 'package:aider_mobile_app/core/auth/domain/models/user_types/user_type_model.dart';
 import 'package:aider_mobile_app/core/errors/failure.dart';
@@ -22,8 +23,11 @@ abstract class UserRepositoryV2 {
 
 class UserRepositoryV2Impl implements UserRepositoryV2 {
   final UserRemoteDatasourceV2 userRemoteDatasourceV2;
+  final UserLocalDatasource userLocalDatasource;
 
-  UserRepositoryV2Impl({required this.userRemoteDatasourceV2});
+  UserRepositoryV2Impl(
+      {required this.userRemoteDatasourceV2,
+      required this.userLocalDatasource});
 
   @override
   Future<Either<Failure, String>> addProfileImage(
@@ -116,10 +120,19 @@ class UserRepositoryV2Impl implements UserRepositoryV2 {
   Future<Either<Failure, UserModel>> fetchUserDetailByUID(
       {required String uid}) async {
     try {
-      final result =
-          await userRemoteDatasourceV2.fetchUserDetailByUID(uid: uid);
-      return Right(result);
+      late UserModel? user;
+      user = await userLocalDatasource.retrieveUserByUid(uid);
+
+      if (user == null) {
+        user = await userRemoteDatasourceV2.fetchUserDetailByUID(uid: uid);
+        ZLoggerService.logOnInfo('fetchUserDetailByUID Fetching from remote');
+
+        await userLocalDatasource.persistUser(user);
+      }
+
+      return Right(user);
     } catch (e, s) {
+      ZLoggerService.logOnError('fetchUserDetailByUID Error: $e');
       CrashService.setCrashKey(
           'fetchUserDetailByUID', 'Fetching user detail by UID');
       return Left(FailureToMessage.returnLeftError(e, s));

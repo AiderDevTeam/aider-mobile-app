@@ -228,7 +228,9 @@ class _RentedItemCardState extends State<RentedItemCard> {
                 BookingProgressStatus.success &&
             widget.booking.userPickupStatus == BookingProgressStatus.success &&
             rentalProduct?.isOverdue == false &&
-            rentalProduct?.returnedEarly == false) ...[
+            rentalProduct?.returnedEarly == false &&
+            widget.booking.userDropOffStatus !=
+                BookingProgressStatus.success) ...[
           DaysRemainingCard(
             overDue:
                 '${DateTime.parse(rentalProduct?.endDate ?? '').difference(DateTime.now()).inDays} days remaining',

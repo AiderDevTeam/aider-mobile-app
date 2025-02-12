@@ -321,7 +321,7 @@ class _RentingSummaryModalContentState
         (price) =>
             day >= (price.startDay ?? 0) &&
             (price.endDay == null || day <= price.endDay!),
-        orElse: () => const ProductPriceModel(price: 0.0),
+        orElse: () => ProductPriceModel(price: 0.0),
       );
 
       // Calculate 10% of the price for the current day and add to the total

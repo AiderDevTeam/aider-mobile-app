@@ -116,7 +116,7 @@ class _RentalScoreTabScreenState extends State<RentalScoreTabScreen> {
               ),
               const VSpace(height: 32.0),
               ReviewRatingWidget(
-                statistics: statistics ?? const StatisticModel(),
+                statistics: statistics ?? StatisticModel(),
                 type: true,
               ),
               const VSpace(height: 32.0),

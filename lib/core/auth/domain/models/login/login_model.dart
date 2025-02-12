@@ -1,16 +1,47 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class LoginModel {
+  final String? uid;
+  final String? email;
+  final String? accessToken;
+  final String? refreshToken;
+  final bool? isVerified;
 
-part 'login_model.freezed.dart';
+  LoginModel({
+    this.uid,
+    this.email,
+    this.accessToken,
+    this.refreshToken,
+    this.isVerified,
+  });
 
-@freezed
-class LoginModel with _$LoginModel {
-  const LoginModel._();
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'email': email,
+      'accessToken': accessToken,
+      'refreshToken': refreshToken,
+      'isVerified': isVerified,
+    };
+  }
 
-  factory LoginModel({
-    final String? uid,
-    final String? email,
-    final String? accessToken,
-    final String? refreshToken,
-    final bool? isVerified,
-  }) = _LoginModel;
+  factory LoginModel.fromJson(Map<String, dynamic> json) {
+    return LoginModel(
+      uid: json['uid'],
+      email: json['email'],
+      accessToken: json['accessToken'],
+      refreshToken: json['refreshToken'],
+      isVerified: json['isVerified'],
+    );
+  }
+
+  LoginModel copyWith({
+    String? uid,
+    String? email,
+    String? accessToken,
+    String? refreshToken,
+    bool? isVerified,
+  }) {
+    return LoginModel(
+      uid: uid ?? this.uid,
+    );
+  }
 }

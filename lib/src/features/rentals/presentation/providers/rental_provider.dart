@@ -18,10 +18,9 @@ import '../../data/repositories/rental_repository.dart';
 
 class RentalProvider extends BaseProvider {
   final _rentalRepository = sl.get<RentalRepository>();
-  BookedProductHistoryModel _rentedProductHistory =
-      const BookedProductHistoryModel();
+  BookedProductHistoryModel _rentedProductHistory = BookedProductHistoryModel();
   BookedProductHistoryModel _myItemsProductHistory =
-      const BookedProductHistoryModel();
+      BookedProductHistoryModel();
 
   UnmodifiableListView<BookingModel> get getRentalProducts =>
       UnmodifiableListView(_rentedProductHistory.data);

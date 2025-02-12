@@ -111,7 +111,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       'data': response.docs.map((e) {
         final data = (e.data() as Map<String, dynamic>);
 
-        final jsonUser = user.customToJson();
+        final jsonUser = user.toJson();
         data['user'] = jsonUser;
         return data;
       }).toList(),
@@ -288,7 +288,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       'data': response.docs.map((e) {
         final data = (e.data() as Map<String, dynamic>);
 
-        final jsonUser = vendor.customToJson();
+        final jsonUser = vendor.toJson();
         data['user'] = jsonUser;
         return data;
       }).toList(),

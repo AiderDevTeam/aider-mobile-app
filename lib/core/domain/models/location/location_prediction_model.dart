@@ -1,22 +1,29 @@
-// ignore_for_file: invalid_annotation_target
+class LocationPredictionModel {
+  final String? description;
+  final String? placeId;
+  final Map<String, dynamic>? structuredFormatting;
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+  LocationPredictionModel({
+    this.description,
+    this.placeId,
+    this.structuredFormatting,
+  });
 
-part 'location_prediction_model.freezed.dart';
+  factory LocationPredictionModel.fromJson(Map<String, dynamic> json) {
+    return LocationPredictionModel(
+      description: json['description'],
+      placeId: json['place_id'],
+      structuredFormatting: json['structured_formatting'],
+    );
+  }
 
-part 'location_prediction_model.g.dart';
-
-@freezed
-class LocationPredictionModel with _$LocationPredictionModel {
-  const factory LocationPredictionModel({
-    String? description,
-    @JsonKey(name: 'place_id') String? placeId,
-    @JsonKey(name: 'structured_formatting')
-    Map<String, dynamic>? structuredFormatting,
-  }) = _LocationPredictionModel;
-
-  factory LocationPredictionModel.fromJson(Map<String, dynamic> json) =>
-      _$LocationPredictionModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'description': description,
+      'place_id': placeId,
+      'structured_formatting': structuredFormatting,
+    };
+  }
 }
 
 class LocationPredictionList {
@@ -26,7 +33,7 @@ class LocationPredictionList {
 
   factory LocationPredictionList.fromJson(List parsedJson) {
     final list =
-    parsedJson.map((obj) => LocationPredictionModel.fromJson(obj)).toList();
+        parsedJson.map((obj) => LocationPredictionModel.fromJson(obj)).toList();
     return LocationPredictionList(list: list);
   }
 }

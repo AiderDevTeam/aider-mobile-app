@@ -1,9 +1,14 @@
 import 'dart:async';
 
+import 'package:aider_mobile_app/core/auth/domain/models/statistics/statistic_model.dart';
+import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
+import 'package:aider_mobile_app/core/auth/domain/models/wallet/wallet_model.dart';
+import 'package:aider_mobile_app/core/domain/models/address/address_model.dart';
 import 'package:aider_mobile_app/core/providers/auth_provider.dart';
 import 'package:aider_mobile_app/core/services/git_it_service_locator.dart';
 import 'package:aider_mobile_app/core/providers/location_provider.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
+import 'package:aider_mobile_app/src/features/kyc/domain/verification_model/verification_model.dart';
 import 'package:aider_mobile_app/src/features/kyc/presentation/view_model/kyc_view_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/providers/rental_provider.dart';
 import 'package:aider_mobile_app/src/features/review/presentation/view_models/review_view_model.dart';
@@ -15,6 +20,7 @@ import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'core/providers/wallet_provider.dart';
@@ -35,6 +41,13 @@ import 'src/features/product/presentation/providers/product_provider.dart';
 Future<void> main() async {
   await runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await Hive.initFlutter();
+    Hive.registerAdapter(UserModelAdapter());
+    Hive.registerAdapter(AddressModelAdapter());
+    Hive.registerAdapter(StatisticModelAdapter());
+    Hive.registerAdapter(WalletModelAdapter());
+    Hive.registerAdapter(VerificationModelAdapter());
+
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     setUpGetItServiceLocator();

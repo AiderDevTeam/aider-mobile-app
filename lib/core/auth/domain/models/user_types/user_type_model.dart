@@ -1,18 +1,27 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class UserTypeModel {
+  final String? uid;
+  final String? name;
+  final String? description;
 
-part 'user_type_model.freezed.dart';
-part 'user_type_model.g.dart';
+  const UserTypeModel({
+    this.uid,
+    this.name,
+    this.description,
+  });
 
-@freezed
-class UserTypeModel with _$UserTypeModel {
-  const UserTypeModel._();
+  factory UserTypeModel.fromJson(Map<String, dynamic> json) {
+    return UserTypeModel(
+      uid: json['uid'],
+      name: json['name'],
+      description: json['description'],
+    );
+  }
 
-  factory UserTypeModel({
-    final String? uid,
-    final String? name,
-    final String? description,
-  }) = _UserTypeModel;
-
-  factory UserTypeModel.fromJson(Map<String, dynamic> json) =>
-      _$UserTypeModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'uid': uid,
+      'name': name,
+      'description': description,
+    };
+  }
 }

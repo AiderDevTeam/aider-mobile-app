@@ -3,77 +3,120 @@
 part of 'user_model.dart';
 
 // **************************************************************************
-// JsonSerializableGenerator
+// TypeAdapterGenerator
 // **************************************************************************
 
-_$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
-    _$UserModelImpl(
-      id: (json['id'] as num?)?.toInt(),
-      uid: json['uid'] as String?,
-      externalId: json['externalId'] as String?,
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
-      displayName: json['displayName'] as String?,
-      gender: json['gender'] as String?,
-      email: json['email'] as String?,
-      password: json['password'] as String?,
-      callingCode: json['callingCode'] as String?,
-      phone: json['phone'] as String?,
-      birthday: json['birthday'] as String?,
-      idVerificationStatus: json['idVerificationStatus'] as String?,
-      idVerified: json['idVerified'] as bool?,
-      profilePhotoUrl: json['profilePhotoUrl'] as String?,
-      itemsListed: (json['itemsListed'] as num?)?.toInt(),
-      addresses: (json['addresses'] as List<dynamic>?)
-          ?.map((e) => AddressModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      statistics: json['statistics'] == null
-          ? null
-          : StatisticModel.fromJson(json['statistics'] as Map<String, dynamic>),
-      wallets: (json['wallets'] as List<dynamic>?)
-          ?.map((e) => WalletModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      userIdentifications: (json['userIdentifications'] as List<dynamic>?)
-          ?.map((e) => VerificationModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      canReceiveSMS: json['canReceiveSMS'] as bool?,
-      canReceiveEmailUpdates: json['canReceiveEmailUpdates'] as bool?,
-      canReceivePushNotifications: json['canReceivePushNotifications'] as bool?,
-      hasDefaultWallet: json['hasDefaultWallet'] as bool?,
-      pushNotificationToken: json['pushNotificationToken'] as String?,
-      userTypeId: json['userTypeId'] as String?,
-      termsAndConditions: json['termsAndConditions'] as bool?,
-      deviceOs: json['deviceOs'] as String?,
-    );
+class UserModelAdapter extends TypeAdapter<UserModel> {
+  @override
+  final int typeId = 0;
 
-Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'uid': instance.uid,
-      'externalId': instance.externalId,
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
-      'displayName': instance.displayName,
-      'gender': instance.gender,
-      'email': instance.email,
-      'password': instance.password,
-      'callingCode': instance.callingCode,
-      'phone': instance.phone,
-      'birthday': instance.birthday,
-      'idVerificationStatus': instance.idVerificationStatus,
-      'idVerified': instance.idVerified,
-      'profilePhotoUrl': instance.profilePhotoUrl,
-      'itemsListed': instance.itemsListed,
-      'addresses': instance.addresses,
-      'statistics': instance.statistics,
-      'wallets': instance.wallets,
-      'userIdentifications': instance.userIdentifications,
-      'canReceiveSMS': instance.canReceiveSMS,
-      'canReceiveEmailUpdates': instance.canReceiveEmailUpdates,
-      'canReceivePushNotifications': instance.canReceivePushNotifications,
-      'hasDefaultWallet': instance.hasDefaultWallet,
-      'pushNotificationToken': instance.pushNotificationToken,
-      'userTypeId': instance.userTypeId,
-      'termsAndConditions': instance.termsAndConditions,
-      'deviceOs': instance.deviceOs,
+  @override
+  UserModel read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+    return UserModel(
+      id: fields[0] as int?,
+      uid: fields[1] as String?,
+      externalId: fields[2] as String?,
+      firstName: fields[3] as String?,
+      lastName: fields[4] as String?,
+      displayName: fields[5] as String?,
+      gender: fields[6] as String?,
+      email: fields[7] as String?,
+      password: fields[8] as String?,
+      callingCode: fields[9] as String?,
+      phone: fields[10] as String?,
+      birthday: fields[11] as String?,
+      idVerificationStatus: fields[12] as String?,
+      idVerified: fields[13] as bool?,
+      profilePhotoUrl: fields[14] as String?,
+      itemsListed: fields[15] as int?,
+      addresses: (fields[16] as List?)?.cast<AddressModel>(),
+      statistics: fields[17] as StatisticModel?,
+      wallets: (fields[18] as List?)?.cast<WalletModel>(),
+      userIdentifications: (fields[19] as List?)?.cast<VerificationModel>(),
+      canReceiveSMS: fields[20] as bool?,
+      canReceiveEmailUpdates: fields[21] as bool?,
+      canReceivePushNotifications: fields[22] as bool?,
+      hasDefaultWallet: fields[23] as bool?,
+      pushNotificationToken: fields[24] as String?,
+      userTypeId: fields[25] as String?,
+      termsAndConditions: fields[26] as bool?,
+      deviceOs: fields[27] as String?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, UserModel obj) {
+    writer
+      ..writeByte(28)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.uid)
+      ..writeByte(2)
+      ..write(obj.externalId)
+      ..writeByte(3)
+      ..write(obj.firstName)
+      ..writeByte(4)
+      ..write(obj.lastName)
+      ..writeByte(5)
+      ..write(obj.displayName)
+      ..writeByte(6)
+      ..write(obj.gender)
+      ..writeByte(7)
+      ..write(obj.email)
+      ..writeByte(8)
+      ..write(obj.password)
+      ..writeByte(9)
+      ..write(obj.callingCode)
+      ..writeByte(10)
+      ..write(obj.phone)
+      ..writeByte(11)
+      ..write(obj.birthday)
+      ..writeByte(12)
+      ..write(obj.idVerificationStatus)
+      ..writeByte(13)
+      ..write(obj.idVerified)
+      ..writeByte(14)
+      ..write(obj.profilePhotoUrl)
+      ..writeByte(15)
+      ..write(obj.itemsListed)
+      ..writeByte(16)
+      ..write(obj.addresses)
+      ..writeByte(17)
+      ..write(obj.statistics)
+      ..writeByte(18)
+      ..write(obj.wallets)
+      ..writeByte(19)
+      ..write(obj.userIdentifications)
+      ..writeByte(20)
+      ..write(obj.canReceiveSMS)
+      ..writeByte(21)
+      ..write(obj.canReceiveEmailUpdates)
+      ..writeByte(22)
+      ..write(obj.canReceivePushNotifications)
+      ..writeByte(23)
+      ..write(obj.hasDefaultWallet)
+      ..writeByte(24)
+      ..write(obj.pushNotificationToken)
+      ..writeByte(25)
+      ..write(obj.userTypeId)
+      ..writeByte(26)
+      ..write(obj.termsAndConditions)
+      ..writeByte(27)
+      ..write(obj.deviceOs);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserModelAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

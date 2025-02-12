@@ -68,9 +68,11 @@ class _RateAndReviewModalState extends State<RateAndReviewModal> {
                   requestBody: {
                     "type": widget.type,
                     "rating": rating,
+                    "productUid": widget.booking.productUid,
                     "comment": productReviewController.text,
                     'vendorUid': widget.booking.vendorUid,
                     'renterUid': widget.booking.userUid,
+                    'date': DateTime.now().toIso8601String(),
                   },
                 );
               },

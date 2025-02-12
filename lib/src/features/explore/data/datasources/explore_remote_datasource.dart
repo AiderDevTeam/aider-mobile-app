@@ -105,10 +105,26 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
       {required String categoryExternalId,
       required int page,
       required int dataPerPage}) async {
+    final categoryJson = await RemoteConfigService
+        .getRemoteData.configs['categories']
+        .firstWhere((category) => category['externalId'] == categoryExternalId);
+
+    final category = CategoryModel.fromJson(categoryJson);
+    List<String> subCategories = [];
+    for (var subCategory in category.subCategories!) {
+      for (var subCategoryItem in subCategory.subCategoryItems!) {
+        if (subCategoryItem.externalId != null) {
+          subCategories.add(subCategoryItem.externalId!);
+        }
+      }
+    }
+
     final response = await firestore
         .collection(kProductsCollection)
-        .where('categoryExternalId', isEqualTo: categoryExternalId)
+        .where('subCategoryItemId', whereIn: subCategories)
         .get();
+
+    ZLoggerService.logOnInfo('response: ${response.docs.length}');
 
     return response.docs
         .map((doc) => ProductModel.fromJson(doc.data()))

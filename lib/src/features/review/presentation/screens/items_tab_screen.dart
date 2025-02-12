@@ -126,7 +126,7 @@ class _ItemsTabScreenState extends State<ItemsTabScreen> {
               ),
               const VSpace(height: 32.0),
               ReviewRatingWidget(
-                statistics: statistics ?? const StatisticModel(),
+                statistics: statistics ?? StatisticModel(),
               ),
               const VSpace(height: 32.0),
               ListView.builder(

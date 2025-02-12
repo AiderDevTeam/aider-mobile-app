@@ -52,17 +52,24 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
     required Map<String, dynamic> queryParam,
     bool isCompleted = false,
   }) async {
-    final query = await firebaseFirestore
-        .collection(kBookingCollection)
-        .orderBy('createdAt', descending: true)
-        .where(userTypeUid, isEqualTo: firebaseAuth.currentUser!.uid);
+    ZLoggerService.logOnInfo('fetchItems is completed: $isCompleted');
 
+    QuerySnapshot<Map<String, dynamic>> response;
     if (isCompleted) {
-      query.where('collectionStatus',
-          isEqualTo: BookingProgressStatus.accepted.name);
+      response = await firebaseFirestore
+          .collection(kBookingCollection)
+          .orderBy('createdAt', descending: true)
+          .where(userTypeUid, isEqualTo: firebaseAuth.currentUser!.uid)
+          .where('collectionStatus',
+              isEqualTo: BookingProgressStatus.success.name)
+          .get();
+    } else {
+      response = await firebaseFirestore
+          .collection(kBookingCollection)
+          .orderBy('createdAt', descending: true)
+          .where(userTypeUid, isEqualTo: firebaseAuth.currentUser!.uid)
+          .get();
     }
-
-    final response = await query.get();
     // have a map  of productUid to list of booking index in list
     Map<String, List<int>> productUidToBookingIndexList = {};
 
@@ -174,20 +181,15 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
   Future<void> confirmDropOff(
       {required String bookingUid, required String type}) async {
     Map<Object, Object?> requestBody = {};
-    if (type == 'user') {
-      triggerPayout(bookingUid: bookingUid, type: type);
-    } else {
-      requestBody['vendorDropOffStatus'] = 'success';
-    }
 
-    await firebaseFirestore
-        .collection(kBookingCollection)
-        .doc(bookingUid)
-        .update(requestBody);
+    if (type == 'user') {
+      await handleUserDropOff(bookingUid: bookingUid, returnedEarly: false);
+    } else {
+      await handleVendorDropOff(bookingUid: bookingUid);
+    }
   }
 
-  Future<void> triggerPayout(
-      {required String bookingUid, required String type}) async {
+  Future<void> triggerPayout({required String bookingUid}) async {
     final baseUrl = RemoteConfigService.getRemoteData.configs['env']
         ['paymentBaseUrl'] as String;
 
@@ -204,10 +206,29 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
   Future<ReviewModel> createProductReviews(
       {required String bookingUid,
       required Map<String, dynamic> requestBody}) async {
-    final docRef = firebaseFirestore.collection(kReviewsCollection).doc();
+    final reviewCollection = firebaseFirestore.collection(kReviewsCollection);
+    await firebaseFirestore.runTransaction((Transaction tx) async {
+      final reviewDoc = reviewCollection.doc();
+      requestBody['uid'] = reviewDoc.id;
+      requestBody['bookingUid'] = bookingUid;
+      tx.set(reviewDoc, requestBody);
+    });
 
-    requestBody['uid'] = docRef.id;
-    await docRef.set(requestBody);
+    final averageRatingQuery = await reviewCollection
+        .where('productUid', isEqualTo: requestBody['productUid'])
+        .aggregate(average('rating'))
+        .get();
+
+    final averageRating = averageRatingQuery.getAverage('rating');
+    ZLoggerService.logOnInfo('averageRating: $averageRating');
+    if (averageRating != null) {
+      ZLoggerService.logOnInfo('averageRating: ${requestBody['productUid']}');
+      final productRef = firebaseFirestore
+          .collection(kProductsCollection)
+          .doc(requestBody['productUid']);
+      await productRef.update({'rating': averageRating});
+    }
+
     return ReviewModel.fromJson(requestBody);
   }
 
@@ -215,16 +236,42 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
   Future<void> earlyReturn(
       {required String bookingUid,
       required BookedProductModel bookedProduct}) async {
-    bookedProduct = bookedProduct.copyWith(returnedEarly: true);
+    await handleUserDropOff(bookingUid: bookingUid, returnedEarly: true);
+  }
+
+  Future<void> handleUserDropOff(
+      {required String bookingUid, required bool returnedEarly}) async {
+    await firebaseFirestore.runTransaction((trx) async {
+      final bookingRef =
+          firebaseFirestore.collection(kBookingCollection).doc(bookingUid);
+
+      final bookingDoc = await bookingRef.get();
+      final bookingData = BookingModel.fromJson(bookingDoc.data()!);
+
+      trx.update(bookingRef, {
+        'userDropOffStatus': 'success',
+        'bookedProduct': bookingData.bookedProduct!
+            .copyWith(returnedEarly: returnedEarly)
+            .toJson()
+      });
+
+      final productRef = firebaseFirestore
+          .collection(kProductsCollection)
+          .doc(bookingData.productUid);
+      trx.update(productRef, {
+        'quantity':
+            FieldValue.increment(-(bookingData.bookedProduct!.quantity!))
+      });
+    });
+
+    await triggerPayout(bookingUid: bookingUid);
+  }
+
+  Future<void> handleVendorDropOff({required String bookingUid}) async {
     await firebaseFirestore
         .collection(kBookingCollection)
         .doc(bookingUid)
-        .update({
-      'userDropOffStatus': 'success',
-      'bookedProduct': bookedProduct.customToJson()
-    });
-
-    await triggerPayout(bookingUid: bookingUid, type: 'vendor');
+        .update({'vendorDropOffStatus': 'success'});
   }
 
   @override

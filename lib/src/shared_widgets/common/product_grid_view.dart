@@ -2,6 +2,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart
 import 'package:aider_mobile_app/core/extensions/widgets/gesture_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
 import 'package:aider_mobile_app/src/shared_widgets/modals/error_modal_content.dart';
@@ -115,22 +116,8 @@ class ProductGridView extends StatelessWidget {
             ).bold().fontSize(14).color(kGrey1200).paddingOnly(right: 12.0),
           ],
         ).onPressed(() async {
-          final fetchedProduct = await context
-              .read<ExploreViewProvider>()
-              .getProductByUserIdAndProductUid(
-                  context, product.userUid ?? '', product.uid ?? '');
-
-          if (fetchedProduct == null) {
-            AppDialogUtil.popUpModal(context,
-                modalContent: const ErrorModalContent(
-                  errorMessage:
-                      'something went wrong while fetching product details',
-                  errorTitle: 'Product not found',
-                ));
-            return;
-          }
           AppNavigator.pushNamed(context, AppRoute.productDetailScreen,
-              arguments: fetchedProduct);
+              arguments: product);
         });
       },
     );
