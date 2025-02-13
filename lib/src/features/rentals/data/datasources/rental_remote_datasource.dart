@@ -3,6 +3,7 @@ import 'package:aider_mobile_app/src/features/rentals/domain/models/booked_produ
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../../core/services/crash_service.dart';
 import '../../../../../core/services/http_service_requester.dart';
 import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/services/remote_config_service.dart';
@@ -19,7 +20,7 @@ abstract class RentalRemoteDataSource {
       {String? nextPage,
       required Map<String, dynamic> queryParam,
       bool isCompleted = false});
-  Stream<BookingModel> fetchBookingStream(String bookingExternalId);
+  Stream<BookingModel> fetchBookingStream({required String bookingUid});
   Future<void> confirmPickUp(
       {required String bookingUid, required String type});
   Future<void> confirmDropOff(
@@ -190,16 +191,22 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
   }
 
   Future<void> triggerPayout({required String bookingUid}) async {
-    final baseUrl = RemoteConfigService.getRemoteData.configs['env']
-        ['paymentBaseUrl'] as String;
+    try {
+      final baseUrl = RemoteConfigService.getRemoteData.configs['env']
+          ['paymentBaseUrl'] as String;
 
-    final token = await firebaseAuth.currentUser!.getIdToken();
+      final token = await firebaseAuth.currentUser!.getIdToken();
 
-    await httpServiceRequester.postRequest(
-      endpoint: '$baseUrl/payout',
-      requestBody: {'bookingUid': bookingUid},
-      token: token,
-    );
+      await httpServiceRequester.postRequest(
+        endpoint: '$baseUrl/payout',
+        requestBody: {'bookingUid': bookingUid},
+        token: token,
+      );
+    } catch (e) {
+      ZLoggerService.logOnError('Error triggering payout: $e');
+      CrashService.setCrashKey(
+          'payout', 'Error triggering payout: $e, bookingUid: $bookingUid');
+    }
   }
 
   @override
@@ -248,6 +255,10 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
       final bookingDoc = await bookingRef.get();
       final bookingData = BookingModel.fromJson(bookingDoc.data()!);
 
+      if (bookingData.userDropOffStatus == BookingProgressStatus.success) {
+        return;
+      }
+
       trx.update(bookingRef, {
         'userDropOffStatus': 'success',
         'bookedProduct': bookingData.bookedProduct!
@@ -290,10 +301,10 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
   }
 
   @override
-  Stream<BookingModel> fetchBookingStream(String bookingExternalId) {
+  Stream<BookingModel> fetchBookingStream({required String bookingUid}) {
     return firebaseFirestore
         .collection(kBookingCollection)
-        .doc(bookingExternalId)
+        .doc(bookingUid)
         .snapshots()
         .map((event) => BookingModel.fromJson(event.data() ?? {}));
   }

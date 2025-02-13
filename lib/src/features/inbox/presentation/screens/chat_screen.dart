@@ -50,7 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
     context.read<InboxViewModel>().clearMessages();
 
     // Start listening to booking updates
-    context.read<RentalProvider>().listenToBooking(booking);
+    context.read<RentalProvider>().listenToBooking(context, booking);
     // Start listening to messages
     context.read<InboxViewModel>().listenToMessages(booking.uid ?? '');
   }

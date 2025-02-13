@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:aider_mobile_app/core/extensions/date_extension.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 
 import '../../src/features/product/domain/models/product/product_model.dart';
 import '../../src/features/product/domain/models/product_price/product_price_model.dart';
@@ -174,7 +175,12 @@ class HelperUtil {
   }
 
   static num collectionAmount(num bookingPrice, num serviceFee, int duration) {
-    return (bookingPrice * (1 + (serviceFee * duration)));
+    num amount = (bookingPrice * (1 + (serviceFee * duration)));
+    amount = double.parse(amount.toStringAsFixed(2));
+
+    ZLoggerService.logOnInfo(
+        'collectionAmount: $amount, bookingPrice: $bookingPrice, serviceFee: $serviceFee, duration: $duration');
+    return amount;
   }
 
   static String generateBookingNumber() {

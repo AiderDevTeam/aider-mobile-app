@@ -3,6 +3,7 @@ import 'dart:collection';
 
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booked_product/booked_product_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/booking_model.dart';
+import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
 import 'package:aider_mobile_app/src/shared_widgets/modals/success_modal_content.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ import '../../../../../core/domain/models/pagination/pagination_model.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/routing/app_navigator.dart';
 import '../../../../../core/services/git_it_service_locator.dart';
+import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../core/providers/base_provider.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
@@ -420,24 +422,54 @@ class RentalProvider extends BaseProvider {
 
   BookingModel? get currentBooking => _currentBooking;
 
-  void listenToBooking(BookingModel booking) {
+  Map<String, BookingModel> _bookingsMap = {};
+
+  Map<String, BookingModel> get bookingsMap => _bookingsMap;
+
+  set setBookingsMap(Map<String, BookingModel> value) {
+    _bookingsMap = value;
+    notifyListeners();
+  }
+
+  void listenToBooking(BuildContext context, BookingModel booking,
+      {bool isChat = true}) {
     // Cancel any existing subscription
-    _bookingSubscription?.cancel();
+    // _bookingSubscription?.cancel();
 
     _bookingSubscription = _rentalRepository
-        .fetchBookingStream(booking.uid ?? '')
+        .fetchBookingStream(bookingUid: booking.uid ?? '')
         .listen((latestBooking) {
-      _currentBooking = latestBooking.copyWith(
-        user: booking.user,
-        vendor: booking.vendor,
-        bookedProduct: booking.bookedProduct,
-      );
+      ZLoggerService.logOnInfo(
+          'Booking updated: ${latestBooking.bookingNumber}');
+      if (isChat) {
+        _currentBooking = latestBooking.copyWith(
+          user: booking.user,
+          vendor: booking.vendor,
+          bookedProduct: booking.bookedProduct,
+        );
+      } else {
+        if (context.mounted) {
+          ZLoggerService.logOnInfo(
+              'Bookings Map updated: ${booking.bookingNumber}');
+          setBookingsMap = {
+            ...bookingsMap,
+            booking.uid ?? '': latestBooking.copyWith(
+              user: booking.user,
+              vendor: booking.vendor,
+              bookedProduct: booking.bookedProduct,
+            ),
+          };
+          ZLoggerService.logOnInfo('Bookings Map updated: ${bookingsMap}');
+        }
+      }
       notifyListeners();
     });
   }
 
   void closeBookingListener() {
+    ZLoggerService.logOnInfo('Closing booking listener');
     _bookingSubscription?.cancel();
+    setBookingsMap = {};
   }
 
   @override

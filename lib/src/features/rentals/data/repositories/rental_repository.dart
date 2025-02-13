@@ -35,7 +35,7 @@ abstract class RentalRepository {
       {required String externalId,
       required int bookingId,
       required String andReason});
-  Stream<BookingModel> fetchBookingStream(String bookingExternalId);
+  Stream<BookingModel> fetchBookingStream({required String bookingUid});
 
   // Future<Either<Failure, bool>> persistReviewHistory(ReviewModel historyModel);
   // Future<Either<Failure, bool>> retrieveReviewHistory();
@@ -179,8 +179,8 @@ class RentalRepositoryImpl extends RentalRepository {
   }
 
   @override
-  Stream<BookingModel> fetchBookingStream(String bookingExternalId) {
-    return rentalRemoteDataSource.fetchBookingStream(bookingExternalId);
+  Stream<BookingModel> fetchBookingStream({required String bookingUid}) {
+    return rentalRemoteDataSource.fetchBookingStream(bookingUid: bookingUid);
   }
 
   // @override

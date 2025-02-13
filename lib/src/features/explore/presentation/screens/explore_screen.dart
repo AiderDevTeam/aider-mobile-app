@@ -40,6 +40,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
       if (!mounted) return;
       await context.read<InboxViewModel>().initState();
       await fetchSections();
+
+      final hasMinimumVersion =
+          await context.read<ExploreViewProvider>().hasMinimumVersion();
+      if (!hasMinimumVersion) {
+        context.read<ExploreViewProvider>().showMinimumVersionDialog(context);
+      }
     });
     super.initState();
   }
