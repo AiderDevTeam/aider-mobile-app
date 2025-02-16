@@ -108,7 +108,9 @@ class _FilterModalState extends State<FilterModal> {
                   requestBody["subCategoryItemIds"] = [...subCategoryItemIds];
                 }
 
-                if (cities != null && cities.isNotEmpty) {
+                if (
+                    // cities != &&
+                    cities.isNotEmpty) {
                   requestBody["location"] = [...cities];
                 }
 

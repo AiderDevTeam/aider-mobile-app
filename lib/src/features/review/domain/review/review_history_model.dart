@@ -24,9 +24,8 @@ class ReviewHistoryModel {
   factory ReviewHistoryModel.fromJson(Map<String, dynamic> json) {
     return ReviewHistoryModel(
       data: (json['data'] as List)
-              ?.map<ReviewModel>((obj) => ReviewModel.fromJson(obj))
-              .toList() ??
-          [],
+          .map<ReviewModel>((obj) => ReviewModel.fromJson(obj))
+          .toList(),
       meta: PaginationModel.fromJson(json['meta']),
     );
   }

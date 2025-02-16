@@ -1,10 +1,6 @@
 import 'package:aider_mobile_app/core/constants/firestore_collections.dart';
-import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../../core/errors/error.dart';
-import '../../../../../core/services/api_routes.dart';
-import '../../../../../core/services/http_service_requester.dart';
 import '../../../product/domain/models/history/product_history_model.dart';
 import '../../domain/review/review_history_model.dart';
 
