@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../core/utils/app_theme_util.dart';
-import '../../../../../core/providers/user_provider.dart';
 import '../../../../shared_widgets/common/svg_icon.dart';
 import '../view_models/inbox_view_model.dart';
 import 'inbox_item.dart';

@@ -198,14 +198,11 @@ class ProductProvider extends BaseProvider with CanRent {
     if (context.mounted &&
         (context.read<ProductProvider>().getPlaceId.isNotEmpty &&
             context.read<ProductProvider>().getPlaceId.isNotEmpty)) {
-      final locationDetails = await context
+      // final locationDetails =
+      await context
           .read<LocationProvider>()
           .fetchLocationDetails(context.read<ProductProvider>().getPlaceId);
       // final locality = HelperUtil.getLocalityFromAddressComponents(locationDetails?.addressComponents?? []);
-      final longAndLat = {
-        "latitude": locationDetails?.geometry?['location']['lat'] ?? 0,
-        "longitude": locationDetails?.geometry?['location']['lng'] ?? 0,
-      };
 
       booking = booking.copyWith(
         bookedProduct: booking.bookedProduct?.copyWith(

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class CrashService {

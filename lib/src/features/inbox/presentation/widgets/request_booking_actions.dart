@@ -29,8 +29,8 @@ class RequestBookingActions extends StatelessWidget {
         booking.userDropOffStatus == BookingProgressStatus.success;
     final isRenterAndVendorPickupConfirmed =
         isVendorPickupConfirmed && isRenterPickupConfirmed;
-    final isRenterOrVendorDropOffConfirmed =
-        isVendorReturnConfirmed || isRenterReturnConfirmed;
+    // final isRenterOrVendorDropOffConfirmed =
+    //     isVendorReturnConfirmed || isRenterReturnConfirmed;
 
     return Column(
       children: [

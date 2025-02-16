@@ -11,7 +11,6 @@ import '../../../../shared_widgets/cards/app_card.dart';
 import '../../../../shared_widgets/common/h_space.dart';
 import '../../../../shared_widgets/common/v_space.dart';
 import '../../../rentals/domain/models/booking/booking_model.dart';
-import '../../domain/models/chat/chat_model.dart';
 
 class InboxItem extends StatelessWidget {
   const InboxItem({

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:aider_mobile_app/core/auth/domain/models/wallet/wallet_model.dart';
 import 'package:aider_mobile_app/core/errors/failure.dart';
 import 'package:aider_mobile_app/core/services/logger_service.dart';

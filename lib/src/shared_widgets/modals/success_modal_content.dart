@@ -4,7 +4,6 @@ import 'package:aider_mobile_app/core/constants/colors.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/v_space.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/routing/app_navigator.dart';
 import '../base/popup_modal_body.dart';
 import '../buttons/app_primary_button.dart';
 import '../common/app_lottie.dart';
@@ -42,7 +41,11 @@ class SuccessModalContent extends StatelessWidget {
             const VSpace(height: 16.0),
             Text(
               title,
-            ).extraBold().fontSize(20.0).color(kPrimaryBlack).alignText(TextAlign.center),
+            )
+                .extraBold()
+                .fontSize(20.0)
+                .color(kPrimaryBlack)
+                .alignText(TextAlign.center),
           ]
         ],
       ),
@@ -62,7 +65,13 @@ class SuccessModalContent extends StatelessWidget {
           ],
         )
       ],
-      child: message.isEmpty ? const SizedBox.shrink() : Text(message).regular().fontSize(16.0).color(kPrimaryBlack).alignText(TextAlign.center),
+      child: message.isEmpty
+          ? const SizedBox.shrink()
+          : Text(message)
+              .regular()
+              .fontSize(16.0)
+              .color(kPrimaryBlack)
+              .alignText(TextAlign.center),
     );
   }
 }

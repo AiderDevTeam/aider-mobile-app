@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
 import 'package:aider_mobile_app/core/constants/firestore_collections.dart';
 import 'package:aider_mobile_app/core/services/http_service_requester.dart';
 import 'package:aider_mobile_app/src/features/inbox/domain/models/message/message_model.dart';

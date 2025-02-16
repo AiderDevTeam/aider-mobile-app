@@ -99,7 +99,9 @@ class KycViewModel extends BaseProvider {
       },
       (userKYC) {
         assert(
-            userKYC != null && userKYC.isNotEmpty, "userKYC is null or empty");
+            // userKYC != null &&
+            userKYC.isNotEmpty,
+            "userKYC is null or empty");
         setUser = _user.copyWith(userIdentifications: userKYC);
         ZLoggerService.logOnInfo("Updated user: $_user");
         return userKYC;

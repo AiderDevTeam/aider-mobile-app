@@ -2,7 +2,6 @@ import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart'
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/text_style.dart';

@@ -65,7 +65,7 @@ class PaymentService {
     BuildContext context, {
     required String paymentUrl,
   }) async {
-    final result = await AppDialogUtil.showScrollableBottomSheet(
+    await AppDialogUtil.showScrollableBottomSheet(
       context: context,
       isDismissible: false,
       builder: (context) => PayStackModalContent(

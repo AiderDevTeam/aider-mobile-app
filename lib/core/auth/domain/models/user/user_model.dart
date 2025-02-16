@@ -1,6 +1,5 @@
 import 'package:aider_mobile_app/core/auth/domain/models/statistics/statistic_model.dart';
 import 'package:aider_mobile_app/src/features/kyc/domain/verification_model/verification_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
 import '../../../../domain/models/address/address_model.dart';
@@ -252,16 +251,16 @@ class UserModel {
 
   bool get userHasWallet => hasDefaultWallet ?? false;
 
-  static String? _timestampToString(dynamic timestamp) {
-    if (timestamp == null) return null;
-    if (timestamp is Timestamp) {
-      return timestamp.toDate().toIso8601String();
-    }
-    return timestamp as String?;
-  }
+  // static String? _timestampToString(dynamic timestamp) {
+  //   if (timestamp == null) return null;
+  //   if (timestamp is Timestamp) {
+  //     return timestamp.toDate().toIso8601String();
+  //   }
+  //   return timestamp as String?;
+  // }
 
-  static dynamic _stringToTimestamp(String? date) {
-    if (date == null) return null;
-    return Timestamp.fromDate(DateTime.parse(date));
-  }
+  // static dynamic _stringToTimestamp(String? date) {
+  //   if (date == null) return null;
+  //   return Timestamp.fromDate(DateTime.parse(date));
+  // }
 }

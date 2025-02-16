@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final userViewModel = context.read<UserProvider>();
       final walletProvider = context.read<WalletProvider>();
       if (walletProvider.userWallets.isEmpty) {
         context.read<WalletProvider>().getWallets();
@@ -62,7 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void onTap(int index) async {
     final bottomNavProvider = context.read<BottomNavViewModel>();
-    final user = context.read<UserProvider>().getUser;
 
     if (index == 2) {
       // if(user.userIdentifications?.first.status == kRejected){

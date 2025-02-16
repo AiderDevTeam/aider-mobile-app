@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import '../../../../shared_widgets/base/draggable_bottom_sheet.dart';
 import '../../../../shared_widgets/modals/draggable_bottom_sheet_content.dart';
 import '../../../rentals/domain/models/booking/booking_model.dart';
-import '../../domain/models/chat/chat_model.dart';
 
 class NudgeModalContent extends StatelessWidget {
   const NudgeModalContent({

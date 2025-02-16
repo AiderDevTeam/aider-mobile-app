@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:aider_mobile_app/core/extensions/date_extension.dart';
@@ -155,7 +154,7 @@ class HelperUtil {
 
     return {
       'duration': duration,
-      'daysSpan': duration == 1 ? '$duration Day' : '${duration ?? 0} Days',
+      'daysSpan': duration == 1 ? '$duration Day' : '$duration Days',
       'bookingDates': bookingDates,
     };
   }

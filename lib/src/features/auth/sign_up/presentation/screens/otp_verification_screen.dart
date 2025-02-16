@@ -10,11 +10,9 @@ import 'package:provider/provider.dart';
 import '../../../../../../core/routing/app_navigator.dart';
 import '../../../../../../core/routing/app_route.dart';
 import '../../../../../../core/constants/colors.dart';
-import '../../../../../../core/utils/app_dialog_util.dart';
 import '../../../../../shared_widgets/common/app_countdown.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/forms/otp_fields.dart';
-import '../../../../../shared_widgets/modals/error_modal_content.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final bool isResetPassword;

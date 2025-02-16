@@ -7,7 +7,6 @@ import '../../../../../../core/constants/colors.dart';
 import '../../../../../../core/constants/common.dart';
 import '../../../../../../core/constants/text_style.dart';
 import '../../../../../../core/providers/auth_provider.dart';
-import '../../../../../../core/providers/user_provider.dart';
 import '../../../../../shared_widgets/base/app_screen_scaffold.dart';
 import '../../../../../shared_widgets/buttons/app_primary_button.dart';
 import '../../../../../shared_widgets/forms/app_input_field.dart';
