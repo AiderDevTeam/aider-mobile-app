@@ -33,6 +33,9 @@ abstract class RentalRemoteDataSource {
       {required String externalId,
       required int bookingId,
       required String andReason});
+  Future<void> clearHasUnreadMessages({required BookingModel booking});
+  Future<void> setCurrentBooking({required BookingModel booking});
+  Future<void> clearCurrentBooking();
 }
 
 class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
@@ -181,8 +184,6 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
   @override
   Future<void> confirmDropOff(
       {required String bookingUid, required String type}) async {
-    Map<Object, Object?> requestBody = {};
-
     if (type == 'user') {
       await handleUserDropOff(bookingUid: bookingUid, returnedEarly: false);
     } else {
@@ -274,8 +275,6 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
             FieldValue.increment(-(bookingData.bookedProduct!.quantity!))
       });
     });
-
-    await triggerPayout(bookingUid: bookingUid);
   }
 
   Future<void> handleVendorDropOff({required String bookingUid}) async {
@@ -283,6 +282,8 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
         .collection(kBookingCollection)
         .doc(bookingUid)
         .update({'vendorDropOffStatus': 'success'});
+
+    await triggerPayout(bookingUid: bookingUid);
   }
 
   @override
@@ -307,5 +308,66 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
         .doc(bookingUid)
         .snapshots()
         .map((event) => BookingModel.fromJson(event.data() ?? {}));
+  }
+
+  @override
+  Future<void> clearHasUnreadMessages({
+    required BookingModel booking,
+  }) async {
+    final userUid = firebaseAuth.currentUser!.uid;
+    final unreadRef = firebaseFirestore.collection(kBookingUnreadCollection);
+
+    await firebaseFirestore.runTransaction((trx) async {
+      final bookingRef = firebaseFirestore.collection(kBookingCollection);
+      trx.update(
+          bookingRef.doc(booking.uid),
+          userUid == booking.vendorUid
+              ? {'vendorHasUnread': false}
+              : {'userHasUnread': false});
+
+      ZLoggerService.logOnInfo("booking UID ${booking.uid}");
+      final unreadBookings = await unreadRef
+          .where('bookingUid', isEqualTo: booking.uid!)
+          .where('userUid', isEqualTo: userUid)
+          .get();
+
+      if (unreadBookings.docs.isEmpty) {
+        ZLoggerService.logOnInfo('No unread messages found for user: $userUid');
+        return;
+      }
+
+      ZLoggerService.logOnInfo('Found unread messages for user: $userUid');
+      final batch = firebaseFirestore.batch();
+      for (var unreadDoc in unreadBookings.docs) {
+        batch.delete(unreadRef.doc(unreadDoc.id));
+      }
+      await batch.commit();
+    });
+  }
+
+  @override
+  Future<void> clearCurrentBooking() async {
+    await firebaseFirestore.runTransaction((trx) async {
+      ZLoggerService.logOnInfo(
+          "clearCurrentBooking: ${firebaseAuth.currentUser!.uid}");
+
+      final usersCollection = firebaseFirestore.collection(kUsersCollection);
+      final userUid = firebaseAuth.currentUser!.uid;
+      trx.update(usersCollection.doc(userUid), {'currentBooking': ''});
+    });
+  }
+
+  @override
+  Future<void> setCurrentBooking({required BookingModel booking}) async {
+    await firebaseFirestore.runTransaction((trx) async {
+      final userUid = firebaseAuth.currentUser!.uid;
+
+      ZLoggerService.logOnInfo(
+          "setCurrentBooking: ${firebaseAuth.currentUser!.uid}, bookingUid: ${booking.uid}");
+      final usersCollection = firebaseFirestore.collection(kUsersCollection);
+      trx.update(usersCollection.doc(userUid), {'currentBooking': booking.uid});
+    });
+
+    await clearHasUnreadMessages(booking: booking);
   }
 }

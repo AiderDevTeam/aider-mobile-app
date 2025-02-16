@@ -19,7 +19,7 @@ abstract class ProductRemoteDatasource {
   Future<void> listProduct({required ProductModel requestBody});
   Future<ProductHistoryModel> fetchUserProducts(
       {required UserModel user, String? nextPage, int? pageSize});
-  Future<bool> requestForItem(ProductModel product,
+  Future<String> requestForItem(ProductModel product,
       {required BookingModel booking});
   Future<bool> deleteProductPhoto(
       {required String productUid, required Map<String, dynamic> requestBody});
@@ -80,6 +80,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       data['prices'] = requestBody.prices?.map((e) => e.toJson()).toList();
       data['photos'] = requestBody.photos?.map((e) => e.toJson()).toList();
       data['address'] = requestBody.address?.toJson();
+      data['search'] = requestBody.name?.toLowerCase();
 
       transaction.update(userCollection.doc(firebaseAuth.currentUser!.uid),
           {'itemsListed': FieldValue.increment(1)});
@@ -122,8 +123,10 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   }
 
   @override
-  Future<bool> requestForItem(ProductModel product,
+  Future<String> requestForItem(ProductModel product,
       {required BookingModel booking}) async {
+    final docRef = bookingCollection.doc();
+
     await firebaseFirestore.runTransaction((transaction) async {
       final startDate = DateTime.parse(booking.bookedProduct?.startDate ?? '');
       final endDate = DateTime.parse(booking.bookedProduct?.endDate ?? '');
@@ -141,8 +144,6 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       final bookingPrice = price.price! * booking.bookedProduct!.quantity!;
       final collectionAmount = HelperUtil.collectionAmount(
           bookingPrice, serviceFee, duration['duration']);
-
-      final docRef = bookingCollection.doc();
 
       booking = booking.copyWith(
         uid: docRef.id,
@@ -194,7 +195,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       transaction.set(messageDocRef, message.toJson());
     });
 
-    return true;
+    return docRef.id;
   }
 
   @override

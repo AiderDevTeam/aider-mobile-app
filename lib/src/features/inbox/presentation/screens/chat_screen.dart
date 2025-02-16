@@ -1,17 +1,19 @@
 import 'package:aider_mobile_app/core/constants/common.dart';
-import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
+import 'package:aider_mobile_app/core/utils/url_launcher_util.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/widgets/nudge_chat_item.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/widgets/nudge_modal_content.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/widgets/request_chat_item.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/booking_model.dart';
 import 'package:aider_mobile_app/src/shared_widgets/base/app_screen_scaffold.dart';
+import 'package:aider_mobile_app/src/shared_widgets/buttons/app_icon_text_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/buttons/app_primary_button.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/h_space.dart';
+import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,12 +55,15 @@ class _ChatScreenState extends State<ChatScreen> {
     context.read<RentalProvider>().listenToBooking(context, booking);
     // Start listening to messages
     context.read<InboxViewModel>().listenToMessages(booking.uid ?? '');
+    context.read<RentalProvider>().setUserActiveBooking(booking);
   }
 
   @override
   void deactivate() {
-    context.read<InboxViewModel>().closeFetchMessage();
-    context.read<RentalProvider>().closeBookingListener();
+    // context.read<InboxViewModel>().closeFetchMessage();
+    // context.read<RentalProvider>().closeBookingListener();
+
+    context.read<RentalProvider>().clearCurrentBooking();
     super.deactivate();
   }
 
@@ -67,7 +72,11 @@ class _ChatScreenState extends State<ChatScreen> {
     return Consumer<RentalProvider>(
       builder: (context, rentalProvider, child) {
         final booking = rentalProvider.currentBooking;
-        if (booking == null) return const CircularProgressIndicator();
+        // if (booking == null) {
+        //   return Container(
+        //     color: Colors.white,
+        //   );
+        // }
 
         return AppScreenScaffold(
           backgroundColor: kGrey50,
@@ -75,12 +84,12 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               const HSpace(width: 12.0),
               (sent
-                      ? booking.vendor?.hasProfilePhoto == true
-                      : booking.user?.hasProfilePhoto == true)
+                      ? booking?.vendor?.hasProfilePhoto == true
+                      : booking?.user?.hasProfilePhoto == true)
                   ? NetworkImageView(
                       imageUrl: sent
-                          ? (booking.vendor?.profilePhotoUrl ?? '')
-                          : (booking.user?.profilePhotoUrl ?? ''),
+                          ? (booking?.vendor?.profilePhotoUrl ?? '')
+                          : (booking?.user?.profilePhotoUrl ?? ''),
                       height: AppThemeUtil.radius(44),
                       width: AppThemeUtil.radius(44),
                       radius: 100,
@@ -91,39 +100,67 @@ class _ChatScreenState extends State<ChatScreen> {
                           '$kImagePath/profile_placeholder.png'),
                     ),
               const HSpace(width: 12.0),
-              Text(sent
-                      ? booking.vendor?.greetingName ?? ''
-                      : booking.user?.greetingName ?? '')
-                  .semiBold()
-                  .fontSize(20.0)
-                  .color(kPrimaryBlack)
-                  .letterSpacing(-0.31)
-                  .overflowText(TextOverflow.ellipsis)
-                  .flexible(),
+              SizedBox(
+                  width: 100.0,
+                  child: Text(sent
+                          ? booking?.vendor?.greetingName ?? ''
+                          : booking?.user?.greetingName ?? '')
+                      .semiBold()
+                      .fontSize(20.0)
+                      .color(kPrimaryBlack)
+                      .letterSpacing(-0.31)
+                      .overflowText(TextOverflow.ellipsis))
             ],
-          ).flexible(),
+          ),
+          appBarActions: [
+            SizedBox(
+                width: 120.0,
+                child: AppIconTextButton(
+                  onPressed:
+                      booking?.collectionStatus == BookingProgressStatus.success
+                          ? () {
+                              UrlLauncherUtil().callPhone(sent
+                                  ? '${booking?.vendor?.callingCode ?? ''}${booking?.vendor?.phone ?? ''}'
+                                  : '${booking?.user?.callingCode ?? ''}${booking?.user?.phone ?? ''}');
+                            }
+                          : null,
+                  icon: ZSvgIcon(
+                    'phone-call-01.svg',
+                    size: AppThemeUtil.radius(12),
+                  ),
+                  text: sent ? 'Call Vendor' : 'Call Renter',
+                  color: kSuccess800,
+                  borderColor: kSuccess800,
+                  borderRadius: 12,
+                  fontSize: 12,
+                  height: 35,
+                )),
+            const HSpace(width: 24)
+          ],
           bottomNavigationBar: BaseView<InboxViewModel>(
               builder: (context, inboxConsumer, child) {
-            if (user.uid == booking.user?.uid &&
+            if (user.uid == booking?.user?.uid &&
                 inboxConsumer.canNudge &&
                 inboxConsumer.getMessages.first.isOngoing) {
               return AppPrimaryButton(
                 text: 'Nudge 👋',
                 height: 52,
-                onPressed: () {
-                  AppDialogUtil.showScrollableBottomSheet(
-                    context: context,
-                    builder: (modalContext) => NudgeModalContent(
-                      booking: booking,
-                      onYesPressed: () async {
-                        AppNavigator.pop(modalContext);
-                        await context
-                            .read<InboxViewModel>()
-                            .sendNudge(context, booking: booking);
+                onPressed: booking == null
+                    ? null
+                    : () {
+                        AppDialogUtil.showScrollableBottomSheet(
+                          context: context,
+                          builder: (modalContext) => NudgeModalContent(
+                            booking: booking,
+                            onYesPressed: () async {
+                              AppNavigator.pop(modalContext);
+                              await context
+                                  .read<InboxViewModel>()
+                                  .sendNudge(context, booking: booking);
+                            },
+                          ),
+                        );
                       },
-                    ),
-                  );
-                },
               ).paddingSymmetric(horizontal: kWidthPadding, vertical: 14.0);
             }
 
@@ -156,7 +193,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 if (message.type == kChatNudgeType) {
                   return NudgeChatItem(
                     message: message,
-                    senderName: (booking.user?.greetingName ?? ''),
+                    senderName: (booking?.user?.greetingName ?? ''),
                   ).paddingOnly(
                     left: user.uid == message.senderUid
                         ? (MediaQuery.of(context).size.width * 0.17)
@@ -168,21 +205,23 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 }
 
-                return RequestChatItem(
-                  message: message,
-                  booking: booking,
-                  senderName: (sent
-                      ? booking.vendor?.greetingName ?? ''
-                      : booking.user?.greetingName ?? ''),
-                ).paddingOnly(
-                  right: user.uid == message.senderUid
-                      ? 0
-                      : (MediaQuery.of(context).size.width * 0.17),
-                  left: user.uid == message.senderUid
-                      ? (MediaQuery.of(context).size.width * 0.17)
-                      : 0,
-                  bottom: 12.0,
-                );
+                return booking == null
+                    ? const SizedBox.shrink()
+                    : RequestChatItem(
+                        message: message,
+                        booking: booking,
+                        senderName: (sent
+                            ? booking.vendor?.greetingName ?? ''
+                            : booking.user?.greetingName ?? ''),
+                      ).paddingOnly(
+                        right: user.uid == message.senderUid
+                            ? 0
+                            : (MediaQuery.of(context).size.width * 0.17),
+                        left: user.uid == message.senderUid
+                            ? (MediaQuery.of(context).size.width * 0.17)
+                            : 0,
+                        bottom: 12.0,
+                      );
               },
             ).paddingSymmetric(horizontal: kWidthPadding);
           }),

@@ -1,6 +1,8 @@
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
+import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/text_style.dart';
@@ -103,15 +105,10 @@ class HomeBottomNavigationBar extends StatelessWidget {
                 label: 'List',
               ),
               BottomNavigationBarItem(
-                icon: BaseView<UserProvider>(
-                    builder: (context, userProvider, child) {
-                  final userStatistic = userProvider.getUser.statistics;
-                  if (userStatistic
-                              ?.totalVendorBookingsPendingAcceptanceCount ==
-                          0 ||
-                      userStatistic
-                              ?.totalVendorBookingsPendingAcceptanceCount ==
-                          null) {
+                icon: BaseView<InboxViewModel>(
+                    builder: (context, inboxConsumer, child) {
+                  final totalUnread = inboxConsumer.totalUnread;
+                  if (totalUnread == 0) {
                     return ZSvgIcon(
                       currentIndex == 3
                           ? 'inbox_outline.svg'
@@ -123,8 +120,7 @@ class HomeBottomNavigationBar extends StatelessWidget {
                   return AppBadge(
                     badgeColor: kAider700,
                     position: badge.BadgePosition.topEnd(top: -10, end: -7),
-                    badgeContent: Text(
-                            "${userStatistic?.totalVendorBookingsPendingAcceptanceCount}")
+                    badgeContent: Text("$totalUnread")
                         .bold()
                         .fontSize(12)
                         .color(kPrimaryWhite),

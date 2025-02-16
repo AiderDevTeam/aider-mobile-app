@@ -36,6 +36,11 @@ abstract class RentalRepository {
       required int bookingId,
       required String andReason});
   Stream<BookingModel> fetchBookingStream({required String bookingUid});
+  Future<Either<Failure, void>> clearHasUnreadMessages(
+      {required BookingModel booking});
+  Future<Either<Failure, void>> setCurrentBooking(
+      {required BookingModel booking});
+  Future<Either<Failure, void>> clearCurrentBooking();
 
   // Future<Either<Failure, bool>> persistReviewHistory(ReviewModel historyModel);
   // Future<Either<Failure, bool>> retrieveReviewHistory();
@@ -181,6 +186,43 @@ class RentalRepositoryImpl extends RentalRepository {
   @override
   Stream<BookingModel> fetchBookingStream({required String bookingUid}) {
     return rentalRemoteDataSource.fetchBookingStream(bookingUid: bookingUid);
+  }
+
+  @override
+  Future<Either<Failure, void>> clearHasUnreadMessages(
+      {required BookingModel booking}) async {
+    try {
+      rentalRemoteDataSource.clearHasUnreadMessages(booking: booking);
+      return const Right(null);
+    } catch (e) {
+      CrashService.setCrashKey('report', 'clearHasUnreadMessages');
+      return left(FailureToMessage.returnLeftError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> clearCurrentBooking() async {
+    try {
+      rentalRemoteDataSource.clearCurrentBooking();
+      return right(null);
+    } catch (e) {
+      CrashService.setCrashKey('report', 'clearHasUnreadMessages');
+      return left(FailureToMessage.returnLeftError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> setCurrentBooking(
+      {required BookingModel booking}) async {
+    try {
+      ZLoggerService.logOnDebug("message: setting current booking");
+      await rentalRemoteDataSource.setCurrentBooking(booking: booking);
+      return right(null);
+    } catch (e) {
+      ZLoggerService.logOnError('error setting current booking: $e');
+      CrashService.setCrashKey('report', 'clearHasUnreadMessages');
+      return left(FailureToMessage.returnLeftError(e));
+    }
   }
 
   // @override

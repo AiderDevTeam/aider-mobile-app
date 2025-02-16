@@ -9,7 +9,6 @@ import '../../../core/utils/app_theme_util.dart';
 import '../../../core/constants/common.dart';
 import '../common/svg_icon.dart';
 
-
 class AiderAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AppBar appBar;
   final String? title;
@@ -35,7 +34,7 @@ class AiderAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => Size.fromHeight(appBar.preferredSize.height+5);
+  Size get preferredSize => Size.fromHeight(appBar.preferredSize.height + 5);
 
   @override
   Widget build(BuildContext context) {
@@ -48,27 +47,35 @@ class AiderAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: appBarBackgroundColor,
       flexibleSpace: Row(
         children: [
-          if(hasLeading) Container(
-            width: AppThemeUtil.radius(44.0),
-            height: AppThemeUtil.radius(44.0),
-            decoration: BoxDecoration(
-              color: AppThemeUtil.getThemeColor(const Color(0xFFF8F8F8)),
-              borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
-            ),
-            padding: EdgeInsets.all(AppThemeUtil.radius(8.0)),
-            child: ZSvgIcon(
-              'arrow_left.svg',
-              size: AppThemeUtil.radius(30.0),
-              color: AppThemeUtil.getThemeColor(kPrimaryBlack, kPrimaryWhite),
-            ),
-          ).onPressed(onPressed),
-          titleWidget?? Text(
-            title?? '',
-          ).semiBold().fontSize(titleFontSize?? 20.0).color(kPrimaryBlack, kPrimaryWhite).letterSpacing(-0.31).overflowText(TextOverflow.ellipsis)
-              .paddingOnly(
-            left: hasLeading? 8.0 : 0.0,
-            top: hasLeading? 0.0: 10.0,
-          ).flexible(),
+          if (hasLeading)
+            Container(
+              width: AppThemeUtil.radius(44.0),
+              height: AppThemeUtil.radius(44.0),
+              decoration: BoxDecoration(
+                color: AppThemeUtil.getThemeColor(const Color(0xFFF8F8F8)),
+                borderRadius: BorderRadius.circular(AppThemeUtil.radius(12.0)),
+              ),
+              padding: EdgeInsets.all(AppThemeUtil.radius(8.0)),
+              child: ZSvgIcon(
+                'arrow_left.svg',
+                size: AppThemeUtil.radius(30.0),
+                color: AppThemeUtil.getThemeColor(kPrimaryBlack, kPrimaryWhite),
+              ),
+            ).onPressed(onPressed),
+          titleWidget ??
+              Text(
+                title ?? '',
+              )
+                  .semiBold()
+                  .fontSize(titleFontSize ?? 20.0)
+                  .color(kPrimaryBlack, kPrimaryWhite)
+                  .letterSpacing(-0.31)
+                  .overflowText(TextOverflow.ellipsis)
+                  .paddingOnly(
+                    left: hasLeading ? 8.0 : 0.0,
+                    top: hasLeading ? 0.0 : 10.0,
+                  )
+                  .flexible(),
         ],
       ).paddingLTRB(
         kWidthPadding,

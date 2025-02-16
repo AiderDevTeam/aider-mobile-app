@@ -1,16 +1,14 @@
-import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/services/payment_service.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/core/utils/cached_network_image_util.dart';
-import 'package:aider_mobile_app/core/utils/url_launcher_util.dart';
 import 'package:aider_mobile_app/core/providers/base_view.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/features/inbox/domain/models/message/message_model.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/widgets/rental_details_modal_content.dart';
-import 'package:aider_mobile_app/src/shared_widgets/buttons/app_icon_text_button.dart';
+import 'package:aider_mobile_app/src/features/inbox/presentation/widgets/request_booking_actions.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/h_space.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
@@ -51,6 +49,9 @@ class RequestChatItem extends StatelessWidget {
         booking.bookingAcceptanceStatus == BookingProgressStatus.rejected;
     final isBookingPending =
         booking.bookingAcceptanceStatus == BookingProgressStatus.pending;
+    final isCompleted =
+        booking.vendorDropOffStatus == BookingProgressStatus.success &&
+            booking.userDropOffStatus == BookingProgressStatus.success;
 
     return AppCard(
       padding: EdgeInsets.symmetric(
@@ -172,17 +173,40 @@ class RequestChatItem extends StatelessWidget {
                 .bold()
                 .fontSize(14.0)
                 .color(isSender ? kSuccess700 : kGrey1200),
-          if (isBookingPaid)
-            Text(isSender ? 'You have made payment' : 'Renter has made payment')
-                .bold()
-                .fontSize(14.0)
-                .color(kSuccess700),
-          if (isBookingCanceled)
+          if (isBookingPaid) ...[
+            if (isSender)
+              booking.userPickupStatus == BookingProgressStatus.notStarted
+                  ? const Text('You have made payment')
+                      .bold()
+                      .fontSize(14.0)
+                      .color(kSuccess700)
+                  : const SizedBox.shrink(),
+            if (!isSender)
+              booking.vendorPickupStatus == BookingProgressStatus.notStarted
+                  ? const Text('Renter has made payment')
+                      .bold()
+                      .fontSize(14.0)
+                      .color(kSuccess700)
+                  : const SizedBox.shrink(),
+            if (isCompleted)
+              const Text('Transaction completed')
+                  .bold()
+                  .fontSize(14.0)
+                  .color(kSuccess700),
+            const VSpace(height: 12.0),
+            RequestBookingActions(
+              booking: booking,
+              isVendor: !isSender,
+            ),
+            const VSpace(height: 8.0),
+          ],
+          if (isBookingCanceled) ...[
             const Text('Request canceled')
                 .bold()
                 .fontSize(14.0)
                 .color(kAider700),
-          const VSpace(height: 12.0),
+            const VSpace(height: 8.0),
+          ],
           AppPrimaryButton(
             text: 'See rental details',
             onPressed: () {
@@ -207,35 +231,8 @@ class RequestChatItem extends StatelessWidget {
                   booking.userDropOffStatus != BookingProgressStatus.success ||
               booking.vendorDropOffStatus != BookingProgressStatus.success &&
                   !isBookingCanceled &&
-                  isBookingPaid) ...[
-            (isSender)
-                ? AppIconTextButton(
-                    onPressed: () {
-                      UrlLauncherUtil().callPhone(
-                          '${booking.vendor?.callingCode ?? ''}${booking.vendor?.phone ?? ''}');
-                    },
-                    icon: ZSvgIcon(
-                      'phone-call-01.svg',
-                      size: AppThemeUtil.radius(20),
-                    ),
-                    text: 'Call Vendor',
-                    color: kSuccess800,
-                    borderColor: kSuccess800,
-                  )
-                : AppIconTextButton(
-                    onPressed: () {
-                      UrlLauncherUtil().callPhone(
-                          '${booking.user?.callingCode ?? ''}${booking.user?.phone ?? ''}');
-                    },
-                    icon: ZSvgIcon(
-                      'phone-call-01.svg',
-                      size: AppThemeUtil.radius(20),
-                    ),
-                    text: 'Call Renter',
-                    color: kSuccess800,
-                    borderColor: kSuccess800,
-                  )
-          ],
+                  isBookingPaid)
+            ...[],
           if (isSender &&
               [
                 BookingProgressStatus.notStarted,

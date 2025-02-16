@@ -8,6 +8,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/providers/base_view.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
+import 'package:aider_mobile_app/core/utils/helper_util.dart';
 import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/providers/rental_provider.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/widgets/rate_review_modal.dart';
@@ -238,7 +239,7 @@ class _MyItemCardState extends State<MyItemCard> {
                                 scaffoldKey: GlobalKey<ScaffoldState>(),
                                 context,
                                 type: 'vendor',
-                                bookingUid: widget.booking.uid ?? '',
+                                booking: widget.booking,
                               );
                         },
                       ),
@@ -299,8 +300,8 @@ class _MyItemCardState extends State<MyItemCard> {
                             BookingProgressStatus.success)
                     ? DaysRemainingCard(
                         overDue:
-                            'Item in use, ${rentalProduct?.daysSpan} days remaining',
-                        cardColor: Colors.transparent,
+                            'Item in use, ${HelperUtil.getDaysRemaining(rentalProduct?.startDate ?? '', rentalProduct?.endDate ?? '')} days remaining',
+                        cardColor: const Color.fromARGB(0, 245, 138, 138),
                         textColor: const Color(0xFFF79009),
                       )
                     : const SizedBox.shrink()
@@ -350,7 +351,7 @@ class _MyItemCardState extends State<MyItemCard> {
                                     context,
                                     scaffoldKey: GlobalKey<ScaffoldState>(),
                                     type: 'vendor',
-                                    bookingUid: widget.booking.uid ?? '',
+                                    booking: widget.booking,
                                   );
                             },
                           ),

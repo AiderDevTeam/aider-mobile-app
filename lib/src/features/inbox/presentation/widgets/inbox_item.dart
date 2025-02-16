@@ -85,22 +85,33 @@ class InboxItem extends StatelessWidget {
                     .fontSize(12)
                     .color(kGrey400)
                     .flexible(),
-              (sent
-                      ? booking.vendor?.hasProfilePhoto == true
-                      : booking.user?.hasProfilePhoto == true)
-                  ? NetworkImageView(
-                      imageUrl: sent
-                          ? (booking.vendor?.profilePhotoUrl ?? '')
-                          : (booking.user?.profilePhotoUrl ?? ''),
-                      height: AppThemeUtil.radius(24),
-                      width: AppThemeUtil.radius(24),
-                      radius: 100,
-                    )
-                  : CircleAvatar(
-                      maxRadius: AppThemeUtil.radius(12),
-                      backgroundImage: const AssetImage(
-                          '$kImagePath/profile_placeholder.png'),
-                    ),
+              Row(
+                children: [
+                  (sent
+                          ? booking.vendor?.hasProfilePhoto == true
+                          : booking.user?.hasProfilePhoto == true)
+                      ? NetworkImageView(
+                          imageUrl: sent
+                              ? (booking.vendor?.profilePhotoUrl ?? '')
+                              : (booking.user?.profilePhotoUrl ?? ''),
+                          height: AppThemeUtil.radius(24),
+                          width: AppThemeUtil.radius(24),
+                          radius: 100,
+                        )
+                      : CircleAvatar(
+                          maxRadius: AppThemeUtil.radius(12),
+                          backgroundImage: const AssetImage(
+                              '$kImagePath/profile_placeholder.png'),
+                        ),
+                  const HSpace(width: 8.0),
+                  Text(sent
+                          ? booking.vendor?.firstName ?? ''
+                          : booking.user?.firstName ?? '')
+                      .regular()
+                      .fontSize(12)
+                      .color(kGrey600)
+                ],
+              )
             ],
           )
         ],

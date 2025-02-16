@@ -186,4 +186,11 @@ class HelperUtil {
   static String generateBookingNumber() {
     return 'A${DateTime.now().format('yyMMddHHmmss')}';
   }
+
+  static String getDaysRemaining(String startDate, String endDate) {
+    return DateTime.parse(endDate)
+        .difference(DateTime.parse(startDate))
+        .inDays
+        .toString();
+  }
 }

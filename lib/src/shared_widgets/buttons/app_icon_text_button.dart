@@ -9,7 +9,6 @@ import '../../../core/utils/app_theme_util.dart';
 import '../../../core/utils/helper_util.dart';
 import '../common/svg_icon.dart';
 
-
 class AppIconTextButton extends StatelessWidget {
   final void Function()? onPressed;
   final String text;
@@ -28,6 +27,7 @@ class AppIconTextButton extends StatelessWidget {
   final bool isIconRight;
   final MainAxisSize mainAxisSize;
   final TextScaler? textScaler;
+  final double? borderRadius;
 
   const AppIconTextButton({
     super.key,
@@ -48,8 +48,8 @@ class AppIconTextButton extends StatelessWidget {
     this.isIconRight = false,
     this.mainAxisSize = MainAxisSize.max,
     this.textScaler,
-  }) : assert(imageIconName != null || icon!= null);
-
+    this.borderRadius,
+  }) : assert(imageIconName != null || icon != null);
 
   @override
   Widget build(BuildContext context) {
@@ -63,87 +63,99 @@ class AppIconTextButton extends StatelessWidget {
         child: MaterialButton(
           elevation: 0,
           highlightElevation: 0,
-          color: color?? AppThemeUtil.getThemeColor(kPrimaryBlack),
+          color: color ?? AppThemeUtil.getThemeColor(kPrimaryBlack),
           disabledColor: AppThemeUtil.getThemeColor(kGrey300),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppThemeUtil.radius(8.0)),
-            side: BorderSide(color: onPressed != null ? (borderColor?? AppThemeUtil.getThemeColor(kPrimaryBlack)) : Colors.transparent),
+            borderRadius:
+                BorderRadius.circular(AppThemeUtil.radius(borderRadius ?? 8.0)),
+            side: BorderSide(
+                color: onPressed != null
+                    ? (borderColor ?? AppThemeUtil.getThemeColor(kPrimaryBlack))
+                    : Colors.transparent),
           ),
           onPressed: onPressed,
           minWidth: AppThemeUtil.width(minWidth),
           height: AppThemeUtil.height(height),
-          child: isIconRight?
-          Row(
-            mainAxisAlignment: mainAxisAlignment,
-            mainAxisSize: mainAxisSize,
-            children: [
-              Text(
-                text,
-                style: textStyle?? kSemiBoldFontStyle.copyWith(
-                  fontSize: AppThemeUtil.fontSize(fontSize?? 16),
-                  color: onPressed != null ? AppThemeUtil.getThemeColor(textColor?? kPrimaryWhite) : AppThemeUtil.getThemeColor(kPrimaryWhite),
+          child: isIconRight
+              ? Row(
+                  mainAxisAlignment: mainAxisAlignment,
+                  mainAxisSize: mainAxisSize,
+                  children: [
+                    Text(
+                      text,
+                      style: textStyle ??
+                          kSemiBoldFontStyle.copyWith(
+                            fontSize: AppThemeUtil.fontSize(fontSize ?? 16),
+                            color: onPressed != null
+                                ? AppThemeUtil.getThemeColor(
+                                    textColor ?? kPrimaryWhite)
+                                : AppThemeUtil.getThemeColor(kPrimaryWhite),
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      textScaler: textScaler,
+                    ).flexible(),
+                    if (icon != null)
+                      icon!.paddingOnly(left: iconPaddingFromText),
+                    if (imageIconName != null) ...[
+                      HelperUtil.isSvgImage(imageIconName ?? '')
+                          ? ZSvgIcon(
+                              imageIconName!,
+                              size: AppThemeUtil.radius(21),
+                            ).paddingOnly(right: iconPaddingFromText).flexible()
+                          : Container(
+                              height: AppThemeUtil.radius(21),
+                              width: AppThemeUtil.radius(21),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                      AssetImage('$kImagePath/$imageIconName'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ).paddingOnly(right: iconPaddingFromText).flexible()
+                    ],
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: mainAxisAlignment,
+                  mainAxisSize: mainAxisSize,
+                  children: [
+                    if (imageIconName != null) ...[
+                      HelperUtil.isSvgImage(imageIconName ?? '')
+                          ? ZSvgIcon(
+                              imageIconName!,
+                              size: AppThemeUtil.radius(21),
+                            ).paddingOnly(right: iconPaddingFromText).flexible()
+                          : Container(
+                              height: AppThemeUtil.radius(21),
+                              width: AppThemeUtil.radius(21),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                      AssetImage('$kImagePath/$imageIconName'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ).paddingOnly(right: iconPaddingFromText).flexible()
+                    ],
+                    if (icon != null)
+                      icon!.paddingOnly(right: iconPaddingFromText),
+                    Text(text,
+                            style: textStyle ??
+                                kSemiBoldFontStyle.copyWith(
+                                  fontSize:
+                                      AppThemeUtil.fontSize(fontSize ?? 16),
+                                  color: onPressed != null
+                                      ? AppThemeUtil.getThemeColor(
+                                          textColor ?? kPrimaryWhite)
+                                      : AppThemeUtil.getThemeColor(
+                                          kPrimaryWhite),
+                                ),
+                            overflow: TextOverflow.ellipsis,
+                            textScaler: textScaler)
+                        .flexible()
+                  ],
                 ),
-                overflow: TextOverflow.ellipsis,
-                textScaler: textScaler,
-              ).flexible(),
-
-              if(icon!=null) icon!.paddingOnly(left: iconPaddingFromText),
-
-              if(imageIconName!=null) ...[
-                HelperUtil.isSvgImage(imageIconName?? '') ? ZSvgIcon(
-                  imageIconName!,
-                  size: AppThemeUtil.radius(21),
-                ).paddingOnly(right: iconPaddingFromText).flexible()
-                    :
-                Container(
-                  height: AppThemeUtil.radius(21),
-                  width: AppThemeUtil.radius(21),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('$kImagePath/$imageIconName'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ).paddingOnly(right: iconPaddingFromText).flexible()
-              ],
-            ],
-          )
-              :
-          Row(
-            mainAxisAlignment: mainAxisAlignment,
-            mainAxisSize: mainAxisSize,
-            children: [
-              if(imageIconName!=null) ...[
-                HelperUtil.isSvgImage(imageIconName?? '') ? ZSvgIcon(
-                  imageIconName!,
-                  size: AppThemeUtil.radius(21),
-                ).paddingOnly(right: iconPaddingFromText).flexible()
-                    :
-                Container(
-                  height: AppThemeUtil.radius(21),
-                  width: AppThemeUtil.radius(21),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('$kImagePath/$imageIconName'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ).paddingOnly(right: iconPaddingFromText).flexible()
-              ],
-
-              if(icon!=null) icon!.paddingOnly(right: iconPaddingFromText),
-
-              Text(
-                text,
-                style: textStyle?? kSemiBoldFontStyle.copyWith(
-                  fontSize: AppThemeUtil.fontSize(fontSize?? 16),
-                  color: onPressed != null ? AppThemeUtil.getThemeColor(textColor?? kPrimaryWhite) : AppThemeUtil.getThemeColor(kPrimaryWhite),
-                ),
-                overflow: TextOverflow.ellipsis,
-                textScaler: textScaler
-              ).flexible()
-            ],
-          ),
         ),
       ),
     );

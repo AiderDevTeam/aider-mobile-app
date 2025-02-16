@@ -3,8 +3,10 @@ import 'dart:collection';
 
 import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/providers/base_provider.dart';
+import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/modals/success_modal_content.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/routing/app_navigator.dart';
@@ -194,12 +196,16 @@ class InboxViewModel extends BaseProvider {
       setAcceptingRequestLoading = true;
     }
 
+    final bookingUid = booking.uid!;
+    final user = context.read<UserProvider>().getUser;
+
     final result = await _inboxRepository.approveBookingRequest(
         booking: booking, status: status);
 
-    // if (context.mounted) {
-    //   AppNavigator.pop(context);
-    // }
+    if (context.mounted && status != BookingProgressStatus.accepted) {
+      AppNavigator.pop(context);
+      AppNavigator.pop(context);
+    }
 
     result.fold((failure) {
       if (status == BookingProgressStatus.accepted) {
@@ -215,6 +221,14 @@ class InboxViewModel extends BaseProvider {
         );
       });
     }, (_) {
+      sendNotification(
+          message:
+              '${user.firstName} has ${status == BookingProgressStatus.accepted ? 'accepted' : 'rejected'} booking',
+          title: 'Booking confirmation',
+          bookingUid: bookingUid,
+          senderUid: user.uid!,
+          recipientUid: booking.userUid!);
+
       if (status == BookingProgressStatus.accepted) {
         setAcceptingRequestLoading = false;
       }
@@ -235,6 +249,10 @@ class InboxViewModel extends BaseProvider {
   Future<void> sendNudge(BuildContext context,
       {required BookingModel booking}) async {
     AppDialogUtil.loadingDialog(context);
+
+    final bookingUid = booking.uid!;
+    final user = context.read<UserProvider>().getUser;
+
     final result = await _inboxRepository.sendNudge(booking: booking);
     // if (context.mounted) {
     //   AppNavigator.pop(context);
@@ -250,6 +268,12 @@ class InboxViewModel extends BaseProvider {
         );
       });
     }, (chat) {
+      sendNotification(
+          message: '${user.firstName} sent you a nudge',
+          title: 'Nudge',
+          bookingUid: bookingUid,
+          senderUid: user.uid!,
+          recipientUid: booking.vendorUid!);
       AppDialogUtil.popUpModal(
         context,
         modalContent: const SuccessModalContent(
@@ -260,14 +284,44 @@ class InboxViewModel extends BaseProvider {
     });
   }
 
-  /// LOCAL DB
-  void _persistSentChat() async {
-    final _ = await _inboxRepository.persistSentChat(_sentChats);
+  int _totalUnread = 0;
+
+  int get totalUnread => _totalUnread;
+
+  set totalUnread(int value) {
+    _totalUnread = value;
+    notifyListeners();
   }
 
-  void _persistReceivedChat() async {
-    final _ = await _inboxRepository.persistReceivedChat(_receivedChats);
+  listenToUnreadMessages() {
+    _inboxRepository.getUnreadMessagesStream().listen((count) {
+      totalUnread = count;
+    });
   }
+
+  Future<void> sendNotification(
+      {required String message,
+      required String title,
+      required String bookingUid,
+      required String senderUid,
+      required String recipientUid}) {
+    return _inboxRepository.sendNotification(
+      message: message,
+      title: title,
+      bookingUid: bookingUid,
+      senderUid: senderUid,
+      recipientUid: recipientUid,
+    );
+  }
+
+  /// LOCAL DB
+  // void _persistSentChat() async {
+  //   final _ = await _inboxRepository.persistSentChat(_sentChats);
+  // }
+
+  // void _persistReceivedChat() async {
+  //   final _ = await _inboxRepository.persistReceivedChat(_receivedChats);
+  // }
 
   Future<void> _retrieveSentChat() async {
     final result = await _inboxRepository.retrieveSentChat();

@@ -16,4 +16,5 @@ const kReviewsCollection = 'reviews';
 const kOrdersCollection = 'orders';
 const kPriceStructureCollection = 'priceStructure';
 const kBookingCollection = 'bookings';
+const kBookingUnreadCollection = 'bookingUnread';
 const kReportsCollection = 'reports';

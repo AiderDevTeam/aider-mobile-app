@@ -9,6 +9,7 @@ import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
+import 'package:aider_mobile_app/core/utils/helper_util.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/providers/rental_provider.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/widgets/rate_review_modal.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/widgets/report_modal.dart';
@@ -200,7 +201,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                         await context.read<RentalProvider>().confirmPickUp(
                               context,
                               type: 'user',
-                              bookingUid: booking.uid ?? '',
+                              booking: booking,
                               scaffoldKey: GlobalKey<ScaffoldState>(),
                             );
                       },
@@ -254,7 +255,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                 booking.userDropOffStatus != BookingProgressStatus.success) ...[
               DaysRemainingCard(
                 overDue:
-                    '${DateTime.parse(rentalProduct?.endDate ?? '').difference(DateTime.now()).inDays} days remaining',
+                    '${HelperUtil.getDaysRemaining(rentalProduct?.startDate ?? '', rentalProduct?.endDate ?? '')} days remaining',
                 cardColor: const Color(0xFFFEF4E6),
                 textColor: const Color(0xFFF79009),
               ),
@@ -271,7 +272,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                       onYesPressed: () async {
                         await context.read<RentalProvider>().earlyReturn(
                               context,
-                              bookingUid: booking.uid ?? '',
+                              booking: booking,
                               bookedProduct: rentalProduct!,
                             );
                       },
@@ -324,7 +325,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                                   context,
                                   scaffoldKey: GlobalKey<ScaffoldState>(),
                                   type: 'user',
-                                  bookingUid: booking.uid ?? '',
+                                  booking: booking,
                                 );
                           },
                         ),
@@ -385,7 +386,7 @@ class _RentedItemCardState extends State<RentedItemCard> {
                                   context,
                                   scaffoldKey: GlobalKey<ScaffoldState>(),
                                   type: 'user',
-                                  bookingUid: booking.uid ?? '',
+                                  booking: booking,
                                 );
                           },
                         ),

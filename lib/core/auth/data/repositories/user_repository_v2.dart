@@ -10,6 +10,8 @@ import '../datasources/user_remote_datasource_v2.dart';
 
 abstract class UserRepositoryV2 {
   Future<Either<Failure, UserModel>> updateUser({required UserModel user});
+  Future<Either<Failure, void>> setPushNotificationToken(
+      {required String pushNotificationToken});
   Future<Either<Failure, UserModel>> fetchUserDetail();
   Stream<UserModel?> fetchUserDetailStream();
   Future<Either<Failure, bool>> verifyDisplayName(
@@ -135,6 +137,20 @@ class UserRepositoryV2Impl implements UserRepositoryV2 {
       ZLoggerService.logOnError('fetchUserDetailByUID Error: $e');
       CrashService.setCrashKey(
           'fetchUserDetailByUID', 'Fetching user detail by UID');
+      return Left(FailureToMessage.returnLeftError(e, s));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> setPushNotificationToken(
+      {required String pushNotificationToken}) async {
+    try {
+      await userRemoteDatasourceV2.setPushNotificationToken(
+          pushNotificationToken: pushNotificationToken);
+      return const Right(null);
+    } catch (e, s) {
+      CrashService.setCrashKey(
+          'setPushNotificationToken', 'Setting push notification token');
       return Left(FailureToMessage.returnLeftError(e, s));
     }
   }

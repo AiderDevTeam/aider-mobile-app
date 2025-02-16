@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:aider_mobile_app/core/providers/user_provider.dart';
+import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booked_product/booked_product_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/booking_model.dart';
-import 'package:aider_mobile_app/src/shared_widgets/common/zloading.dart';
 import 'package:aider_mobile_app/src/shared_widgets/modals/success_modal_content.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../core/domain/models/pagination/pagination_model.dart';
 import '../../../../../core/errors/failure.dart';
@@ -111,13 +113,15 @@ class RentalProvider extends BaseProvider {
   Future<void> confirmPickUp(
     BuildContext context, {
     String type = 'user',
-    required String bookingUid,
+    required BookingModel booking,
     required GlobalKey<ScaffoldState> scaffoldKey,
   }) async {
     AppDialogUtil.loadingDialog(context);
 
+    final bookingUid = booking.uid!;
+    final user = context.read<UserProvider>().getUser;
     final result = await _rentalRepository.confirmPickUp(
-        bookingUid: bookingUid, type: type);
+        bookingUid: booking.uid!, type: type);
     if (context.mounted) {
       AppNavigator.pop(context);
     }
@@ -132,6 +136,13 @@ class RentalProvider extends BaseProvider {
         );
       });
     }, (right) {
+      context.read<InboxViewModel>().sendNotification(
+          message: '${user.firstName} has confirmed pickup',
+          title: 'Pickup confirmation',
+          bookingUid: bookingUid,
+          senderUid: user.uid!,
+          recipientUid: type == 'user' ? booking.vendorUid! : booking.userUid!);
+
       if (type == 'user') {
         final index = _rentedProductHistory.data
             .indexWhere((obj) => obj.uid == bookingUid);
@@ -174,10 +185,13 @@ class RentalProvider extends BaseProvider {
   Future<void> confirmDropOff(
     BuildContext context, {
     String type = 'user',
-    required String bookingUid,
+    required BookingModel booking,
     required GlobalKey<ScaffoldState> scaffoldKey,
   }) async {
     AppDialogUtil.loadingDialog(context);
+
+    final bookingUid = booking.uid!;
+    final user = context.read<UserProvider>().getUser;
 
     final result = await _rentalRepository.confirmDropOff(
         bookingUid: bookingUid, type: type);
@@ -195,6 +209,13 @@ class RentalProvider extends BaseProvider {
         );
       });
     }, (right) {
+      context.read<InboxViewModel>().sendNotification(
+          message: '${user.firstName} has confirmed drop off',
+          title: 'Drop off confirmation',
+          bookingUid: bookingUid,
+          senderUid: user.uid!,
+          recipientUid: type == 'user' ? booking.vendorUid! : booking.userUid!);
+
       if (type == 'user') {
         final index = _rentedProductHistory.data
             .indexWhere((obj) => obj.uid == bookingUid);
@@ -352,9 +373,12 @@ class RentalProvider extends BaseProvider {
   }
 
   Future<void> earlyReturn(BuildContext context,
-      {required String bookingUid,
+      {required BookingModel booking,
       required BookedProductModel bookedProduct}) async {
     AppDialogUtil.loadingDialog(context);
+
+    final bookingUid = booking.uid!;
+    final user = context.read<UserProvider>().getUser;
 
     final result = await _rentalRepository.earlyReturn(
         bookingUid: bookingUid, bookedProduct: bookedProduct);
@@ -380,6 +404,13 @@ class RentalProvider extends BaseProvider {
         );
       });
     }, (right) {
+      context.read<InboxViewModel>().sendNotification(
+          message: '${user.firstName} has confirmed drop off',
+          title: 'Drop off confirmation',
+          bookingUid: bookingUid,
+          senderUid: user.uid!,
+          recipientUid: booking.vendorUid!);
+
       final index =
           _rentedProductHistory.data.indexWhere((obj) => obj.uid == bookingUid);
       if (index >= 0) {
@@ -420,7 +451,20 @@ class RentalProvider extends BaseProvider {
   BookingModel? _currentBooking;
   StreamSubscription<BookingModel>? _bookingSubscription;
 
+  get bookingSubscription => _bookingSubscription;
+
   BookingModel? get currentBooking => _currentBooking;
+
+// Handle changes to the booking based on user's and vendors actions.
+  set setCurrentBooking(BookingModel booking) {
+    _currentBooking = booking;
+    notifyListeners();
+  }
+
+  void clearCurrentBooking() {
+    _currentBooking = null;
+    _rentalRepository.clearCurrentBooking();
+  }
 
   Map<String, BookingModel> _bookingsMap = {};
 
@@ -429,6 +473,10 @@ class RentalProvider extends BaseProvider {
   set setBookingsMap(Map<String, BookingModel> value) {
     _bookingsMap = value;
     notifyListeners();
+  }
+
+  void setUserActiveBooking(BookingModel booking) {
+    _rentalRepository.setCurrentBooking(booking: booking);
   }
 
   void listenToBooking(BuildContext context, BookingModel booking,
@@ -442,7 +490,7 @@ class RentalProvider extends BaseProvider {
       ZLoggerService.logOnInfo(
           'Booking updated: ${latestBooking.bookingNumber}');
       if (isChat) {
-        _currentBooking = latestBooking.copyWith(
+        setCurrentBooking = latestBooking.copyWith(
           user: booking.user,
           vendor: booking.vendor,
           bookedProduct: booking.bookedProduct,
@@ -466,15 +514,15 @@ class RentalProvider extends BaseProvider {
     });
   }
 
-  void closeBookingListener() {
-    ZLoggerService.logOnInfo('Closing booking listener');
-    _bookingSubscription?.cancel();
-    setBookingsMap = {};
-  }
+  // void closeBookingListener() {
+  //   ZLoggerService.logOnInfo('Closing booking listener');
+  //   _bookingSubscription?.cancel();
+  //   setBookingsMap = {};
+  // }
 
-  @override
-  void dispose() {
-    _bookingSubscription?.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _bookingSubscription?.cancel();
+  //   super.dispose();
+  // }
 }

@@ -13,15 +13,15 @@ class ProductPhotoModel {
     return ProductPhotoModel(
       id: json['id'],
       externalId: json['externalId'],
-      photoUrl: json['photoUrl'],
+      photoUrl: json['photoUrl'] ?? json['photo_url'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'external_id': externalId,
-      'photo_url': photoUrl,
+      'externalId': externalId,
+      'photoUrl': photoUrl,
     };
   }
 

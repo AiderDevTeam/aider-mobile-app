@@ -103,12 +103,11 @@ class _ListProductScreenState extends State<ListProductScreen> {
                   ),
                 );
               }
-              if (prices.length < 3) {
+              if (prices.isEmpty) {
                 AppDialogUtil.popUpModal(
                   context,
                   modalContent: const ErrorModalContent(
-                    errorMessage:
-                        "Provide prices for all ranges (Daily, 7+ Days, 30+ Days)",
+                    errorMessage: "Provide the prices for the item",
                   ),
                 );
                 return;

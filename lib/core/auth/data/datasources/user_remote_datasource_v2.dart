@@ -9,6 +9,8 @@ import '../../../services/logger_service.dart';
 
 abstract class UserRemoteDatasourceV2 {
   Future<UserModel> updateUser({required UserModel user});
+  Future<void> setPushNotificationToken(
+      {required String pushNotificationToken});
   Future<UserModel> fetchUserDetail();
   Stream<UserModel> fetchUserDetailStream();
   Future<UserModel> fetchUserDetailByUID({required String uid});
@@ -72,9 +74,9 @@ class UserRemoteDatasourceV2Impl extends UserRemoteDatasourceV2 {
     userJson
         .addAll({'addresses': user.addresses?.map((e) => e.toJson()).toList()});
     userJson.remove('password');
-    userJson.addAll({'joinedAt': FieldValue.serverTimestamp()});
+    // userJson.addAll({'joinedAt': FieldValue.serverTimestamp()});
     userJson.addAll({'updatedAt': FieldValue.serverTimestamp()});
-    userJson.addAll({'itemsListed': 0});
+    userJson.addAll({'itemsListed': user.itemsListed ?? 0});
     await usersCollection.doc(currentUser!.uid).set(userJson);
     return user;
   }
@@ -115,5 +117,14 @@ class UserRemoteDatasourceV2Impl extends UserRemoteDatasourceV2 {
       return UserModel.fromJson(result.data() as Map<String, dynamic>);
     }
     throw const ServerException(message: 'User not found');
+  }
+
+  @override
+  Future<void> setPushNotificationToken(
+      {required String pushNotificationToken}) async {
+    final userUid = auth.currentUser!.uid;
+    await userTypesCollection
+        .doc(userUid)
+        .update({'pushNotificationToken': pushNotificationToken});
   }
 }

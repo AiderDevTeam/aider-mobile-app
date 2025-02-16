@@ -103,6 +103,7 @@ class BookingModel {
     UserModel? vendor,
     UserModel? user,
     DateTime? createdAt,
+    bool? hasUnreadMessages,
   }) {
     return BookingModel(
       id: id ?? this.id,

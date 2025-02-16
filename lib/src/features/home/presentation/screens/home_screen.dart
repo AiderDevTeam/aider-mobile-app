@@ -1,17 +1,17 @@
-import 'package:aider_mobile_app/core/constants/common.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/features/explore/presentation/screens/explore_screen.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
+import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:aider_mobile_app/src/features/profile/presentation/screens/profile_screen.dart';
 import 'package:aider_mobile_app/src/features/rentals/presentation/screens/rentals_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../core/providers/wallet_provider.dart';
 import '../../../../../core/services/git_it_service_locator.dart';
 import '../../../../../core/services/local_notification_service.dart';
-import '../../../../../core/services/logger_service.dart';
 import '../../../../../core/services/push_notification_service.dart';
 import '../../../../../core/providers/base_view.dart';
 import '../../../inbox/presentation/screens/inbox_screen.dart';
@@ -37,11 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final userViewModel = context.read<UserProvider>();
+      final walletProvider = context.read<WalletProvider>();
+      if (walletProvider.userWallets.isEmpty) {
+        context.read<WalletProvider>().getWallets();
+      }
 
       // Fetch wallet data and set default wallet if available
       // await fetchUserWallet();
       _fcmInitialization();
       _requestForNotificationPermissions();
+      context.read<InboxViewModel>().listenToUnreadMessages();
+      await context.read<UserProvider>().setPushNotificationToken();
     });
   }
 
@@ -57,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void onTap(int index) async {
     final bottomNavProvider = context.read<BottomNavViewModel>();
     final user = context.read<UserProvider>().getUser;
+
     if (index == 2) {
       // if(user.userIdentifications?.first.status == kRejected){
       //   AppNavigator.pushNamed(
@@ -74,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //   return;
       // }
 
-      if (user.wallets?.length == 0) {
+      if (context.read<WalletProvider>().userWallets.isEmpty) {
         AppNavigator.pushNamed(context, AppRoute.paymentScreen);
         return;
       }

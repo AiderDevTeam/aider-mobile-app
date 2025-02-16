@@ -1,4 +1,3 @@
-import 'package:aider_mobile_app/core/extensions/date_extension.dart';
 import 'package:aider_mobile_app/core/extensions/string_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';

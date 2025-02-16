@@ -11,7 +11,6 @@ import '../../../../../core/utils/app_dialog_util.dart';
 import '../../../../shared_widgets/modals/error_modal_content.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../../domain/models/bank/bank_model.dart';
-import '../../domain/models/transaction/transaction_model.dart';
 
 class TransactionProvider extends BaseProvider {
   final _transactionRepository = sl.get<TransactionRepository>();
@@ -31,6 +30,7 @@ class TransactionProvider extends BaseProvider {
     final result = await _transactionRepository.initiateTransaction(
         bookingUid: bookingUid);
 
+    setPaymentLoading = true;
     String? paymentUrl;
 
     result.fold((failure) {
@@ -139,9 +139,9 @@ class TransactionProvider extends BaseProvider {
   }
 
   // LOCAL DB
-  void _persistBanks() async {
-    final _ = await _transactionRepository.persistBanks(_banks);
-  }
+  // void _persistBanks() async {
+  //   final _ = await _transactionRepository.persistBanks(_banks);
+  // }
   // void _persistReceivedChat() async{
   //   final _ = await _inboxRepository.persistReceivedChat(_receivedChats);
   // }

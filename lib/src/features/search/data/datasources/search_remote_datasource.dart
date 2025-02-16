@@ -29,14 +29,14 @@ class SearchRemoteDataSourceImpl extends SearchRemoteDataSource {
   @override
   Future<SearchModel> searchAll(
       {required Map<String, dynamic> requestBody}) async {
-    final searchTerm = requestBody['searchInput'].toString();
+    final searchTerm = requestBody['searchInput'].toString().toLowerCase();
     var users = await userCollection
-        // .orderBy('name')
+        .orderBy('search')
         .startAt([searchTerm]).endAt([searchTerm + '\uf8ff']).get();
 
     var usersCount = users.docs.length;
     var products = await productCollection
-        // .orderBy('name')
+        .orderBy('search')
         .startAt([searchTerm]).endAt([searchTerm + '\uf8ff']).get();
 
     var productsCount = products.docs.length;
@@ -76,9 +76,9 @@ class SearchRemoteDataSourceImpl extends SearchRemoteDataSource {
       {required Map<String, dynamic> requestBody,
       String? nextPage,
       required Map<String, dynamic> queryParam}) async {
-    final searchTerm = requestBody['searchInput'].toString();
+    final searchTerm = requestBody['searchInput'].toString().toLowerCase();
     final response = await productCollection
-        .orderBy('name')
+        .orderBy('search')
         .startAt([searchTerm]).endAt(['$searchTerm\uf8ff']).get();
 
     var body = response.docs;

@@ -18,7 +18,7 @@ abstract class ProductRepository {
       {required ProductModel requestBody});
   Future<Either<Failure, ProductHistoryModel>> fetchUserProducts(
       {String? nextPage, int? pageSize, required UserModel user});
-  Future<Either<Failure, bool>> requestForItem(ProductModel product,
+  Future<Either<Failure, String>> requestForItem(ProductModel product,
       {required BookingModel booking});
   Future<Either<Failure, bool>> deleteProductPhoto(
       {required String productUid, required Map<String, dynamic> requestBody});
@@ -111,7 +111,7 @@ class ProductRepositoryImpl extends ProductRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> requestForItem(ProductModel product,
+  Future<Either<Failure, String>> requestForItem(ProductModel product,
       {required BookingModel booking}) async {
     try {
       final response = await productRemoteDatasource.requestForItem(product,

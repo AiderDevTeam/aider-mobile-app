@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:aider_mobile_app/core/auth/domain/models/user/user_model.dart';
 import 'package:aider_mobile_app/core/constants/firestore_collections.dart';
 import 'package:aider_mobile_app/core/services/http_service_requester.dart';
 import 'package:aider_mobile_app/src/features/inbox/domain/models/message/message_model.dart';
@@ -7,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../../../core/errors/error.dart';
 import '../../../../../core/services/logger_service.dart';
+import '../../../../../core/services/remote_config_service.dart';
 
 abstract class InboxRemoteDatasource {
   Future<void> approveBookingRequest(
@@ -16,6 +20,15 @@ abstract class InboxRemoteDatasource {
   Future<void> sendNudge({
     required BookingModel booking,
   });
+
+  Stream<int> getUnreadMessagesStream();
+
+  Future<void> sendNotification(
+      {required String message,
+      required String title,
+      required String bookingUid,
+      required String senderUid,
+      required String recipientUid});
 }
 
 class InboxRemoteDatasourceImpl extends InboxRemoteDatasource {
@@ -37,11 +50,16 @@ class InboxRemoteDatasourceImpl extends InboxRemoteDatasource {
       required BookingProgressStatus status}) async {
     final currentUser = firebaseAuth.currentUser!;
 
-    if (booking.vendorUid != currentUser.uid) {
+    if (booking.vendorUid != currentUser.uid &&
+        status == BookingProgressStatus.accepted) {
       throw const ServerException(
           message: "you don't have permission to approve this booking");
     }
 
+    if (booking.vendorUid != currentUser.uid &&
+        booking.userUid != currentUser.uid) {
+      throw const ServerException(message: "permission denied");
+    }
     await firestore.runTransaction((trx) async {
       final bookingRef = bookingCollection.doc(booking.uid);
       final productRef = productCollection.doc(booking.productUid);
@@ -93,5 +111,54 @@ class InboxRemoteDatasourceImpl extends InboxRemoteDatasource {
         .map((event) => event.docs
             .map((doc) => MessageModel.fromJson(doc.data()))
             .toList());
+  }
+
+  @override
+  Stream<int> getUnreadMessagesStream() {
+    final userUid = firebaseAuth.currentUser!.uid;
+    ZLoggerService.logOnInfo("User UID: $userUid");
+    final snapshots = firestore
+        .collection(kBookingUnreadCollection)
+        .where('userUid', isEqualTo: userUid)
+        .snapshots()
+        .map((e) {
+      ZLoggerService.logOnInfo("unread Data: ${e.docs.length}");
+      return e.docs.length;
+    });
+
+    return snapshots;
+  }
+
+  @override
+  Future<void> sendNotification(
+      {required String message,
+      required String title,
+      required String bookingUid,
+      required String senderUid,
+      required String recipientUid}) async {
+    final recipient =
+        await firestore.collection(kUsersCollection).doc(recipientUid).get();
+
+    if (!recipient.exists) {
+      throw const ServerException(message: "recipient not found");
+    }
+
+    ZLoggerService.logOnInfo(
+        "sending notification to: $recipientUid, current booking: ${recipient.data()?['currentBooking']}, recipient: ${recipient.id}");
+    if (recipient.data()?['currentBooking'] == bookingUid) {
+      return;
+    }
+
+    final baseUrl = RemoteConfigService.getRemoteData.configs['env']
+        ['notificationBaseUrl'] as String;
+
+    await httpServiceRequester
+        .postRequest(endpoint: "$baseUrl/send-notification", requestBody: {
+      'message': message,
+      'title': title,
+      'bookingUid': bookingUid,
+      'senderUid': senderUid,
+      'recipientUid': recipientUid,
+    });
   }
 }

@@ -7,6 +7,7 @@ import 'package:aider_mobile_app/core/routing/app_route.dart';
 import 'package:aider_mobile_app/core/services/cloudinary_service.dart';
 import 'package:aider_mobile_app/core/providers/base_provider.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
+import 'package:aider_mobile_app/src/features/inbox/presentation/view_models/inbox_view_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/category/category_model.dart';
 import 'package:aider_mobile_app/src/features/product/domain/models/category/sub_category_item_model.dart';
 import 'package:aider_mobile_app/src/features/rentals/domain/models/booking/exchange_schedule_model.dart';
@@ -237,6 +238,14 @@ class ProductProvider extends BaseProvider with CanRent {
         );
       });
     }, (right) {
+      final user = context.read<UserProvider>().getUser;
+      context.read<InboxViewModel>().sendNotification(
+          message: '${user.firstName} has sent a request for ${product.name}',
+          title: 'Rental Request',
+          bookingUid: right,
+          senderUid: user.uid!,
+          recipientUid: product.userUid!);
+
       AppDialogUtil.popUpModal(
         context,
         modalContent: SuccessModalContent(

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 import '../../../core/routing/app_navigator.dart';
@@ -43,36 +41,32 @@ class AppScreenScaffold extends StatelessWidget {
   final double? titleFontSize;
   final Widget? titleWidget;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       backgroundColor: backgroundColor,
-      appBar: appBar?
-      AiderAppBar(
-        appBar: AppBar(),
-        title: title?? '',
-        hasLeading: hasLeading,
-        onPressed: onNavigateBack ?? () {
-          AppNavigator.pop(context);
-        },
-        actions: appBarActions,
-        hasBottomBorder: hasBottomBorder,
-        appBarBackgroundColor: appBarBackgroundColor,
-        titleFontSize: titleFontSize,
-        titleWidget: titleWidget,
-      ) : null,
-
-      body: SafeArea(
-        child: child
-      ),
+      appBar: appBar
+          ? AiderAppBar(
+              appBar: AppBar(),
+              title: title ?? '',
+              hasLeading: hasLeading,
+              onPressed: onNavigateBack ??
+                  () {
+                    AppNavigator.pop(context);
+                  },
+              actions: appBarActions,
+              hasBottomBorder: hasBottomBorder,
+              appBarBackgroundColor: appBarBackgroundColor,
+              titleFontSize: titleFontSize,
+              titleWidget: titleWidget,
+            )
+          : null,
+      body: SafeArea(child: child),
       bottomNavigationBar: bottomNavigationBar,
       bottomSheet: bottomSheet,
       floatingActionButton: floatingActionButton,
     );
   }
 }
-
-

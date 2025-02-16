@@ -17,6 +17,13 @@ abstract class InboxRepository {
     required BookingModel booking,
   });
   Stream<List<MessageModel>> fetchMessagesStream(String bookingUid);
+  Stream<int> getUnreadMessagesStream();
+  Future<Either<Failure, void>> sendNotification(
+      {required String message,
+      required String title,
+      required String bookingUid,
+      required String senderUid,
+      required String recipientUid});
 
   /// LOCAL DB
   Future<Either<Failure, bool>> persistSentChat(List<ChatModel> sentChats);
@@ -116,6 +123,32 @@ class InboxRepositoryImpl extends InboxRepository {
       ZLoggerService.logOnError('error fetching messages: $e');
       CrashService.setCrashKey('chat', 'fetching messages');
       return Stream.error(FailureToMessage.returnLeftError(e, s));
+    }
+  }
+
+  @override
+  Stream<int> getUnreadMessagesStream() {
+    return inboxRemoteDatasource.getUnreadMessagesStream();
+  }
+
+  @override
+  Future<Either<Failure, void>> sendNotification(
+      {required String message,
+      required String title,
+      required String bookingUid,
+      required String senderUid,
+      required String recipientUid}) async {
+    try {
+      await inboxRemoteDatasource.sendNotification(
+          message: message,
+          title: title,
+          bookingUid: bookingUid,
+          senderUid: senderUid,
+          recipientUid: recipientUid);
+      return const Right(null);
+    } catch (e) {
+      CrashService.setCrashKey('notification', 'sending a notification');
+      return Left(FailureToMessage.returnLeftError(e));
     }
   }
 }

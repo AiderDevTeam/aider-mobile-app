@@ -104,6 +104,12 @@ class UserProvider extends BaseProvider {
     });
   }
 
+  Future<void> setPushNotificationToken() async {
+    final token = await sl.get<PushNotificationService>().getFcmToken();
+    await _userRepository.setPushNotificationToken(
+        pushNotificationToken: token ?? '');
+  }
+
   Future<void> updateUser(BuildContext context,
       {required UserModel user,
       required Map<String, dynamic>? location}) async {

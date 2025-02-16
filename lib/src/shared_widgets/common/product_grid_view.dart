@@ -2,19 +2,14 @@ import 'package:aider_mobile_app/core/extensions/widgets/flexible_extension.dart
 import 'package:aider_mobile_app/core/extensions/widgets/gesture_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
-import 'package:aider_mobile_app/core/services/logger_service.dart';
-import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
-import 'package:aider_mobile_app/src/shared_widgets/modals/error_modal_content.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../core/constants/colors.dart';
 import '../../../core/routing/app_navigator.dart';
 import '../../../core/routing/app_route.dart';
 import '../../../core/utils/app_theme_util.dart';
 import '../../../core/utils/helper_util.dart';
-import '../../features/explore/presentation/providers/explore_view_provider.dart';
 import '../../features/product/domain/models/product/product_model.dart';
 import 'h_space.dart';
 import 'network_image_view.dart';
