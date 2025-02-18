@@ -166,13 +166,13 @@ class _ProductDetailsBodyState extends State<ProductDetailsBody> {
                     }
 
                     String duration;
-                    if (totalDays >= 1 && totalDays <= 6) {
-                      duration = 'per day';
-                    } else if (totalDays >= 7 && totalDays <= 29) {
-                      duration = 'per week';
-                    } else {
-                      duration = 'per month';
-                    }
+                    // if (totalDays >= 1 && totalDays <= 6) {
+                    //   duration = 'per day';
+                    // } else if (totalDays >= 7 && totalDays <= 29) {
+                    //   duration = 'per week';
+                    // } else {
+                    duration = 'per day';
+                    // }
 
                     return Container(
                       height: AppThemeUtil.radius(92.0),
