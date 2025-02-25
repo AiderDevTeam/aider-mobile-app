@@ -175,6 +175,7 @@ class ProductRepositoryImpl extends ProductRepository {
           productUid: productUid, requestBody: requestBody);
       return Right(response);
     } catch (e, s) {
+      ZLoggerService.logOnError('Error: ${e.toString()}: ${s.toString()}');
       CrashService.setCrashKey('product', 'update product');
       return Left(FailureToMessage.returnLeftError(e, s));
     }

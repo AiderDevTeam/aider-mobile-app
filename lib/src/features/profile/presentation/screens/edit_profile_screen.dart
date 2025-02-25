@@ -1,6 +1,7 @@
 import 'package:aider_mobile_app/core/extensions/string_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/padding_extension.dart';
 import 'package:aider_mobile_app/core/extensions/widgets/text_extension.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/utils/app_theme_util.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/src/shared_widgets/common/svg_icon.dart';
@@ -84,7 +85,8 @@ class _EditUserProfileState extends State<EditUserProfile> {
       bottomNavigationBar: AppBottomNavWrapper(
         child: AppPrimaryButton(
           onPressed: () async {
-            print("Validate: ${formKey.currentState!.validate()}");
+            ZLoggerService.logOnInfo(
+                "Validate: ${formKey.currentState!.validate()}");
             if (formKey.currentState!.validate()) {
               final userProvider = context.read<UserProvider>();
               if (userProvider.isComponentLoading('verifyDisplayName')) return;

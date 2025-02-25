@@ -104,6 +104,7 @@ class RentalRemoteDataSourceImpl extends RentalRemoteDataSource {
 
     final products = await firebaseFirestore
         .collection(kProductsCollection)
+        .where('status', isEqualTo: 'active')
         .where('uid', whereIn: productIds)
         .get();
 

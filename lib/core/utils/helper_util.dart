@@ -161,12 +161,14 @@ class HelperUtil {
 
   static ProductPriceModel? calculateProductPrice(
       ProductModel product, int duration) {
+    ZLoggerService.logOnDebug(
+        "Product Price: ${product.prices?.toList()[0].toJson()}");
     final finiteEndDay = product.prices?.where((price) =>
         price.endDay != null &&
         price.startDay! <= duration &&
         price.endDay! >= duration);
 
-    if (finiteEndDay != null) {
+    if (finiteEndDay != null && finiteEndDay.isNotEmpty) {
       return finiteEndDay.first;
     }
 

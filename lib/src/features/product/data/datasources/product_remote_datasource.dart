@@ -91,7 +91,9 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   @override
   Future<ProductHistoryModel> fetchUserProducts(
       {required UserModel user, String? nextPage, int? pageSize}) async {
-    Query query = productCollection.where('userUid', isEqualTo: user.uid);
+    Query query = productCollection
+        .where('status', isEqualTo: 'active')
+        .where('userUid', isEqualTo: user.uid);
     // .orderBy('postedAt', descending: true);
 
     if (nextPage != null) {
@@ -267,7 +269,9 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
       {required UserModel vendor,
       String? nextPage,
       required Map<String, dynamic> queryParam}) async {
-    Query query = productCollection.where('userUid', isEqualTo: vendor.uid);
+    Query query = productCollection
+        .where('status', isEqualTo: 'active')
+        .where('userUid', isEqualTo: vendor.uid);
     // .orderBy('postedAt', descending: true);
 
     if (nextPage != null) {
@@ -340,6 +344,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
   @override
   Future<int> fetchProductCount() async {
     final response = await productCollection
+        .where('status', isEqualTo: 'active')
         .where('userUid', isEqualTo: firebaseAuth.currentUser!.uid)
         .count()
         .get();

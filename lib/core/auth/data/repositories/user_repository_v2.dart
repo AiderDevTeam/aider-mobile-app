@@ -73,11 +73,11 @@ class UserRepositoryV2Impl implements UserRepositoryV2 {
   Future<Either<Failure, UserModel>> updateUser(
       {required UserModel user}) async {
     try {
-      print("Update user: ${user.toJson()}");
+      ZLoggerService.logOnInfo("Update user: ${user.toJson()}");
       final result = await userRemoteDatasourceV2.updateUser(user: user);
       return Right(result);
     } catch (e, s) {
-      print("Update user error: $e");
+      ZLoggerService.logOnInfo("Update user error: $e");
       CrashService.setCrashKey('updateUser', 'Updating user');
       return Left(FailureToMessage.returnLeftError(e, s));
     }

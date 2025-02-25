@@ -64,7 +64,10 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
   }
 
   Future<List> loadProducts() async {
-    final products = await productsCollection.limit(10).get();
+    final products = await productsCollection
+        .where('status', isEqualTo: 'active')
+        .limit(10)
+        .get();
 
     return products.docs.map((doc) => doc.data()).toList();
   }
@@ -92,7 +95,7 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
       required int dataPerPage}) async {
     final response = await firestore
         .collection(kProductsCollection)
-        // .where('sectionExternalId', isEqualTo: sectionExternalId)
+        .where('status', isEqualTo: 'active')
         .get();
 
     return response.docs
@@ -121,6 +124,7 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
 
     final response = await firestore
         .collection(kProductsCollection)
+        .where('status', isEqualTo: 'active')
         .where('subCategoryItemId', whereIn: subCategories)
         .get();
 
@@ -138,6 +142,7 @@ class ExploreRemoteDatasourceImpl extends ExploreRemoteDatasource {
       required int dataPerPage}) async {
     final response = await firestore
         .collection(kProductsCollection)
+        .where('status', isEqualTo: 'active')
         .where('categoryExternalId',
             isEqualTo: requestBody['categoryExternalId'])
         .get();

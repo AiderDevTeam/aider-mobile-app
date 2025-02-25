@@ -6,6 +6,7 @@ import 'package:aider_mobile_app/core/errors/failure.dart';
 import 'package:aider_mobile_app/core/providers/user_provider.dart';
 import 'package:aider_mobile_app/core/routing/app_navigator.dart';
 import 'package:aider_mobile_app/core/routing/app_route.dart';
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/core/utils/helper_util.dart';
 import 'package:aider_mobile_app/src/features/home/presentation/view_models/bottom_nav_view_model.dart';
@@ -158,7 +159,7 @@ class AuthProvider extends BaseProvider {
     );
 
     authUser.fold((failure) {
-      print(
+      ZLoggerService.logOnInfo(
           'failure: email : ${user.email} password : ${user.password} ${FailureToMessage.mapFailureToMessage(failure)}');
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         AppDialogUtil.popUpModal(

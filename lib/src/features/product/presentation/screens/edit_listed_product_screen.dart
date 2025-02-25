@@ -203,7 +203,7 @@ class _EditListedProductScreenState extends State<EditListedProductScreen> {
                     context,
                     productUid: product.uid ?? '',
                     requestBody: {
-                      "subCategoryItemId": subCategoryItem?.id,
+                      "subCategoryItemId": subCategoryItem?.externalId,
                       "name": itemNameController.text,
                       "description": descriptionController.text,
                       "quantity": quantityController.text,

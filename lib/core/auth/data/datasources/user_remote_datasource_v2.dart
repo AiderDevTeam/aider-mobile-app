@@ -55,7 +55,7 @@ class UserRemoteDatasourceV2Impl extends UserRemoteDatasourceV2 {
   @override
   Future<UserModel> fetchUserDetail() async {
     final token = await auth.currentUser!.getIdToken();
-    ZLoggerService.logOnInfo("Fetch User Detail By UID: ${token}");
+    ZLoggerService.logOnInfo("Fetch User Detail By UID: $token");
     final user = auth.currentUser;
     final result = await usersCollection.doc(user!.uid).get();
 

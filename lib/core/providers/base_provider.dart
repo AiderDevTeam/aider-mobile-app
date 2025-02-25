@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:aider_mobile_app/core/services/logger_service.dart';
 import 'package:aider_mobile_app/core/services/remote_config_service.dart';
 import 'package:aider_mobile_app/core/utils/app_dialog_util.dart';
 import 'package:aider_mobile_app/src/shared_widgets/modals/error_modal_content.dart';
@@ -48,7 +49,7 @@ class BaseProvider extends ChangeNotifier {
             ['minimumVersion'] as Map<String, dynamic>? ??
         {};
 
-    print(
+    ZLoggerService.logOnInfo(
         "version: ${info.version} minimumVersion: ${minimumVersion[platform]}");
 
     return versionToNumber(info.version) >=
