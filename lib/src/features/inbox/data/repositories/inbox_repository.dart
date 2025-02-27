@@ -17,7 +17,7 @@ abstract class InboxRepository {
     required BookingModel booking,
   });
   Stream<List<MessageModel>> fetchMessagesStream(String bookingUid);
-  Stream<int> getUnreadMessagesStream();
+  Stream<int> getUnreadMessagesStream({String? bookingUid});
   Future<Either<Failure, void>> sendNotification(
       {required String message,
       required String title,
@@ -127,8 +127,9 @@ class InboxRepositoryImpl extends InboxRepository {
   }
 
   @override
-  Stream<int> getUnreadMessagesStream() {
-    return inboxRemoteDatasource.getUnreadMessagesStream();
+  Stream<int> getUnreadMessagesStream({String? bookingUid}) {
+    return inboxRemoteDatasource.getUnreadMessagesStream(
+        bookingUid: bookingUid);
   }
 
   @override

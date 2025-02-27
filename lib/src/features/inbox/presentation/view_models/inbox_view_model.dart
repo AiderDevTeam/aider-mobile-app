@@ -287,15 +287,33 @@ class InboxViewModel extends BaseProvider {
   int _totalUnread = 0;
 
   int get totalUnread => _totalUnread;
+  final Map<String, int> _bookingUnread = {};
+
+  Map<String, int> get bookingUnread => _bookingUnread;
 
   set totalUnread(int value) {
     _totalUnread = value;
     notifyListeners();
   }
 
-  listenToUnreadMessages() {
-    _inboxRepository.getUnreadMessagesStream().listen((count) {
-      totalUnread = count;
+  setBookingUnread(String bookingUid, int value) {
+    _bookingUnread[bookingUid] = value;
+    notifyListeners();
+  }
+
+  listenToUnreadMessages({String? bookingUid}) {
+    if (bookingUid != null) {
+      setBookingUnread(bookingUid, 0);
+    }
+
+    _inboxRepository
+        .getUnreadMessagesStream(bookingUid: bookingUid)
+        .listen((count) {
+      if (bookingUid == null) {
+        totalUnread = count;
+      } else {
+        setBookingUnread(bookingUid, count);
+      }
     });
   }
 

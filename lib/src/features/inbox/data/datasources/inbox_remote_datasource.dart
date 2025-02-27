@@ -18,7 +18,7 @@ abstract class InboxRemoteDatasource {
     required BookingModel booking,
   });
 
-  Stream<int> getUnreadMessagesStream();
+  Stream<int> getUnreadMessagesStream({String? bookingUid});
 
   Future<void> sendNotification(
       {required String message,
@@ -111,14 +111,18 @@ class InboxRemoteDatasourceImpl extends InboxRemoteDatasource {
   }
 
   @override
-  Stream<int> getUnreadMessagesStream() {
+  Stream<int> getUnreadMessagesStream({String? bookingUid}) {
     final userUid = firebaseAuth.currentUser!.uid;
     ZLoggerService.logOnInfo("User UID: $userUid");
-    final snapshots = firestore
+    var query = firestore
         .collection(kBookingUnreadCollection)
-        .where('userUid', isEqualTo: userUid)
-        .snapshots()
-        .map((e) {
+        .where('userUid', isEqualTo: userUid);
+
+    if (bookingUid != null) {
+      query = query.where('bookingUid', isEqualTo: bookingUid);
+    }
+
+    final snapshots = query.snapshots().map((e) {
       ZLoggerService.logOnInfo("unread Data: ${e.docs.length}");
       return e.docs.length;
     });
