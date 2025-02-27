@@ -74,6 +74,7 @@ class ProductRemoteDatasourceImpl extends ProductRemoteDatasource {
           userUid: firebaseAuth.currentUser!.uid,
           uid: docRef.id,
           externalId: docRef.id,
+          status: 'active',
           postedAt: DateTime.now().toIso8601String());
 
       final data = requestBody.toJson();
